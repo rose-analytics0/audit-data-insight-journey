@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confusion Matrix Interaktif — Deteksi Fraud</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f7f4; color: #1a1a18; padding: 2rem 1rem; min-height: 100vh; }
+  .container { max-width: 680px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.25rem; }
+  .subtitle { font-size: 14px; color: #5f5e5a; margin-bottom: 2rem; }
+
+  .axis-label { font-size: 12px; font-weight: 500; color: #5f5e5a; text-align: center; }
+  .side-label { font-size: 12px; font-weight: 500; color: #5f5e5a; writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; }
+
+  .matrix-grid { display: grid; grid-template-columns: 32px 1fr 1fr; grid-template-rows: auto auto auto; gap: 8px; align-items: center; margin-bottom: 1.5rem; }
+
+  .cm-cell { border-radius: 10px; padding: 1rem; text-align: center; cursor: pointer; transition: opacity 0.15s, border 0.15s; border: 2px solid transparent; }
+  .cm-cell:hover { opacity: 0.88; }
+  .cm-cell.active { border: 2px solid #1a1a18; }
+
+  .cm-label { font-size: 11px; font-weight: 500; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .cm-number { font-size: 36px; font-weight: 500; line-height: 1; margin-bottom: 4px; }
+  .cm-desc { font-size: 12px; line-height: 1.4; }
+
+  .tp { background: #EAF3DE; }
+  .tp .cm-label { color: #3B6D11; }
+  .tp .cm-number { color: #27500A; }
+  .tp .cm-desc { color: #3B6D11; }
+
+  .fp { background: #FAEEDA; }
+  .fp .cm-label { color: #854F0B; }
+  .fp .cm-number { color: #633806; }
+  .fp .cm-desc { color: #854F0B; }
+
+  .fn { background: #FCEBEB; }
+  .fn .cm-label { color: #A32D2D; }
+  .fn .cm-number { color: #791F1F; }
+  .fn .cm-desc { color: #A32D2D; }
+
+  .tn { background: #E6F1FB; }
+  .tn .cm-label { color: #185FA5; }
+  .tn .cm-number { color: #0C447C; }
+  .tn .cm-desc { color: #185FA5; }
+
+  .detail-box { background: #fff; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border: 0.5px solid #d3d1c7; border-left: 4px solid #ccc; display: none; }
+  .detail-title { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+  .detail-text { font-size: 13px; color: #5f5e5a; line-height: 1.6; margin-bottom: 4px; }
+
+  .section-label { font-size: 13px; font-weight: 500; color: #5f5e5a; margin-bottom: 8px; }
+  .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .slider-row span { font-size: 12px; color: #888780; white-space: nowrap; }
+  input[type=range] { flex: 1; accent-color: #1a1a18; cursor: pointer; }
+  .threshold-label { font-size: 12px; color: #888780; text-align: center; margin-bottom: 1.5rem; }
+
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .metric-card { background: #f1efe8; border-radius: 8px; padding: 0.75rem 1rem; text-align: center; }
+  .metric-card .label { font-size: 11px; color: #5f5e5a; margin-bottom: 4px; }
+  .metric-card .value { font-size: 24px; font-weight: 500; }
+  .metric-card .hint { font-size: 11px; color: #888780; margin-top: 4px; line-height: 1.4; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #5f5e5a; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  .footer { font-size: 12px; color: #888780; text-align: center; margin-top: 2rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Confusion Matrix Interaktif</h1>
+  <p class="subtitle">Simulasi deteksi fraud dengan analogi satpam mal — 1.000 pengunjung, 50 copet</p>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#EAF3DE; border: 1px solid #97C459;"></div> True Positive — copet tertangkap</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FAEEDA; border: 1px solid #EF9F27;"></div> False Positive — orang baik salah ditahan</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FCEBEB; border: 1px solid #F09595;"></div> False Negative — copet lolos</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#E6F1FB; border: 1px solid #85B7EB;"></div> True Negative — orang baik dibiarkan lewat</div>
+  </div>
+
+  <div class="matrix-grid">
+    <div></div>
+    <div class="axis-label">Kenyataannya copet</div>
+    <div class="axis-label">Kenyataannya orang baik</div>
+
+    <div class="side-label">Model bilang copet</div>
+    <div class="cm-cell tp" id="cell-tp" onclick="selectCell('tp')">
+      <div class="cm-label">TRUE POSITIVE</div>
+      <div class="cm-number" id="tp-num">40</div>
+      <div class="cm-desc">Copet berhasil tertangkap</div>
+    </div>
+    <div class="cm-cell fp" id="cell-fp" onclick="selectCell('fp')">
+      <div class="cm-label">FALSE POSITIVE</div>
+      <div class="cm-number" id="fp-num">50</div>
+      <div class="cm-desc">Orang baik salah ditahan</div>
+    </div>
+
+    <div class="side-label">Model bilang orang baik</div>
+    <div class="cm-cell fn" id="cell-fn" onclick="selectCell('fn')">
+      <div class="cm-label">FALSE NEGATIVE</div>
+      <div class="cm-number" id="fn-num">10</div>
+      <div class="cm-desc">Copet lolos tanpa terdeteksi</div>
+    </div>
+    <div class="cm-cell tn" id="cell-tn" onclick="selectCell('tn')">
+      <div class="cm-label">TRUE NEGATIVE</div>
+      <div class="cm-number" id="tn-num">900</div>
+      <div class="cm-desc">Orang baik dibiarkan lewat</div>
+    </div>
+  </div>
+
+  <div class="detail-box" id="detail-panel">
+    <div class="detail-title" id="detail-title"></div>
+    <div class="detail-text" id="detail-meaning"></div>
+    <div class="detail-text" id="detail-example"></div>
+    <div class="detail-text" id="detail-impact"></div>
+  </div>
+
+  <div class="section-label">Geser: tingkat kewaspadaan model</div>
+  <div class="slider-row">
+    <span>Santai</span>
+    <input type="range" min="0" max="100" value="50" step="1" id="threshold" oninput="updateMatrix(this.value)">
+    <span>Ketat</span>
+  </div>
+  <div class="threshold-label" id="threshold-label">Posisi tengah — model seimbang</div>
+
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="label">Precision</div>
+      <div class="value" id="precision-val" style="color:#854F0B;">44%</div>
+      <div class="hint">dari yang ditahan, berapa yang benar copet?</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Recall</div>
+      <div class="value" id="recall-val" style="color:#A32D2D;">80%</div>
+      <div class="hint">dari semua copet, berapa yang tertangkap?</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">F1-Score</div>
+      <div class="value" id="f1-val" style="color:#185FA5;">57%</div>
+      <div class="hint">keseimbangan precision dan recall</div>
+    </div>
+  </div>
+
+  <div class="footer">Audit &amp; Data Insight Journey — klik setiap kotak untuk penjelasan lengkap</div>
+</div>
+
+<script>
+const TOTAL_FRAUD = 50;
+const TOTAL_NORMAL = 950;
+
+const details = {
+  tp: {
+    title: "True Positive — hasil terbaik",
+    meaning: "Model mendeteksi fraud, dan memang benar fraud. Ini yang kita inginkan.",
+    example: "Contoh: Satpam menahan pengunjung, dan setelah diperiksa memang terbukti copet.",
+    impact: "Dampak bisnis: positif. Fraud berhasil dicegah sebelum merugikan siapapun.",
+    color: "#3B6D11"
+  },
+  fp: {
+    title: "False Positive — salah tuduh",
+    meaning: "Model bilang fraud, padahal aslinya normal. Orang baik jadi tersangka.",
+    example: "Contoh: Satpam menahan pengunjung karena curiga, tapi ternyata dia hanya belanja biasa.",
+    impact: "Dampak bisnis: pelanggan marah, kepercayaan turun, bisa viral di media sosial.",
+    color: "#854F0B"
+  },
+  fn: {
+    title: "False Negative — yang paling berbahaya",
+    meaning: "Model bilang normal, padahal aslinya fraud. Penjahat lolos begitu saja.",
+    example: "Contoh: Satpam membiarkan pengunjung lewat karena penampilannya rapi, padahal dia copet.",
+    impact: "Dampak bisnis: kerugian finansial langsung, reputasi hancur, bisa berujung tuntutan hukum.",
+    color: "#A32D2D"
+  },
+  tn: {
+    title: "True Negative — aman dan benar",
+    meaning: "Model bilang normal, dan memang benar normal. Orang baik dibiarkan lewat.",
+    example: "Contoh: Satpam membiarkan pengunjung masuk, dan memang dia hanya pengunjung biasa.",
+    impact: "Dampak bisnis: netral. Ini kondisi normal yang kita harapkan untuk mayoritas transaksi.",
+    color: "#185FA5"
+  }
+};
+
+let activeCell = null;
+
+function selectCell(type) {
+  if (activeCell) document.getElementById('cell-' + activeCell).classList.remove('active');
+  if (activeCell === type) {
+    activeCell = null;
+    document.getElementById('detail-panel').style.display = 'none';
+    return;
+  }
+  activeCell = type;
+  document.getElementById('cell-' + type).classList.add('active');
+  const d = details[type];
+  document.getElementById('detail-title').textContent = d.title;
+  document.getElementById('detail-title').style.color = d.color;
+  document.getElementById('detail-meaning').textContent = d.meaning;
+  document.getElementById('detail-example').textContent = d.example;
+  document.getElementById('detail-impact').textContent = d.impact;
+  document.getElementById('detail-panel').style.borderLeftColor = d.color;
+  document.getElementById('detail-panel').style.display = 'block';
+}
+
+function updateMatrix(val) {
+  const v = parseInt(val);
+  const tp = Math.round(TOTAL_FRAUD * (0.3 + v * 0.007));
+  const fn = TOTAL_FRAUD - tp;
+  const fp = Math.round(TOTAL_NORMAL * (0.01 + v * 0.001));
+  const tn = TOTAL_NORMAL - fp;
+
+  document.getElementById('tp-num').textContent = tp;
+  document.getElementById('fn-num').textContent = fn;
+  document.getElementById('fp-num').textContent = fp;
+  document.getElementById('tn-num').textContent = tn;
+
+  const precision = tp + fp > 0 ? Math.round((tp / (tp + fp)) * 100) : 0;
+  const recall = Math.round((tp / TOTAL_FRAUD) * 100);
+  const f1 = precision + recall > 0 ? Math.round(2 * precision * recall / (precision + recall)) : 0;
+
+  document.getElementById('precision-val').textContent = precision + '%';
+  document.getElementById('recall-val').textContent = recall + '%';
+  document.getElementById('f1-val').textContent = f1 + '%';
+
+  let label = '';
+  if (v < 25) label = 'Model santai — banyak fraud yang lolos';
+  else if (v < 45) label = 'Model agak santai — recall rendah, precision tinggi';
+  else if (v < 55) label = 'Posisi tengah — model seimbang';
+  else if (v < 75) label = 'Model agak ketat — lebih banyak fraud tertangkap';
+  else label = 'Model sangat ketat — banyak orang baik ikut tertahan';
+  document.getElementById('threshold-label').textContent = label;
+}
+</script>
+</body>
+</html>
