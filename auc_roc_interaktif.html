@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUC-ROC Interaktif — Audit & Data Insight Journey</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f7f4; color: #1a1a18; padding: 2rem 1rem; min-height: 100vh; }
+  .container { max-width: 680px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.25rem; }
+  .subtitle { font-size: 14px; color: #5f5e5a; margin-bottom: 2rem; }
+  .card { background: #fff; border-radius: 12px; border: 0.5px solid #d3d1c7; padding: 1.25rem; margin-bottom: 1rem; }
+  .slider-section { background: #f1efe8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .slider-label { font-size: 12px; min-width: 100px; }
+  .slider-val { font-size: 12px; font-weight: 500; min-width: 36px; text-align: right; }
+  input[type=range] { flex: 1; cursor: pointer; }
+  .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem; }
+  .info-card { border-radius: 8px; padding: 0.75rem; text-align: center; border: 0.5px solid; }
+  .model-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; margin-bottom: 6px; }
+  .insight-box { background: #f1efe8; border-radius: 8px; padding: 0.75rem 1rem; font-size: 12px; color: #5f5e5a; line-height: 1.6; margin-bottom: 1rem; text-align: center; }
+  .footer { font-size: 12px; color: #888780; text-align: center; margin-top: 2rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>AUC-ROC Interaktif</h1>
+  <p class="subtitle">Audit & Data Insight Journey — performa model di semua posisi tombol sekaligus</p>
+
+  <div class="card">
+    <canvas id="roc-canvas" width="580" height="360" style="width:100%; height:auto;"></canvas>
+  </div>
+
+  <div class="slider-section">
+    <div style="font-size:12px; font-weight:500; color:#5f5e5a; margin-bottom:12px;">Geser untuk lihat titik di kurva bergerak</div>
+    <div class="slider-row">
+      <span class="slider-label" style="color:#A32D2D; font-weight:500;">Model buruk</span>
+      <input type="range" min="0" max="100" value="50" step="1" style="accent-color:#E24B4A;" oninput="updateDot(0, this.value)">
+      <span class="slider-val" style="color:#A32D2D;" id="dot0-val">50%</span>
+    </div>
+    <div class="slider-row">
+      <span class="slider-label" style="color:#3B6D11; font-weight:500;">Model sedang</span>
+      <input type="range" min="0" max="100" value="50" step="1" style="accent-color:#639922;" oninput="updateDot(1, this.value)">
+      <span class="slider-val" style="color:#3B6D11;" id="dot1-val">50%</span>
+    </div>
+    <div class="slider-row">
+      <span class="slider-label" style="color:#0C447C; font-weight:500;">Model bagus</span>
+      <input type="range" min="0" max="100" value="50" step="1" style="accent-color:#185FA5;" oninput="updateDot(2, this.value)">
+      <span class="slider-val" style="color:#0C447C;" id="dot2-val">50%</span>
+    </div>
+  </div>
+
+  <div class="insight-box" id="dot-insight">Geser slider untuk melihat posisi tombol di setiap kurva</div>
+
+  <div class="info-grid">
+    <div class="info-card" style="background:#FCEBEB; border-color:#F09595;">
+      <div class="model-badge" style="background:#F7C1C1; color:#501313;">AUC 0.5</div>
+      <div style="font-size:20px; font-weight:500; color:#A32D2D; margin:4px 0;">Tebak-tebakan</div>
+      <div style="font-size:11px; color:#791F1F; line-height:1.5;">Tidak lebih baik dari melempar koin. Model ini tidak berguna sama sekali.</div>
+    </div>
+    <div class="info-card" style="background:#EAF3DE; border-color:#97C459;">
+      <div class="model-badge" style="background:#C0DD97; color:#173404;">AUC 0.7</div>
+      <div style="font-size:20px; font-weight:500; color:#3B6D11; margin:4px 0;">Cukup baik</div>
+      <div style="font-size:11px; color:#27500A; line-height:1.5;">Mulai bisa membedakan fraud dari normal, tapi masih ada ruang untuk diperbaiki.</div>
+    </div>
+    <div class="info-card" style="background:#E6F1FB; border-color:#85B7EB;">
+      <div class="model-badge" style="background:#B5D4F4; color:#042C53;">AUC 0.9</div>
+      <div style="font-size:20px; font-weight:500; color:#185FA5; margin:4px 0;">Sangat andal</div>
+      <div style="font-size:11px; color:#0C447C; line-height:1.5;">Sangat baik membedakan fraud dari normal di hampir semua kondisi.</div>
+    </div>
+  </div>
+
+  <div style="background:#f1efe8; border-radius:8px; padding:0.75rem 1rem; font-size:12px; color:#5f5e5a; line-height:1.6;">
+    Semakin kurva melengkung ke sudut kiri atas, semakin bagus model kita bekerja di berbagai kondisi — dari posisi tombol paling santai sampai paling ketat.
+  </div>
+
+  <div class="footer">Audit & Data Insight Journey — geser slider untuk eksplorasi berbagai posisi tombol</div>
+</div>
+
+<script>
+const W = 580, H = 360;
+const PAD = { l: 70, r: 20, t: 20, b: 55 };
+const CW = W - PAD.l - PAD.r;
+const CH = H - PAD.t - PAD.b;
+const dots = [0.5, 0.5, 0.5];
+
+function rocPoint(t, auc) {
+  const fpr = t;
+  const tpr = Math.pow(fpr, Math.max(0.1, 1 - (auc - 0.5) * 2));
+  return { fpr, tpr };
+}
+
+function toCanvas(fpr, tpr) {
+  return { x: PAD.l + fpr * CW, y: PAD.t + (1 - tpr) * CH };
+}
+
+function drawCurve(ctx, auc, color, lineWidth) {
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  for (let i = 0; i <= 100; i++) {
+    const t = i / 100;
+    const { fpr, tpr } = rocPoint(t, auc);
+    const c = toCanvas(fpr, tpr);
+    i === 0 ? ctx.moveTo(c.x, c.y) : ctx.lineTo(c.x, c.y);
+  }
+  ctx.stroke();
+}
+
+function draw() {
+  const canvas = document.getElementById('roc-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  ctx.strokeStyle = '#d3d1c7';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const x = PAD.l + (i / 4) * CW;
+    const y = PAD.t + (i / 4) * CH;
+    ctx.beginPath(); ctx.moveTo(x, PAD.t); ctx.lineTo(x, PAD.t + CH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(PAD.l, y); ctx.lineTo(PAD.l + CW, y); ctx.stroke();
+  }
+
+  ctx.strokeStyle = '#B4B2A9';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6, 3]);
+  ctx.beginPath();
+  ctx.moveTo(PAD.l, PAD.t + CH);
+  ctx.lineTo(PAD.l + CW, PAD.t);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  drawCurve(ctx, 0.5, '#E24B4A', 2);
+  drawCurve(ctx, 0.7, '#639922', 2.5);
+  drawCurve(ctx, 0.9, '#185FA5', 3);
+
+  const aucs = [0.5, 0.7, 0.9];
+  const colors = ['#E24B4A', '#639922', '#185FA5'];
+  const dotColors = ['#A32D2D', '#3B6D11', '#0C447C'];
+
+  aucs.forEach((auc, i) => {
+    const t = dots[i];
+    const { fpr, tpr } = rocPoint(t, auc);
+    const c = toCanvas(fpr, tpr);
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, 7, 0, Math.PI * 2);
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+    ctx.strokeStyle = dotColors[i];
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
+
+  ctx.fillStyle = '#888780';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('False Positive Rate — seberapa sering salah menahan orang baik', PAD.l + CW / 2, H - 8);
+
+  ctx.save();
+  ctx.translate(14, PAD.t + CH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('True Positive Rate — copet tertangkap', 0, 0);
+  ctx.restore();
+
+  ['0', '0.25', '0.5', '0.75', '1'].forEach((v, i) => {
+    const x = PAD.l + (i / 4) * CW;
+    ctx.fillStyle = '#888780';
+    ctx.textAlign = 'center';
+    ctx.fillText(v, x, PAD.t + CH + 16);
+  });
+
+  ['1', '0.75', '0.5', '0.25', '0'].forEach((v, i) => {
+    const y = PAD.t + (i / 4) * CH;
+    ctx.fillStyle = '#888780';
+    ctx.textAlign = 'right';
+    ctx.fillText(v, PAD.l - 8, y + 4);
+  });
+
+  const legendX = PAD.l + CW - 160;
+  const legendY = PAD.t + CH - 80;
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.strokeStyle = '#d3d1c7';
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  ctx.roundRect(legendX, legendY, 165, 75, 6);
+  ctx.fill();
+  ctx.stroke();
+
+  [['#E24B4A', 'AUC 0.5 — tebak-tebakan'], ['#639922', 'AUC 0.7 — cukup baik'], ['#185FA5', 'AUC 0.9 — sangat andal']].forEach(([color, label], i) => {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(legendX + 10, legendY + 18 + i * 20);
+    ctx.lineTo(legendX + 30, legendY + 18 + i * 20);
+    ctx.stroke();
+    ctx.fillStyle = '#444441';
+    ctx.textAlign = 'left';
+    ctx.font = '10px sans-serif';
+    ctx.fillText(label, legendX + 36, legendY + 22 + i * 20);
+  });
+}
+
+function updateDot(idx, val) {
+  val = parseInt(val);
+  dots[idx] = val / 100;
+  const labels = ['dot0-val', 'dot1-val', 'dot2-val'];
+  document.getElementById(labels[idx]).textContent = val + '%';
+
+  const aucs = [0.5, 0.7, 0.9];
+  const { fpr, tpr } = rocPoint(dots[idx], aucs[idx]);
+  const modelNames = ['Model buruk', 'Model sedang', 'Model bagus'];
+  const fp = Math.round(fpr * 100);
+  const tp = Math.round(tpr * 100);
+  document.getElementById('dot-insight').textContent =
+    modelNames[idx] + ' — di posisi ini: ' + tp + '% copet tertangkap, ' + fp + '% orang baik ikut salah ditahan';
+
+  draw();
+}
+
+draw();
+</script>
+</body>
+</html>
