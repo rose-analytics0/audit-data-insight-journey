@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1-Score Interaktif — Audit & Data Insight Journey</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f7f4; color: #1a1a18; padding: 2rem 1rem; min-height: 100vh; }
+  .container { max-width: 680px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.25rem; }
+  .subtitle { font-size: 14px; color: #5f5e5a; margin-bottom: 2rem; }
+
+  .card { background: #fff; border-radius: 12px; border: 0.5px solid #d3d1c7; padding: 1.25rem; margin-bottom: 1rem; }
+  .metric-bar-wrap { background: #f1efe8; border-radius: 4px; height: 12px; margin: 4px 0 16px; overflow: hidden; }
+  .metric-bar-fill { height: 12px; border-radius: 4px; transition: width 0.4s; }
+
+  .slider-section { background: #f1efe8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .slider-label { font-size: 12px; color: #5f5e5a; min-width: 80px; }
+  .slider-val { font-size: 12px; font-weight: 500; min-width: 36px; text-align: right; }
+  input[type=range] { flex: 1; accent-color: #1a1a18; cursor: pointer; }
+
+  .context-box { border-radius: 10px; padding: 1rem 1.25rem; border-left: 4px solid; transition: all 0.3s; margin-bottom: 1rem; }
+  .context-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .context-text { font-size: 12px; color: #5f5e5a; line-height: 1.6; margin-bottom: 6px; }
+  .context-label { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+
+  .footer { font-size: 12px; color: #888780; text-align: center; margin-top: 2rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>F1-Score Interaktif</h1>
+  <p class="subtitle">Audit & Data Insight Journey — 1.000 pengunjung, 50 copet</p>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:2px;">
+      <span style="font-size:13px; font-weight:500;">Precision</span>
+      <span style="font-size:22px; font-weight:500; color:#854F0B;" id="p-val">44%</span>
+    </div>
+    <div style="font-size:11px; color:#5f5e5a; margin-bottom:6px;">dari 90 yang ditahan → hanya 40 benar copet, 50 orang baik salah ditahan</div>
+    <div class="metric-bar-wrap"><div class="metric-bar-fill" id="p-bar" style="width:44%; background:#FAEEDA; border:1px solid #EF9F27;"></div></div>
+
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:2px;">
+      <span style="font-size:13px; font-weight:500;">Recall</span>
+      <span style="font-size:22px; font-weight:500; color:#993C1D;" id="r-val">80%</span>
+    </div>
+    <div style="font-size:11px; color:#5f5e5a; margin-bottom:6px;">dari 50 copet → 40 berhasil tertangkap, 10 masih lolos</div>
+    <div class="metric-bar-wrap"><div class="metric-bar-fill" id="r-bar" style="width:80%; background:#FAECE7; border:1px solid #F0997B;"></div></div>
+
+    <div style="border-top:0.5px solid #d3d1c7; margin:0.75rem 0; padding-top:0.75rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <span style="font-size:12px; color:#5f5e5a;">Rata-rata biasa</span>
+        <span style="font-size:16px; font-weight:500; color:#5f5e5a;" id="avg-val">62%</span>
+      </div>
+      <div style="font-size:11px; color:#888780; margin-bottom:12px;">memperlakukan keduanya setara — Precision yang rendah ikut "tertutupi"</div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:13px; font-weight:500;">F1-Score</span>
+        <span style="font-size:28px; font-weight:500; color:#185FA5;" id="f1-val">57%</span>
+      </div>
+      <div class="metric-bar-wrap" style="height:14px;"><div class="metric-bar-fill" id="f1-bar" style="width:57%; background:#E6F1FB; border:1px solid #85B7EB;"></div></div>
+      <div style="font-size:11px; color:#888780;" id="f1-note">lebih rendah dari rata-rata biasa — sinyal ada ketidakseimbangan yang perlu diperbaiki</div>
+    </div>
+  </div>
+
+  <div class="slider-section">
+    <div style="font-size:12px; font-weight:500; color:#5f5e5a; margin-bottom:12px;">Eksplor sendiri — geser untuk lihat bagaimana F1-Score dan dampaknya berubah</div>
+    <div class="slider-row">
+      <span class="slider-label">Precision</span>
+      <input type="range" min="1" max="100" value="44" step="1" oninput="update('p', this.value)">
+      <span class="slider-val" style="color:#854F0B;" id="sl-p">44%</span>
+    </div>
+    <div class="slider-row">
+      <span class="slider-label">Recall</span>
+      <input type="range" min="1" max="100" value="80" step="1" oninput="update('r', this.value)">
+      <span class="slider-val" style="color:#993C1D;" id="sl-r">80%</span>
+    </div>
+  </div>
+
+  <div class="context-box" id="context-box" style="background:#FFF8F0; border-left-color:#854F0B;">
+    <div class="context-title" id="context-title" style="color:#854F0B;">Kondisi saat ini — Precision rendah</div>
+    <div class="context-text" id="context-desc">Terlalu banyak pengunjung baik yang salah ditahan. Di dunia nyata ini artinya terlalu banyak nasabah yang transaksinya diblokir tanpa alasan.</div>
+    <div class="context-label">Dampak ke bisnis:</div>
+    <div class="context-text" id="context-impact">Nasabah frustrasi, banyak komplain ke customer service, kepercayaan pelanggan turun. Dalam jangka panjang nasabah bisa pindah ke bank lain.</div>
+    <div class="context-label">Contoh nyata:</div>
+    <div class="context-text" id="context-example">Kamu belanja di luar kota, tiba-tiba kartu kredit diblokir karena sistem menganggap transaksinya mencurigakan — padahal kamu yang melakukannya sendiri.</div>
+  </div>
+
+  <div class="footer">Audit & Data Insight Journey — geser slider untuk eksplorasi berbagai kondisi</div>
+</div>
+
+<script>
+let p = 44, r = 80;
+
+function f1(p, r) {
+  if (p + r === 0) return 0;
+  return Math.round(2 * p * r / (p + r));
+}
+
+function update(type, val) {
+  val = parseInt(val);
+  if (type === 'p') { p = val; document.getElementById('sl-p').textContent = val + '%'; }
+  else { r = val; document.getElementById('sl-r').textContent = val + '%'; }
+  render();
+}
+
+function render() {
+  const avg = Math.round((p + r) / 2);
+  const f = f1(p, r);
+
+  document.getElementById('p-val').textContent = p + '%';
+  document.getElementById('r-val').textContent = r + '%';
+  document.getElementById('p-bar').style.width = p + '%';
+  document.getElementById('r-bar').style.width = r + '%';
+  document.getElementById('avg-val').textContent = avg + '%';
+  document.getElementById('f1-val').textContent = f + '%';
+  document.getElementById('f1-bar').style.width = f + '%';
+
+  let note, title, desc, impact, example, bgColor, borderColor;
+
+  if (Math.abs(p - r) < 10) {
+    note = 'Precision dan Recall seimbang — F1-Score mendekati rata-rata biasa';
+    title = 'Kondisi ideal — model seimbang';
+    desc = 'Satpam jarang salah menahan orang baik, dan jarang kecolongan copet. Keduanya terjaga dengan baik.';
+    impact = 'Bisnis berjalan lancar. Nasabah tidak terganggu, fraud tetap terkendali. Ini kondisi yang ingin dicapai setiap tim fraud detection.';
+    example = 'Transaksi normal berjalan mulus, dan ketika ada pola mencurigakan sistem langsung menandainya dengan tepat.';
+    bgColor = '#F0FBF5'; borderColor = '#3B6D11';
+  } else if (p < 40 && r >= 70) {
+    note = 'Precision sangat rendah — terlalu banyak orang baik salah ditahan';
+    title = 'Kondisi berbahaya — terlalu curigaan';
+    desc = 'Model terlalu agresif. Hampir semua copet tertangkap, tapi terlalu banyak pengunjung baik ikut kena getahnya.';
+    impact = 'Banjir komplain dari nasabah, biaya customer service melonjak, reputasi bank tercoreng. Bisa viral di media sosial dan berujung kehilangan pelanggan besar-besaran.';
+    example = 'Setiap hari ratusan nasabah menelepon bank karena kartu mereka diblokir padahal mereka tidak melakukan hal mencurigakan.';
+    bgColor = '#FFF3E0'; borderColor = '#854F0B';
+  } else if (p < 50) {
+    note = 'Precision rendah — cukup banyak orang baik yang terganggu';
+    title = 'Kondisi perlu diperbaiki — Precision rendah';
+    desc = 'Lebih dari separuh orang yang ditahan ternyata tidak bersalah. Satpam terlalu gampang curiga.';
+    impact = 'Nasabah mulai merasa tidak nyaman. Komplain meningkat, kepercayaan perlahan turun meski belum kritis.';
+    example = 'Kamu belanja di luar kota, tiba-tiba kartu kredit diblokir karena sistem menganggap transaksinya mencurigakan — padahal kamu yang melakukannya sendiri.';
+    bgColor = '#FFF8F0'; borderColor = '#854F0B';
+  } else if (r < 40 && p >= 70) {
+    note = 'Recall sangat rendah — terlalu banyak fraud yang lolos';
+    title = 'Kondisi berbahaya — terlalu longgar';
+    desc = 'Model terlalu santai. Jarang salah menahan orang baik, tapi lebih dari separuh copet dibiarkan lewat begitu saja.';
+    impact = 'Kerugian finansial menumpuk diam-diam setiap hari. Bank bisa rugi miliaran sebelum masalahnya terdeteksi. Reputasi hancur ketika kasusnya akhirnya terkuak.';
+    example = 'Uang raib dari rekening nasabah sedikit demi sedikit selama berbulan-bulan karena sistem tidak mendeteksi pola transaksi mencurigakan yang nilainya kecil tapi konsisten.';
+    bgColor = '#FFF0F0'; borderColor = '#A32D2D';
+  } else if (r < 60) {
+    note = 'Recall rendah — cukup banyak fraud yang lolos tidak terdeteksi';
+    title = 'Kondisi perlu diperbaiki — Recall rendah';
+    desc = 'Hampir separuh copet berhasil lolos tanpa terdeteksi. Satpam terlalu hati-hati sampai kecolongan.';
+    impact = 'Fraud terus terjadi meski tidak separah kondisi kritis. Kerugian perlahan menumpuk dan baru terasa setelah beberapa waktu.';
+    example = 'Beberapa nasabah melaporkan transaksi yang tidak mereka lakukan, tapi jumlahnya kecil sehingga sempat diabaikan oleh sistem.';
+    bgColor = '#FFF0F0'; borderColor = '#A32D2D';
+  } else {
+    note = 'Model cukup seimbang — masih ada ruang untuk diperbaiki';
+    title = 'Kondisi cukup baik — tapi belum optimal';
+    desc = 'Precision dan Recall keduanya di level yang cukup. Tidak ada masalah kritis, tapi masih bisa ditingkatkan.';
+    impact = 'Bisnis berjalan normal. Sesekali ada nasabah yang terganggu atau fraud yang lolos, tapi tidak dalam jumlah yang mengkhawatirkan.';
+    example = 'Sistem bekerja dengan baik di sebagian besar kasus, hanya sesekali ada transaksi normal yang diblokir atau fraud kecil yang terlewat.';
+    bgColor = '#F0F6FF'; borderColor = '#185FA5';
+  }
+
+  document.getElementById('f1-note').textContent = note;
+  document.getElementById('context-box').style.background = bgColor;
+  document.getElementById('context-box').style.borderLeftColor = borderColor;
+  document.getElementById('context-title').textContent = title;
+  document.getElementById('context-title').style.color = borderColor;
+  document.getElementById('context-desc').textContent = desc;
+  document.getElementById('context-impact').textContent = impact;
+  document.getElementById('context-example').textContent = example;
+}
+</script>
+</body>
+</html>
