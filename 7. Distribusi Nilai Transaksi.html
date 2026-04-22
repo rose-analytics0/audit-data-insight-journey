@@ -1,0 +1,154 @@
+
+<h2 class="sr-only">Visualisasi interaktif distribusi nilai transaksi PaySim dengan insight audit. Klik setiap batang untuk membaca makna auditnya langsung di dalam grafik.</h2>
+
+<div style="margin-bottom: 1.25rem;">
+  <p style="font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 4px;">Distribusi nilai transaksi — 6,3 juta transaksi</p>
+  <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0;">Klik batang mana saja untuk membaca makna auditnya</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-bottom: 1.25rem;">
+  <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.875rem; text-align: center;">
+    <p style="font-size: 11px; color: var(--color-text-secondary); margin: 0 0 3px;">Median</p>
+    <p style="font-size: 17px; font-weight: 500; color: var(--color-text-primary); margin: 0;">74.872</p>
+    <p style="font-size: 10px; color: var(--color-text-tertiary); margin: 3px 0 0;">nilai transaksi tipikal</p>
+  </div>
+  <div style="background: #FAEEDA; border-radius: var(--border-radius-md); padding: 0.875rem; text-align: center;">
+    <p style="font-size: 11px; color: #854F0B; margin: 0 0 3px;">Mean (rata-rata)</p>
+    <p style="font-size: 17px; font-weight: 500; color: #633806; margin: 0;">179.862</p>
+    <p style="font-size: 10px; color: #854F0B; margin: 3px 0 0;">2.4x lebih besar dari median</p>
+  </div>
+  <div style="background: #FCEBEB; border-radius: var(--border-radius-md); padding: 0.875rem; text-align: center;">
+    <p style="font-size: 11px; color: #A32D2D; margin: 0 0 3px;">Nilai maksimum</p>
+    <p style="font-size: 17px; font-weight: 500; color: #791F1F; margin: 0;">92,4 juta</p>
+    <p style="font-size: 10px; color: #A32D2D; margin: 3px 0 0;">extreme outlier</p>
+  </div>
+</div>
+
+<div style="display: flex; gap: 8px; align-items: stretch; height: 260px; margin-bottom: 1rem;" id="barContainer">
+</div>
+
+<div id="auditCard" style="border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); padding: 1rem 1.25rem; background: var(--color-background-primary); min-height: 110px; transition: background 0.2s;">
+  <p style="font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.05em;" id="cardLabel">Pilih rentang nilai</p>
+  <p style="font-size: 14px; color: var(--color-text-primary); margin: 0; line-height: 1.7;" id="cardText">Klik salah satu batang di atas untuk membaca makna auditnya — mulai dari transaksi rutin di kiri hingga extreme outliers di ujung kanan.</p>
+  <div id="cardBadge" style="display: none; margin-top: 10px; display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px;"></div>
+</div>
+
+<div style="display: flex; gap: 16px; margin-top: 12px; font-size: 12px; color: var(--color-text-secondary); flex-wrap: wrap;">
+  <span style="display: flex; align-items: center; gap: 5px;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #639922; display:inline-block;"></span>Transaksi rutin</span>
+  <span style="display: flex; align-items: center; gap: 5px;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #EF9F27; display:inline-block;"></span>Zona transisi</span>
+  <span style="display: flex; align-items: center; gap: 5px;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #E24B4A; display:inline-block;"></span>Ekor kanan — risiko material tinggi</span>
+  <span style="margin-left: auto; font-size: 11px; color: var(--color-text-tertiary);">Skewness: 30.99 (sangat ekstrem)</span>
+</div>
+
+<script>
+const bins = [
+  {
+    label: '0 – 100 ribu',
+    count: 3525282, pct: 55.4,
+    color: '#639922', colorLight: '#EAF3DE', colorText: '#27500A',
+    badge: '55.4% dari semua transaksi',
+    badgeBg: '#C0DD97', badgeColor: '#173404',
+    audit: 'Lebih dari separuh seluruh transaksi ada di sini — rutin, kecil, dan normal. Dalam sampling acak, kelompok ini hampir selalu terpilih. Tapi dari perspektif audit, risikonya paling rendah karena nilai individualnya tidak material.',
+    auditTag: 'Risiko rendah — terpilih sering dalam sampling'
+  },
+  {
+    label: '100 rb – 500 rb',
+    count: 2497038, pct: 39.2,
+    color: '#639922', colorLight: '#EAF3DE', colorText: '#27500A',
+    badge: '39.2% dari semua transaksi',
+    badgeBg: '#C0DD97', badgeColor: '#173404',
+    audit: 'Bersama kelompok pertama, keduanya mencakup 94.6% dari seluruh populasi transaksi. Artinya sampling acak hampir selalu berakhir di dua kelompok ini — dan auditor akan merasa "sudah cukup mewakili", padahal 5.4% sisanya justru menyimpan risiko terbesar.',
+    auditTag: 'Risiko rendah — mendominasi hasil sampling acak'
+  },
+  {
+    label: '500 rb – 1 juta',
+    count: 209658, pct: 3.3,
+    color: '#EF9F27', colorLight: '#FAEEDA', colorText: '#633806',
+    badge: '3.3% dari semua transaksi',
+    badgeBg: '#FAC775', badgeColor: '#412402',
+    audit: 'Mulai masuk zona transisi. Hanya 3.3% populasi, artinya dalam 100 sampel acak rata-rata hanya 3–4 yang masuk kelompok ini. Nilainya mulai cukup signifikan untuk diperhatikan, tapi masih relatif terwakili jika ukuran sampel cukup besar.',
+    auditTag: 'Zona transisi — mulai perlu perhatian khusus'
+  },
+  {
+    label: '1 juta – 5 juta',
+    count: 119111, pct: 1.9,
+    color: '#EF9F27', colorLight: '#FAEEDA', colorText: '#633806',
+    badge: '1.9% dari semua transaksi',
+    badgeBg: '#FAC775', badgeColor: '#412402',
+    audit: 'Kurang dari 2% populasi — peluang terpilih dalam sampling acak sudah sangat kecil. Tapi satu transaksi di rentang ini nilainya setara ratusan hingga ribuan transaksi kecil di kelompok pertama. Inilah awal dari ketidakseimbangan antara frekuensi dan materialitas.',
+    auditTag: 'Risiko mulai tinggi — jarang masuk sampel acak'
+  },
+  {
+    label: '5 juta – 10 juta',
+    count: 9072, pct: 0.14,
+    color: '#E24B4A', colorLight: '#FCEBEB', colorText: '#791F1F',
+    badge: '0.14% — ekor kanan dimulai',
+    badgeBg: '#F7C1C1', badgeColor: '#501313',
+    audit: 'Ini adalah awal ekor kanan distribusi. Dalam 1.000 sampel acak, rata-rata hanya 1–2 transaksi dari kelompok ini yang terpilih. Hampir tidak terlihat secara statistik, tapi nilainya bisa mencapai 10 juta per transaksi — jauh melampaui rata-rata populasi.',
+    auditTag: 'Ekor kanan — hampir tidak tersentuh sampling'
+  },
+  {
+    label: '10 juta – 50 juta',
+    count: 2396, pct: 0.04,
+    color: '#E24B4A', colorLight: '#FCEBEB', colorText: '#791F1F',
+    badge: '2.396 transaksi dari 6,3 juta',
+    badgeBg: '#F09595', badgeColor: '#501313',
+    audit: 'Hanya 2.396 transaksi — 0.04% populasi. Peluang satu transaksi ini masuk sampel acak mendekati nol. Tapi dari sisi materialitas audit, satu transaksi di sini setara puluhan juta. Inilah yang dimaksud "risiko terkonsentrasi di ekor distribusi".',
+    auditTag: 'Risiko sangat tinggi — peluang terdeteksi sampling: hampir nol'
+  },
+  {
+    label: '50 juta+',
+    count: 47, pct: 0.001,
+    color: '#E24B4A', colorLight: '#FCEBEB', colorText: '#791F1F',
+    badge: 'Hanya 47 transaksi dari 6.362.620',
+    badgeBg: '#E24B4A', badgeColor: '#FCEBEB',
+    audit: 'Extreme outliers — hanya 47 transaksi, tapi nilainya hingga 92,4 juta per transaksi. Peluang terpilih dalam sampling acak: secara statistik hampir mustahil. Ini adalah bukti paling kuat mengapa audit digital membutuhkan population-wide analytics — bukan sampling. Inilah transaksi yang paling butuh diperiksa, tapi paling tidak mungkin ditemukan dengan cara konvensional.',
+    auditTag: 'Extreme outlier — mustahil ditemukan via sampling acak'
+  }
+];
+
+const maxCount = Math.max(...bins.map(b => b.count));
+const container = document.getElementById('barContainer');
+
+bins.forEach((b, i) => {
+  const heightPct = Math.max((b.count / maxCount) * 100, 2);
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; cursor:pointer; gap:4px;';
+
+  const bar = document.createElement('div');
+  bar.style.cssText = `width:100%; height:${heightPct}%; background:${b.color}; border-radius:3px 3px 0 0; border:1.5px solid ${b.color}; transition:opacity 0.15s;`;
+  bar.onmouseenter = () => { bar.style.opacity = '0.8'; };
+  bar.onmouseleave = () => { bar.style.opacity = '1'; };
+
+  const pctLabel = document.createElement('div');
+  pctLabel.style.cssText = `font-size:10px; color:${b.color}; font-weight:500; text-align:center;`;
+  pctLabel.textContent = b.pct >= 1 ? b.pct + '%' : b.pct + '%';
+
+  wrapper.appendChild(bar);
+  wrapper.appendChild(pctLabel);
+
+  wrapper.onclick = () => {
+    document.querySelectorAll('#barContainer > div > div:first-child').forEach(el => el.style.outline = 'none');
+    bar.style.outline = `2px solid ${b.color}`;
+    bar.style.outlineOffset = '2px';
+
+    const card = document.getElementById('auditCard');
+    const label = document.getElementById('cardLabel');
+    const text = document.getElementById('cardText');
+    const badge = document.getElementById('cardBadge');
+
+    card.style.background = b.colorLight;
+    card.style.borderColor = b.color;
+    label.style.color = b.colorText;
+    label.textContent = b.label + ' — ' + b.count.toLocaleString('id-ID') + ' transaksi';
+    text.style.color = b.colorText;
+    text.textContent = b.audit;
+    badge.style.display = 'inline-block';
+    badge.style.background = b.badgeBg;
+    badge.style.color = b.badgeColor;
+    badge.textContent = b.auditTag;
+  };
+
+  container.appendChild(wrapper);
+});
+</script>
