@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDA 2 — Fraud & Nilai Transaksi</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f9f7; color: #1a1a1a; padding: 24px; max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 20px; line-height: 1.5; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .card { background: #f1efe8; border-radius: 10px; padding: 14px; text-align: center; }
+  .card.red { background: #FCEBEB; }
+  .card-label { font-size: 11px; color: #666; margin-bottom: 4px; }
+  .card-value { font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; }
+  .card.red .card-label { color: #A32D2D; }
+  .card.red .card-value { color: #791F1F; }
+  .card-sub { font-size: 10px; color: #888; }
+  .card.red .card-sub { color: #A32D2D; }
+  .btn-group { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  button { font-size: 12px; padding: 7px 16px; border-radius: 8px; border: 1.5px solid #ccc; background: transparent; color: #1a1a1a; cursor: pointer; font-weight: 500; }
+  button.active-abs { background: #E24B4A; border-color: #E24B4A; color: white; }
+  button.active-rate { background: #185FA5; border-color: #185FA5; color: white; }
+  .explanation { font-size: 12px; color: #555; margin-bottom: 20px; padding: 10px 14px; background: #f1efe8; border-radius: 8px; line-height: 1.6; }
+
+  /* Chart uses SVG for reliable cross-browser rendering */
+  #chartSvg { width: 100%; display: block; margin-bottom: 4px; }
+
+  .insight-card { border-radius: 12px; border: 1.5px solid #e0e0e0; padding: 16px 20px; background: white; min-height: 110px; }
+  .insight-label { font-size: 11px; font-weight: 600; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .insight-text { font-size: 13px; color: #333; line-height: 1.7; margin-bottom: 8px; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; color: white; display: none; }
+  .legend { display: flex; gap: 16px; margin-top: 14px; font-size: 12px; color: #666; flex-wrap: wrap; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 4px; vertical-align: middle; }
+  .source { font-size: 10px; color: #aaa; margin-top: 16px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<h1>Fraud & nilai transaksi — dua cara membaca risiko</h1>
+<p class="subtitle">Data nyata dari PaySim dataset (6,3 juta transaksi, 8.213 fraud). Pilih perspektif lalu klik batang untuk membaca makna auditnya.</p>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-label">Median fraud</div>
+    <div class="card-value">441.423</div>
+    <div class="card-sub">6x lebih besar dari non-fraud</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Fraud di bawah 500rb</div>
+    <div class="card-value">52,8%</div>
+    <div class="card-sub">mayoritas fraud bernilai kecil</div>
+  </div>
+  <div class="card red">
+    <div class="card-label">Fraud rate 5–10 juta</div>
+    <div class="card-value">8,2%</div>
+    <div class="card-sub">170x lebih tinggi dari transaksi kecil</div>
+  </div>
+</div>
+
+<div class="btn-group">
+  <button id="btn-abs" class="active-abs" onclick="setView('absolute')">% dari semua fraud (absolut)</button>
+  <button id="btn-rate" onclick="setView('rate')">Fraud rate per rentang (%)</button>
+</div>
+
+<div class="explanation" id="viewExpl">
+  <strong>Perspektif absolut:</strong> dari semua 8.213 kasus fraud, berapa persennya ada di setiap rentang nilai? Menunjukkan di mana fraud paling banyak secara jumlah.
+</div>
+
+<svg id="chartSvg" height="280"></svg>
+
+<div class="insight-card" id="insightCard">
+  <div class="insight-label" id="insightLabel">Pilih rentang nilai</div>
+  <div class="insight-text" id="insightText">Klik salah satu batang di atas untuk membaca makna auditnya dari perspektif yang dipilih.</div>
+  <span class="badge" id="insightBadge"></span>
+</div>
+
+<div class="legend">
+  <span><span class="legend-dot" style="background:#E24B4A;"></span>Tinggi — perhatian audit diperlukan</span>
+  <span><span class="legend-dot" style="background:#EF9F27;"></span>Sedang</span>
+  <span><span class="legend-dot" style="background:#639922;"></span>Rendah — tapi tidak berarti aman</span>
+</div>
+
+<p class="source">Sumber: PaySim synthetic dataset — Lopez Rojas et al. (2016).<br>Visualisasi: Rosliana Dwi Astuti — Audit & Data Insight Journey.</p>
+
+<script>
+var bins = [
+  {
+    label: '0–100 rb', fraudCount: 1691, total: 3525282,
+    fraudRate: 0.048, pctOfFraud: 20.6,
+    absColor: '#E24B4A', rateColor: '#639922',
+    absInsight: '20.6% dari semua fraud ada di sini — lebih dari 1 dari 5 kasus fraud bernilai di bawah 100 ribu. Ini adalah bukti paling langsung bahwa fraud tidak selalu mahal. Auditor yang hanya fokus pada transaksi besar akan melewatkan seperlima dari seluruh kasus fraud.',
+    rateInsight: 'Fraud rate hanya 0.048% — dari setiap 10.000 transaksi kecil, sekitar 5 yang fraud. Sangat rendah secara proporsional, tapi ingat: ada 3,5 juta transaksi di sini, sehingga jumlah absolutnya tetap signifikan.',
+    absBadge: '20.6% dari semua fraud', rateBadge: 'Fraud rate: 0.048% — paling rendah'
+  },
+  {
+    label: '100rb–500rb', fraudCount: 2642, total: 2497038,
+    fraudRate: 0.106, pctOfFraud: 32.2,
+    absColor: '#E24B4A', rateColor: '#639922',
+    absInsight: '32.2% dari semua fraud ada di rentang ini — kelompok dengan jumlah kasus fraud terbanyak. Gabungkan dengan kelompok pertama: 52.8% dari semua fraud terjadi di transaksi bernilai di bawah 500 ribu. Mayoritas fraud tersembunyi di transaksi yang tampak biasa.',
+    rateInsight: 'Fraud rate 0.106% — dua kali lebih tinggi dari kelompok sebelumnya. Ada pola bahwa semakin besar nilai transaksi, semakin tinggi probabilitas fraud-nya. Tapi masih kurang dari 1 dari 1.000 transaksi.',
+    absBadge: '32.2% dari semua fraud — terbanyak', rateBadge: 'Fraud rate: 0.106%'
+  },
+  {
+    label: '500rb–1 jt', fraudCount: 1158, total: 209658,
+    fraudRate: 0.552, pctOfFraud: 14.1,
+    absColor: '#EF9F27', rateColor: '#EF9F27',
+    absInsight: '14.1% dari semua fraud — jumlah absolutnya mulai turun karena total transaksinya juga lebih sedikit. Tapi proporsi fraud mulai naik signifikan. Ini adalah zona transisi penting dalam analisis risiko berbasis nilai transaksi.',
+    rateInsight: 'Fraud rate 0.552% — lonjakan yang signifikan. Dari setiap 1.000 transaksi di rentang ini, sekitar 5–6 adalah fraud. Mulai masuk zona yang perlu perhatian lebih dalam audit berbasis risiko.',
+    absBadge: '14.1% dari semua fraud', rateBadge: 'Fraud rate: 0.552% — mulai naik'
+  },
+  {
+    label: '1 jt–5 jt', fraudCount: 1962, total: 119111,
+    fraudRate: 1.647, pctOfFraud: 23.9,
+    absColor: '#EF9F27', rateColor: '#E24B4A',
+    absInsight: '23.9% dari semua fraud ada di rentang ini — hampir sama besarnya dengan kelompok 0–100 ribu. Bukti bahwa fraud tersebar di seluruh spektrum nilai. Tidak ada zona yang benar-benar "bebas fraud."',
+    rateInsight: 'Fraud rate 1.647% — sudah sangat signifikan. Dari setiap 100 transaksi di rentang 1–5 juta, hampir 2 adalah fraud. Tanda kuat bahwa transaksi bernilai lebih besar memang lebih berisiko secara proporsional.',
+    absBadge: '23.9% dari semua fraud', rateBadge: 'Fraud rate: 1.647% — tinggi'
+  },
+  {
+    label: '5 jt–10 jt', fraudCount: 744, total: 9072,
+    fraudRate: 8.201, pctOfFraud: 9.1,
+    absColor: '#639922', rateColor: '#E24B4A',
+    absInsight: '9.1% dari semua fraud — jumlah absolutnya paling kecil karena total transaksinya memang sangat sedikit (9.072). Tapi setiap transaksi fraud di sini bernilai 5–10 juta, sehingga dampak keuangannya sangat material jika terlewat dalam audit.',
+    rateInsight: 'Fraud rate 8.201% — yang paling mengejutkan. Dari setiap 100 transaksi di rentang 5–10 juta, sekitar 8 adalah fraud. Ini 170 kali lebih tinggi dari transaksi di bawah 100 ribu. Transaksi besar jauh lebih berisiko per transaksinya.',
+    absBadge: '9.1% dari semua fraud', rateBadge: 'Fraud rate: 8.2% — tertinggi! 170x lebih tinggi'
+  }
+];
+
+var currentView = 'absolute';
+var selectedIdx = null;
+
+var SVG_W = 660;
+var SVG_H = 260;
+var PAD_LEFT = 40;
+var PAD_RIGHT = 20;
+var PAD_TOP = 30;
+var PAD_BOTTOM = 36;
+var BAR_AREA_H = SVG_H - PAD_TOP - PAD_BOTTOM;
+
+function getValue(d) { return currentView === 'absolute' ? d.pctOfFraud : d.fraudRate; }
+function getColor(d) { return currentView === 'absolute' ? d.absColor : d.rateColor; }
+function getInsight(d) { return currentView === 'absolute' ? d.absInsight : d.rateInsight; }
+function getBadge(d) { return currentView === 'absolute' ? d.absBadge : d.rateBadge; }
+function getLightBg(color) {
+  if (color === '#E24B4A') return '#FCEBEB';
+  if (color === '#EF9F27') return '#FAEEDA';
+  return '#EAF3DE';
+}
+
+function buildChart() {
+  var svg = document.getElementById('chartSvg');
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', '0 0 ' + SVG_W + ' ' + SVG_H);
+
+  var vals = bins.map(getValue);
+  var maxVal = Math.max.apply(null, vals);
+
+  var n = bins.length;
+  var totalBarW = SVG_W - PAD_LEFT - PAD_RIGHT;
+  var gap = 12;
+  var barW = (totalBarW - gap * (n - 1)) / n;
+
+  /* y-axis gridlines & labels */
+  var steps = 4;
+  for (var s = 0; s <= steps; s++) {
+    var yVal = (maxVal / steps) * s;
+    var yPos = PAD_TOP + BAR_AREA_H - (yVal / maxVal) * BAR_AREA_H;
+    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', PAD_LEFT);
+    line.setAttribute('x2', SVG_W - PAD_RIGHT);
+    line.setAttribute('y1', yPos);
+    line.setAttribute('y2', yPos);
+    line.setAttribute('stroke', '#e5e5e5');
+    line.setAttribute('stroke-width', '1');
+    svg.appendChild(line);
+
+    var yLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    yLbl.setAttribute('x', PAD_LEFT - 6);
+    yLbl.setAttribute('y', yPos + 4);
+    yLbl.setAttribute('text-anchor', 'end');
+    yLbl.setAttribute('font-size', '10');
+    yLbl.setAttribute('fill', '#aaa');
+    yLbl.textContent = yVal.toFixed(yVal < 1 ? 2 : 1) + '%';
+    svg.appendChild(yLbl);
+  }
+
+  bins.forEach(function(d, i) {
+    var val = getValue(d);
+    var color = getColor(d);
+    var barH = Math.max((val / maxVal) * BAR_AREA_H, 4);
+    var x = PAD_LEFT + i * (barW + gap);
+    var y = PAD_TOP + BAR_AREA_H - barH;
+
+    /* bar rect */
+    var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', barW);
+    rect.setAttribute('height', barH);
+    rect.setAttribute('fill', color);
+    rect.setAttribute('rx', '3');
+    rect.setAttribute('ry', '3');
+    rect.setAttribute('opacity', selectedIdx === i ? '1' : '0.85');
+    if (selectedIdx === i) {
+      rect.setAttribute('stroke', color);
+      rect.setAttribute('stroke-width', '2.5');
+    }
+    rect.style.cursor = 'pointer';
+
+    rect.addEventListener('mouseenter', function() { rect.setAttribute('opacity', '0.65'); });
+    rect.addEventListener('mouseleave', function() { rect.setAttribute('opacity', selectedIdx === i ? '1' : '0.85'); });
+    rect.addEventListener('click', function() {
+      selectedIdx = i;
+      buildChart();
+      showInsight(d, color);
+    });
+    svg.appendChild(rect);
+
+    /* value label above bar */
+    var valLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    valLbl.setAttribute('x', x + barW / 2);
+    valLbl.setAttribute('y', y - 5);
+    valLbl.setAttribute('text-anchor', 'middle');
+    valLbl.setAttribute('font-size', '11');
+    valLbl.setAttribute('font-weight', '600');
+    valLbl.setAttribute('fill', color);
+    valLbl.textContent = val + '%';
+    valLbl.style.cursor = 'pointer';
+    valLbl.addEventListener('click', function() {
+      selectedIdx = i;
+      buildChart();
+      showInsight(d, color);
+    });
+    svg.appendChild(valLbl);
+
+    /* axis label below */
+    var axLbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    axLbl.setAttribute('x', x + barW / 2);
+    axLbl.setAttribute('y', PAD_TOP + BAR_AREA_H + 16);
+    axLbl.setAttribute('text-anchor', 'middle');
+    axLbl.setAttribute('font-size', '9.5');
+    axLbl.setAttribute('fill', '#888');
+    axLbl.textContent = d.label;
+    svg.appendChild(axLbl);
+  });
+}
+
+function showInsight(d, color) {
+  var card = document.getElementById('insightCard');
+  var lbl = document.getElementById('insightLabel');
+  var txt = document.getElementById('insightText');
+  var badge = document.getElementById('insightBadge');
+  card.style.background = getLightBg(color);
+  card.style.borderColor = color;
+  lbl.style.color = color;
+  lbl.textContent = d.label + ' — ' + d.fraudCount.toLocaleString('id-ID') + ' kasus fraud dari ' + d.total.toLocaleString('id-ID') + ' transaksi';
+  txt.style.color = '#1a1a1a';
+  txt.textContent = getInsight(d);
+  badge.style.display = 'inline-block';
+  badge.style.background = color;
+  badge.textContent = getBadge(d);
+}
+
+function resetInsight() {
+  var card = document.getElementById('insightCard');
+  card.style.background = 'white';
+  card.style.borderColor = '#e0e0e0';
+  document.getElementById('insightLabel').style.color = '#888';
+  document.getElementById('insightLabel').textContent = 'Pilih rentang nilai';
+  document.getElementById('insightText').style.color = '#333';
+  document.getElementById('insightText').textContent = 'Klik salah satu batang untuk membaca makna auditnya dari perspektif yang dipilih.';
+  document.getElementById('insightBadge').style.display = 'none';
+}
+
+function setView(view) {
+  currentView = view;
+  selectedIdx = null;
+  var explanations = {
+    absolute: '<strong>Perspektif absolut:</strong> dari semua 8.213 kasus fraud, berapa persennya ada di setiap rentang nilai? Menunjukkan di mana fraud paling banyak secara jumlah.',
+    rate: '<strong>Perspektif fraud rate:</strong> dari semua transaksi di suatu rentang nilai, berapa persen yang fraud? Menunjukkan di mana transaksi paling berisiko secara proporsional.'
+  };
+  document.getElementById('viewExpl').innerHTML = explanations[view];
+  document.getElementById('btn-abs').className = view === 'absolute' ? 'active-abs' : '';
+  document.getElementById('btn-rate').className = view === 'rate' ? 'active-rate' : '';
+  resetInsight();
+  buildChart();
+}
+
+buildChart();
+</script>
+</body>
+</html>
