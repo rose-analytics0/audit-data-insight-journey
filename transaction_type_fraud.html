@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDA 5 — Fraud by Transaction Type</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #fafaf8;
+    color: #1a1a18;
+    padding: 28px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .tag {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    color: #E24B4A; text-transform: uppercase; margin-bottom: 6px;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; font-weight: 400; line-height: 1.3;
+    color: #1a1a18; margin-bottom: 6px;
+  }
+  .subtitle { font-size: 12px; color: #888; line-height: 1.5; margin-bottom: 22px; }
+
+  /* ── STAT CARDS ── */
+  .cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 22px; }
+  .card { background: #f2f0ea; border-radius: 10px; padding: 13px 12px; text-align: center; }
+  .card.red  { background: #FCEBEB; }
+  .card.green{ background: #EAF3DE; }
+  .card .lbl { font-size: 10px; color: #888; margin-bottom: 3px; }
+  .card.red  .lbl { color: #A32D2D; }
+  .card.green.lbl { color: #3B6D11; }
+  .card .val { font-size: 18px; font-weight: 600; color: #1a1a18; }
+  .card.red  .val { color: #791F1F; }
+  .card.green .val { color: #27500A; }
+  .card .sub { font-size: 10px; color: #aaa; margin-top: 3px; }
+  .card.red  .sub { color: #c05050; }
+  .card.green .sub { color: #639922; }
+
+  /* ── SECTION LABEL ── */
+  .section-lbl {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #bbb; margin-bottom: 10px;
+  }
+
+  /* ── TRANSACTION TYPE BARS ── */
+  .type-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+  .type-row {
+    border-radius: 10px; border: 1.5px solid #e8e6df;
+    background: white; overflow: hidden; cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .type-row:hover { border-color: #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .type-row.selected { border-color: var(--sel-color); box-shadow: 0 2px 12px rgba(0,0,0,0.10); }
+
+  .type-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px 8px;
+  }
+  .type-badge {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+  }
+  .type-name { font-size: 14px; font-weight: 600; color: #1a1a18; flex: 1; }
+  .type-status {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
+    text-transform: uppercase; padding: 2px 8px; border-radius: 12px;
+  }
+  .status-clean { background: #EAF3DE; color: #27500A; }
+  .status-fraud { background: #FCEBEB; color: #791F1F; }
+
+  /* stacked bar */
+  .bar-wrap { padding: 0 16px 12px; }
+  .bar-outer {
+    width: 100%; height: 18px; background: #f2f0ea;
+    border-radius: 4px; overflow: hidden; display: flex;
+  }
+  .bar-nf { height: 100%; background: #639922; border-radius: 4px 0 0 4px; transition: width 0.4s ease; }
+  .bar-fr { height: 100%; background: #E24B4A; transition: width 0.4s ease; }
+  .bar-labels {
+    display: flex; justify-content: space-between;
+    font-size: 10px; color: #aaa; margin-top: 4px;
+  }
+
+  /* ── INSIGHT CARD ── */
+  .insight-wrap { margin-bottom: 20px; }
+  .insight-card {
+    border-radius: 10px; border: 1.5px solid #e0e0e0;
+    padding: 16px 18px; background: white; min-height: 120px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .insight-lbl {
+    font-size: 10px; font-weight: 600; color: #aaa;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+  }
+  .insight-txt { font-size: 13px; color: #333; line-height: 1.7; }
+  .insight-badge {
+    display: none; margin-top: 8px;
+    font-size: 11px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px; color: white;
+  }
+
+  /* ── FINANCIAL CRIME LOGIC ── */
+  .crime-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .crime-card { border-radius: 10px; padding: 15px 16px; }
+  .crime-card.transfer { background: #E6F1FB; border-left: 3px solid #185FA5; }
+  .crime-card.cashout  { background: #FCEBEB; border-left: 3px solid #E24B4A; }
+  .crime-card .c-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; margin-bottom: 5px;
+  }
+  .crime-card.transfer .c-tag { color: #185FA5; }
+  .crime-card.cashout  .c-tag { color: #A32D2D; }
+  .crime-card .c-title { font-size: 13px; font-weight: 600; margin-bottom: 5px; line-height: 1.3; }
+  .crime-card.transfer .c-title { color: #0C447C; }
+  .crime-card.cashout  .c-title { color: #791F1F; }
+  .crime-card .c-body { font-size: 12px; line-height: 1.6; }
+  .crime-card.transfer .c-body { color: #378ADD; }
+  .crime-card.cashout  .c-body { color: #c05050; }
+
+  /* ── AUDIT BOX ── */
+  .audit-box { background: #1a1a18; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  .audit-tag {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #E24B4A; margin-bottom: 8px;
+  }
+  .audit-box p { font-size: 13px; color: #d0cfc8; line-height: 1.65; }
+  .audit-box strong { color: #fff; }
+
+  /* ── LEGEND ── */
+  .legend { display: flex; gap: 16px; font-size: 12px; color: #666; margin-bottom: 14px; flex-wrap: wrap; }
+  .ldot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 4px; vertical-align: middle; }
+
+  .footer { font-size: 10px; color: #bbb; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="tag">EDA 5 — Fraud Distribution by Transaction Type</div>
+<h1>Fraud tidak tersebar merata — ia memilih salurannya</h1>
+<p class="subtitle">PaySim — simulasi transaksi mobile money berbasis data nyata. Klik setiap tipe transaksi untuk memahami logika kejahatan finansial di baliknya.</p>
+
+<!-- STAT CARDS -->
+<div class="cards">
+  <div class="card red">
+    <div class="lbl">Tipe mengandung fraud</div>
+    <div class="val">2 dari 5</div>
+    <div class="sub">CASH_OUT & TRANSFER saja</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Total fraud</div>
+    <div class="val">8.213</div>
+    <div class="sub">dari 6,36 juta transaksi</div>
+  </div>
+  <div class="card green">
+    <div class="lbl">Tipe bersih 100%</div>
+    <div class="val">3 tipe</div>
+    <div class="sub">CASH_IN, PAYMENT, DEBIT</div>
+  </div>
+</div>
+
+<div class="section-lbl">Distribusi fraud per tipe transaksi — klik untuk insight</div>
+
+<!-- TYPE BARS -->
+<div class="type-list" id="typeList"></div>
+
+<div class="legend">
+  <span><span class="ldot" style="background:#639922;"></span>Non-Fraud</span>
+  <span><span class="ldot" style="background:#E24B4A;"></span>Fraud</span>
+  <span style="font-size:11px; color:#bbb;">Bar menunjukkan proporsi dalam skala linear</span>
+</div>
+
+<!-- INSIGHT CARD -->
+<div class="insight-wrap">
+  <div class="insight-card" id="insightCard">
+    <div class="insight-lbl" id="insightLbl">Pilih tipe transaksi</div>
+    <div class="insight-txt" id="insightTxt">Klik salah satu tipe transaksi di atas untuk membaca logika audit dan financial crime di baliknya.</div>
+    <span class="insight-badge" id="insightBadge"></span>
+  </div>
+</div>
+
+<!-- FINANCIAL CRIME LOGIC -->
+<div class="section-lbl">Logika kejahatan finansial</div>
+<div class="crime-grid">
+  <div class="crime-card transfer">
+    <div class="c-tag">TRANSFER → Layering</div>
+    <div class="c-title">Memisahkan dana dari sumbernya</div>
+    <div class="c-body">Dana dipindahkan antar akun untuk menyamarkan asal-usulnya. Setelah multi-hop transfer, jejak transaksi semakin sulit ditelusuri — bahkan bisa lintas negara atau dikonversi ke aset kripto.</div>
+  </div>
+  <div class="crime-card cashout">
+    <div class="c-tag">CASH_OUT → Monetization</div>
+    <div class="c-title">Tahap akhir ekstraksi dana</div>
+    <div class="c-body">Dana yang sudah "dilapisi" diubah menjadi tunai. Begitu menjadi cash, jejak digital terputus — membuat penelusuran pasca-fraud jauh lebih kompleks dan memakan waktu lama.</div>
+  </div>
+</div>
+
+<!-- AUDIT BOX -->
+<div class="audit-box">
+  <div class="audit-tag">Implikasi audit</div>
+  <p>Fraud dalam transaksi digital <strong>bukan terutama soal nominal atau waktu</strong> — melainkan tentang bagaimana pelaku secara strategis memilih <strong>jenis saluran transaksi</strong> untuk melapisi, memindahkan, dan merealisasikan dana ilegal. CASH_IN, PAYMENT, dan DEBIT yang bersih sepenuhnya bukan karena volumenya kecil, tapi karena secara struktural <strong>tidak berguna untuk tujuan pencucian uang</strong>. Auditor perlu memfokuskan perhatian pada pola TRANSFER berulang dan CASH_OUT yang tidak proporsional dengan aktivitas ekonomi normal akun tersebut.</p>
+</div>
+
+<div class="footer">
+  Sumber: PaySim synthetic dataset — Lopez Rojas et al., The 28th European Modeling and Simulation Symposium (EMSS) 2016.<br>
+  Visualisasi: Rosliana Dwi Astuti — Audit &amp; Data Insight Journey.
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+var types = [
+  {
+    id: 'CASH_OUT',
+    totalNF: 2233384, totalFr: 4116,
+    frRate: 0.184, pctOfFraud: 50.1,
+    hasFraud: true,
+    badge: '50.1% dari semua fraud — terbanyak',
+    badgeColor: '#E24B4A',
+    insight: 'CASH_OUT adalah saluran monetisasi fraud — tahap akhir di mana dana hasil kejahatan diubah menjadi tunai. Dari 2,23 juta transaksi CASH_OUT, sebanyak 4.116 terindikasi fraud (fraud rate 0.184%). Begitu dana keluar sebagai cash, jejak digitalnya terputus dan penelusuran menjadi sangat kompleks. Inilah mengapa CASH_OUT menjadi target prioritas dalam audit berbasis risiko.',
+    bgLight: '#FCEBEB', borderColor: '#E24B4A', textColor: '#791F1F'
+  },
+  {
+    id: 'TRANSFER',
+    totalNF: 528812, totalFr: 4097,
+    frRate: 0.769, pctOfFraud: 49.9,
+    hasFraud: true,
+    badge: 'Fraud rate tertinggi: 0.769%',
+    badgeColor: '#185FA5',
+    insight: 'TRANSFER memiliki fraud rate tertinggi di antara semua tipe transaksi — 0.769%. Dari 532.909 transaksi TRANSFER, sebanyak 4.097 adalah fraud. Transfer digunakan untuk layering: memisahkan dana dari sumbernya dengan memindahkannya antar akun, berpotensi lintas negara atau ke aset kripto. Semakin banyak "hop" transfer yang dilakukan, semakin sulit jejak asalnya ditelusuri.',
+    bgLight: '#E6F1FB', borderColor: '#185FA5', textColor: '#0C447C'
+  },
+  {
+    id: 'PAYMENT',
+    totalNF: 2151495, totalFr: 0,
+    frRate: 0, pctOfFraud: 0,
+    hasFraud: false,
+    badge: '0 fraud dari 2,15 juta transaksi',
+    badgeColor: '#639922',
+    insight: 'PAYMENT bersih sepenuhnya — tidak satu pun dari 2,15 juta transaksi payment yang terindikasi fraud. Ini bukan kebetulan: payment adalah transaksi yang membayar sesuatu kepada merchant atau penyedia layanan. Secara struktural, payment tidak berguna untuk tujuan pencucian uang karena dana mengalir ke pihak ketiga yang teridentifikasi, bukan ke akun yang bisa dikontrol pelaku.',
+    bgLight: '#EAF3DE', borderColor: '#639922', textColor: '#27500A'
+  },
+  {
+    id: 'CASH_IN',
+    totalNF: 1399284, totalFr: 0,
+    frRate: 0, pctOfFraud: 0,
+    hasFraud: false,
+    badge: '0 fraud dari 1,4 juta transaksi',
+    badgeColor: '#639922',
+    insight: 'CASH_IN juga bersih sepenuhnya dari fraud. Ini sangat masuk akal secara logika finansial kriminal: pelaku fraud ingin mengekstrak dana keluar dari sistem, bukan memasukkan dana ke dalamnya. CASH_IN adalah transaksi yang menambah saldo — kebalikan dari apa yang dibutuhkan pelaku untuk merealisasikan keuntungan ilegal mereka.',
+    bgLight: '#EAF3DE', borderColor: '#639922', textColor: '#27500A'
+  },
+  {
+    id: 'DEBIT',
+    totalNF: 41432, totalFr: 0,
+    frRate: 0, pctOfFraud: 0,
+    hasFraud: false,
+    badge: '0 fraud dari 41.432 transaksi',
+    badgeColor: '#639922',
+    insight: 'DEBIT juga bersih sepenuhnya. Transaksi debit umumnya terhubung langsung ke rekening bank yang terdaftar dengan identitas nyata — membuat anonimitas yang dibutuhkan pelaku fraud sulit dipertahankan. Kontrol yang lebih ketat pada transaksi debit menjadikannya saluran yang dihindari pelaku kejahatan finansial.',
+    bgLight: '#EAF3DE', borderColor: '#639922', textColor: '#27500A'
+  }
+];
+
+var selectedId = null;
+
+// ── BUILD TYPE ROWS ────────────────────────────────────────────────────────
+function buildTypeList() {
+  var list = document.getElementById('typeList');
+  list.innerHTML = '';
+
+  types.forEach(function(t) {
+    var total = t.totalNF + t.totalFr;
+    var nfPct = (t.totalNF / total * 100);
+    var frPct = (t.totalFr / total * 100);
+
+    var row = document.createElement('div');
+    row.className = 'type-row' + (selectedId === t.id ? ' selected' : '');
+    if (selectedId === t.id) row.style.setProperty('--sel-color', t.borderColor);
+
+    // header
+    var hdr = document.createElement('div');
+    hdr.className = 'type-header';
+
+    var badge = document.createElement('span');
+    badge.className = 'type-badge';
+    badge.style.background = t.hasFraud ? (t.id === 'TRANSFER' ? '#E6F1FB' : '#FCEBEB') : '#EAF3DE';
+    badge.style.color = t.hasFraud ? (t.id === 'TRANSFER' ? '#0C447C' : '#791F1F') : '#27500A';
+    badge.textContent = t.id;
+
+    var name = document.createElement('div');
+    name.className = 'type-name';
+    name.textContent = total.toLocaleString('id-ID') + ' transaksi';
+
+    var status = document.createElement('span');
+    status.className = 'type-status ' + (t.hasFraud ? 'status-fraud' : 'status-clean');
+    status.textContent = t.hasFraud ? '⚠ Ada fraud' : '✓ Bersih';
+
+    hdr.appendChild(badge);
+    hdr.appendChild(name);
+    hdr.appendChild(status);
+
+    // stacked bar
+    var barWrap = document.createElement('div');
+    barWrap.className = 'bar-wrap';
+
+    var barOuter = document.createElement('div');
+    barOuter.className = 'bar-outer';
+
+    var barNF = document.createElement('div');
+    barNF.className = 'bar-nf';
+    barNF.style.width = nfPct + '%';
+
+    var barFR = document.createElement('div');
+    barFR.className = 'bar-fr';
+    barFR.style.width = frPct < 0.1 && t.hasFraud ? '0.5%' : frPct + '%'; // min visibility
+
+    barOuter.appendChild(barNF);
+    barOuter.appendChild(barFR);
+
+    var barLabels = document.createElement('div');
+    barLabels.className = 'bar-labels';
+    barLabels.innerHTML =
+      '<span style="color:#639922;">' + t.totalNF.toLocaleString('id-ID') + ' non-fraud</span>' +
+      '<span style="color:' + (t.hasFraud ? '#E24B4A' : '#aaa') + ';">' +
+        (t.hasFraud ? t.totalFr.toLocaleString('id-ID') + ' fraud (' + t.frRate + '%)' : '0 fraud') +
+      '</span>';
+
+    barWrap.appendChild(barOuter);
+    barWrap.appendChild(barLabels);
+
+    row.appendChild(hdr);
+    row.appendChild(barWrap);
+
+    row.addEventListener('click', function() {
+      selectedId = t.id;
+      buildTypeList();
+      showInsight(t);
+    });
+
+    list.appendChild(row);
+  });
+}
+
+// ── SHOW INSIGHT ──────────────────────────────────────────────────────────
+function showInsight(t) {
+  var card  = document.getElementById('insightCard');
+  var lbl   = document.getElementById('insightLbl');
+  var txt   = document.getElementById('insightTxt');
+  var badge = document.getElementById('insightBadge');
+
+  card.style.background   = t.bgLight;
+  card.style.borderColor  = t.borderColor;
+  lbl.style.color         = t.borderColor;
+  lbl.textContent = t.id + (t.hasFraud ? ' — ' + t.pctOfFraud + '% dari semua fraud' : ' — Bersih sepenuhnya');
+  txt.style.color  = t.textColor;
+  txt.textContent  = t.insight;
+  badge.style.display      = 'inline-block';
+  badge.style.background   = t.badgeColor;
+  badge.textContent        = t.badge;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+buildTypeList();
+</script>
+</body>
+</html>
