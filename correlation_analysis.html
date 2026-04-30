@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDA 7 — Correlation Analysis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #fafaf8;
+    color: #1a1a18;
+    padding: 28px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .tag {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    color: #185FA5; text-transform: uppercase; margin-bottom: 6px;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; font-weight: 400; line-height: 1.3;
+    color: #1a1a18; margin-bottom: 6px;
+  }
+  .subtitle { font-size: 12px; color: #888; line-height: 1.5; margin-bottom: 22px; }
+
+  /* ── STAT CARDS ── */
+  .cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
+  .card { background: #f2f0ea; border-radius: 10px; padding: 13px 12px; text-align: center; }
+  .card.blue  { background: #E6F1FB; }
+  .card.red   { background: #FCEBEB; }
+  .card.amber { background: #FAEEDA; }
+  .card .lbl  { font-size: 10px; color: #888; margin-bottom: 3px; }
+  .card.blue  .lbl { color: #185FA5; }
+  .card.red   .lbl { color: #A32D2D; }
+  .card.amber .lbl { color: #854F0B; }
+  .card .val  { font-size: 18px; font-weight: 600; color: #1a1a18; }
+  .card.blue  .val { color: #0C447C; }
+  .card.red   .val { color: #791F1F; }
+  .card.amber .val { color: #633806; }
+  .card .sub  { font-size: 10px; color: #aaa; margin-top: 3px; }
+  .card.blue  .sub { color: #378ADD; }
+  .card.red   .sub { color: #c05050; }
+  .card.amber .sub { color: #C07830; }
+
+  /* ── SECTION LABEL ── */
+  .sec-lbl {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #bbb; margin-bottom: 12px;
+  }
+
+  /* ── TAB BUTTONS ── */
+  .tab-group { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .tab-btn {
+    font-size: 12px; padding: 6px 14px; border-radius: 8px;
+    border: 1.5px solid #ccc; background: transparent;
+    color: #666; cursor: pointer; font-weight: 500;
+    transition: all 0.15s;
+  }
+  .tab-btn.active-fraud  { background: #E24B4A; border-color: #E24B4A; color: white; }
+  .tab-btn.active-struct { background: #185FA5; border-color: #185FA5; color: white; }
+
+  .tab-expl {
+    font-size: 12px; color: #555; margin-bottom: 16px;
+    padding: 10px 14px; background: #f2f0ea;
+    border-radius: 8px; line-height: 1.6;
+  }
+
+  /* ── SVG CHART ── */
+  #corrSvg { width: 100%; display: block; margin-bottom: 6px; }
+
+  /* ── INSIGHT CARD ── */
+  .insight-card {
+    border-radius: 10px; border: 1.5px solid #e0e0e0;
+    padding: 14px 18px; background: white; min-height: 100px;
+    margin-bottom: 20px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .insight-lbl {
+    font-size: 10px; font-weight: 600; color: #aaa;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px;
+  }
+  .insight-txt { font-size: 13px; color: #333; line-height: 1.7; }
+  .insight-badge {
+    display: none; margin-top: 8px;
+    font-size: 11px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px; color: white;
+  }
+
+  /* ── KEY FINDING BOX ── */
+  .finding-box {
+    border-radius: 10px; border-left: 3px solid #E24B4A;
+    background: #FCEBEB; padding: 14px 16px; margin-bottom: 20px;
+  }
+  .finding-lbl {
+    font-size: 10px; font-weight: 600; color: #A32D2D;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px;
+  }
+  .finding-txt { font-size: 13px; color: #791F1F; line-height: 1.7; }
+  .finding-txt strong { color: #5A0F0F; }
+
+  /* ── AUDIT BOX ── */
+  .audit-box { background: #1a1a18; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  .audit-tag {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #378ADD; margin-bottom: 8px;
+  }
+  .audit-box p { font-size: 13px; color: #d0cfc8; line-height: 1.65; }
+  .audit-box strong { color: #fff; }
+
+  .footer { font-size: 10px; color: #bbb; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="tag">Eksplorasi Data 7 — Correlation Analysis</div>
+<h1>Tidak ada satu variabel yang bisa mendeteksi fraud sendirian</h1>
+<p class="subtitle">PaySim — simulasi transaksi mobile money berbasis data nyata. Analisis korelasi antar fitur numerik mengungkap mengapa fraud bersifat multivariat — dan mengapa pendekatan single-indicator tidak memadai.</p>
+
+<!-- STAT CARDS -->
+<div class="cards">
+  <div class="card amber">
+    <div class="lbl">Fitur terkuat ↔ isFraud</div>
+    <div class="val">0.3625</div>
+    <div class="sub">selisih_saldo_pengirim — tapi masih rendah</div>
+  </div>
+  <div class="card red">
+    <div class="lbl">Korelasi amount ↔ isFraud</div>
+    <div class="val">0.077</div>
+    <div class="sub">hampir tidak ada hubungan langsung</div>
+  </div>
+  <div class="card blue">
+    <div class="lbl">Korelasi saldo struktural</div>
+    <div class="val">0.999</div>
+    <div class="sub">oldbalanceOrg ↔ newbalanceOrig</div>
+  </div>
+</div>
+
+<!-- TAB BUTTONS -->
+<div class="sec-lbl">Pilih perspektif analisis korelasi</div>
+<div class="tab-group">
+  <button class="tab-btn active-fraud" id="btn-fraud" onclick="setView('fraud')">Korelasi dengan fraud</button>
+  <button class="tab-btn" id="btn-struct" onclick="setView('struct')">Konsistensi struktur data</button>
+</div>
+
+<div class="tab-expl" id="tabExpl">
+  <strong>Korelasi dengan fraud:</strong> seberapa erat hubungan setiap variabel dengan label isFraud? Nilai mendekati 0 berarti hampir tidak ada hubungan linear langsung — dan ini adalah temuan kunci dari analisis ini.
+</div>
+
+<!-- SVG CHART -->
+<svg id="corrSvg" height="360"></svg>
+
+<!-- INSIGHT CARD -->
+<div class="insight-card" id="insightCard">
+  <div class="insight-lbl" id="insightLbl">Pilih batang</div>
+  <div class="insight-txt" id="insightTxt">Klik salah satu batang untuk membaca makna auditnya secara mendalam.</div>
+  <span class="insight-badge" id="insightBadge"></span>
+</div>
+
+<!-- KEY FINDING -->
+<div class="finding-box">
+  <div class="finding-lbl">Temuan Utama — Fraud Tidak Bisa Dideteksi oleh Satu Indikator</div>
+  <div class="finding-txt">
+    Dari semua variabel yang dianalisis, <strong>perubahan saldo pengirim adalah sinyal paling kuat</strong> dengan korelasi 0.3625 — artinya ada hubungan yang cukup nyata antara pengurasan saldo yang besar dan kemungkinan fraud. Tapi bahkan angka ini pun masih tergolong <strong>sedang</strong>, bukan tinggi. Itu berarti perubahan saldo sendirian masih meninggalkan <strong>64% kasus fraud yang tidak bisa dijelaskan</strong>. Sementara nilai transaksi hanya 0.077, waktu transaksi 0.032, dan sistem pendeteksi bawaan hanya 0.044 — semuanya sangat mendekati nol. Kesimpulannya: <strong>tidak ada satu pun variabel yang bisa mendeteksi fraud secara mandiri</strong>. Fraud baru bisa dikenali ketika beberapa sinyal dilihat secara bersamaan — itulah mengapa pendekatan berbasis machine learning menjadi sangat penting.
+  </div>
+</div>
+
+<!-- AUDIT BOX -->
+<div class="audit-box">
+  <div class="audit-tag">Implikasi Audit</div>
+  <p>Temuan ini membenarkan mengapa <strong>pendekatan audit yang hanya mengandalkan satu aturan tidak cukup</strong> — baik itu batas nilai transaksi, filter waktu, maupun jenis transaksi saja. Dalam literatur audit digital, Nirwana &amp; Permana (2025) menegaskan bahwa fraud bersifat non-linear dan membutuhkan kombinasi fitur untuk dapat dideteksi secara efektif — tidak bisa ditangkap oleh satu variabel tunggal. Hal ini juga sejalan dengan panduan dari <strong>Institute of Internal Auditors (IIA)</strong> yang mendorong penggunaan data analytics secara menyeluruh dalam proses audit modern, bukan hanya pemeriksaan satu indikator secara terpisah. Di sinilah <strong>machine learning sebagai alat pendukung audit</strong> menemukan justifikasinya yang paling kuat — bukan untuk menggantikan pertimbangan auditor, tapi untuk menangkap kombinasi pola kompleks yang tidak bisa ditangkap oleh aturan tunggal manapun.</p>
+</div>
+
+<!-- SA 520 REF BOX -->
+<div style="background:#E6F1FB; border-radius:10px; border-left:3px solid #185FA5; padding:13px 16px; margin-bottom:16px;">
+  <div style="font-size:10px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#185FA5; margin-bottom:5px;">Referensi</div>
+  <p style="font-size:12px; color:#0C447C; line-height:1.6;">Nirwana &amp; Permana (2025). <em>Transformasi Digital dalam Praktik Auditing.</em> Jurnal Riset Rumpun Ilmu Ekonomi, Vol. 4(1). &nbsp;|&nbsp; Institute of Internal Auditors (IIA). <em>Global Internal Audit Standards.</em> &nbsp;|&nbsp; Lopez Rojas et al. (2016). PaySim: A Financial Mobile Money Simulator. The 28th EMSS.</p>
+</div>
+
+<div class="footer">
+  Sumber: PaySim synthetic dataset — Lopez Rojas et al., The 28th European Modeling and Simulation Symposium (EMSS) 2016.<br>
+  Visualisasi: Rosliana Dwi Astuti — Audit &amp; Data Insight Journey.
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────
+
+// View 1: korelasi setiap fitur dengan isFraud (dari tabel, difilter yang melibatkan isFraud)
+var fraudCorr = [
+  {
+    label: 'selisih_saldo\npengirim', val: 0.3625,
+    insight: 'Ini adalah variabel yang paling "merasakan" keberadaan fraud — korelasi 0.3625 berarti ada hubungan yang cukup nyata antara besarnya pengurasan saldo pengirim dan kemungkinan fraud. Bayangkan: saldo seseorang tiba-tiba berkurang sangat besar dalam satu transaksi — itu adalah sinyal peringatan yang lebih kuat dibanding apapun. Tapi 0.3625 pun masih jauh dari sempurna (korelasi sempurna = 1.0), artinya masih banyak kasus fraud yang pengurasan saldonya tidak terlalu mencolok dan tidak bisa tertangkap oleh indikator ini saja.',
+    badge: 'Sinyal terkuat — tapi belum cukup sendirian'
+  },
+  {
+    label: 'amount', val: 0.077,
+    insight: 'Korelasi hanya 0.077 — hampir nol. Artinya besar kecilnya nilai transaksi hampir tidak ada hubungannya dengan apakah transaksi itu fraud atau bukan. Ini mungkin mengejutkan banyak orang yang berasumsi "fraud pasti transaksinya besar." Kenyataannya, pelaku fraud sangat sadar bahwa transaksi bernilai besar lebih mudah diperhatikan — sehingga mereka sering beroperasi di nilai yang tampak biasa dan tidak mencolok.',
+    badge: 'Korelasi hampir nol — nilai bukan penentu fraud'
+  },
+  {
+    label: 'isFlaggedFraud', val: 0.044,
+    insight: 'Ini adalah temuan yang mengejutkan. Kolom isFlaggedFraud adalah sistem penanda otomatis bawaan dalam dataset — seharusnya ia menandai transaksi yang mencurigakan. Tapi korelasinya dengan fraud yang sesungguhnya hanya 0.044 — hampir tidak ada hubungan sama sekali. Artinya sistem pendeteksi berbasis aturan yang ada hampir tidak efektif. Ia melewatkan sebagian besar fraud yang nyata — dan inilah bukti nyata mengapa sistem berbasis aturan saja tidak cukup.',
+    badge: 'Sistem pendeteksi bawaan hampir tidak efektif'
+  },
+  {
+    label: 'step', val: 0.032,
+    insight: 'Korelasi waktu transaksi dengan fraud hanya 0.032 — sangat mendekati nol. Ini berarti kapan transaksi terjadi — pagi, siang, atau tengah malam — hampir tidak memberikan petunjuk apakah transaksi itu fraud atau tidak. Fraud terjadi di semua jam, baik ramai maupun sepi. Inilah mengapa filter seperti "tandai semua transaksi tengah malam" tidak efektif sebagai satu-satunya cara mendeteksi fraud.',
+    badge: 'Waktu bukan penentu — fraud terjadi kapan saja'
+  },
+  {
+    label: 'oldbalanceOrg', val: 0.010,
+    insight: 'Saldo awal pengirim sebelum transaksi memiliki korelasi hanya 0.010 dengan fraud — hampir tidak ada informasi yang berguna di sini. Berapa pun saldo awal seseorang, itu tidak memberitahu kita apakah transaksi yang akan dilakukan adalah fraud. Yang jauh lebih penting bukan berapa saldo awalnya, tapi seberapa besar saldo itu berkurang setelah transaksi terjadi.',
+    badge: 'Saldo awal tidak informatif — pergerakannya yang penting'
+  },
+  {
+    label: 'newbalanceOrig', val: -0.008,
+    insight: 'Saldo akhir pengirim setelah transaksi memiliki korelasi -0.008 — negatif tapi sangat mendekati nol. Tanda negatif kecil ini hanya menunjukkan bahwa saldo akhir yang lebih rendah sedikit lebih cenderung berkaitan dengan fraud — tapi hubungannya terlalu lemah untuk diandalkan sebagai indikator. Sekali lagi, yang lebih berbicara adalah selisihnya, bukan nilai absolutnya.',
+    badge: 'Korelasi negatif sangat lemah'
+  },
+  {
+    label: 'oldbalanceDest', val: -0.006,
+    insight: 'Saldo awal akun penerima sebelum menerima dana hampir tidak memiliki hubungan dengan fraud (korelasi -0.006). Ini menunjukkan bahwa pelaku fraud tidak secara khusus memilih akun penerima berdasarkan berapa saldo yang sudah ada di sana — mereka lebih memperhatikan saluran transaksi yang digunakan daripada kondisi saldo penerima.',
+    badge: 'Saldo penerima tidak relevan sebagai indikator'
+  },
+  {
+    label: 'newbalanceDest', val: 0.001,
+    insight: 'Korelasi 0.001 — ini adalah angka yang paling mendekati nol di antara semua variabel. Saldo akhir penerima setelah menerima dana praktis tidak memberikan informasi apapun tentang kemungkinan fraud. Ini adalah konfirmasi terakhir dari kesimpulan utama: tidak ada variabel tunggal yang bisa diandalkan untuk mendeteksi fraud — hanya kombinasi dari beberapa sinyal yang bisa memberikan gambaran yang berarti.',
+    badge: 'Mendekati nol — tidak ada informasi sama sekali'
+  }
+];
+
+// View 2: korelasi struktural tinggi (konsistensi data)
+var structCorr = [
+  { label: 'oldBalOrg ↔\nnewBalOrig', val: 0.999, insight: 'Korelasi 0.999 antara saldo awal dan akhir pengirim menunjukkan konsistensi struktural yang sangat tinggi. Artinya: saldo sebelum dan sesudah transaksi bergerak secara logis dan konsisten — tidak ada manipulasi sistemik pada pencatatan saldo pengirim. Dari perspektif audit, ini adalah konfirmasi data integrity yang kuat.', badge: 'Data integrity terkonfirmasi — struktur valid' },
+  { label: 'oldBalDest ↔\nnewBalDest', val: 0.977, insight: 'Korelasi 0.977 untuk pasangan saldo penerima juga sangat tinggi — hampir sempurna. Ini mengonfirmasi bahwa pencatatan saldo penerima juga konsisten dan valid secara struktural. Dua pasangan korelasi tinggi ini bersama-sama memberikan keyakinan bahwa fondasi data untuk analisis lebih lanjut dapat dipercaya.', badge: 'Konsistensi saldo penerima terkonfirmasi' },
+  { label: 'amount ↔\nnewBalDest',   val: 0.459, insight: 'Korelasi 0.459 antara jumlah transaksi dan saldo akhir penerima — moderat. Ini masuk akal: semakin besar transaksi, semakin besar pula perubahan saldo penerima. Korelasi ini mengonfirmasi logika bisnis dasar transaksi, tapi tidak cukup tinggi untuk menunjukkan hubungan sempurna karena penerima mungkin juga melakukan transaksi lain.', badge: 'Korelasi moderat — logika bisnis terkonfirmasi' },
+  { label: 'amount ↔\noldBalDest',   val: 0.294, insight: 'Korelasi 0.294 antara jumlah transaksi dan saldo awal penerima — lemah tapi ada. Ini menunjukkan sedikit kecenderungan bahwa transaksi yang lebih besar mengalir ke akun dengan saldo lebih tinggi — mungkin mencerminkan pola bisnis di mana merchant atau agen dengan volume tinggi menerima transaksi lebih besar.', badge: 'Korelasi lemah — ada pola tapi tidak dominan' }
+];
+
+var currentView = 'fraud';
+var selectedIdx = null;
+
+var SVG_W = 660, SVG_H = 360;
+var PL = 120, PR = 60, PT = 28, PB = 28;
+var CHART_W = SVG_W - PL - PR;
+var CHART_H = SVG_H - PT - PB;
+
+var tabExplanations = {
+  fraud: '<strong>Korelasi dengan fraud:</strong> seberapa erat hubungan setiap variabel dengan label isFraud? Nilai mendekati 0 berarti hampir tidak ada hubungan linear langsung — dan ini adalah temuan kunci dari analisis ini.',
+  struct: '<strong>Konsistensi struktur data:</strong> korelasi antar pasangan variabel saldo yang menunjukkan apakah data integrity terjaga. Korelasi tinggi di sini adalah kabar baik — berarti pencatatan saldo konsisten dan valid.'
+};
+
+function getData() {
+  return currentView === 'fraud' ? fraudCorr : structCorr;
+}
+
+function getBarColor(val, view) {
+  if (view === 'struct') {
+    if (val > 0.9) return '#185FA5';
+    if (val > 0.3) return '#378ADD';
+    return '#85B7EB';
+  }
+  var abs = Math.abs(val);
+  if (abs >= 0.3)  return '#854F0B'; // amber — strongest but still moderate
+  if (abs < 0.02)  return '#aaa';
+  if (abs < 0.05)  return '#EF9F27';
+  return '#E24B4A';
+}
+
+function getLightBg(val, view) {
+  if (view === 'struct') return '#E6F1FB';
+  var abs = Math.abs(val);
+  if (abs >= 0.3)  return '#FAEEDA';
+  if (abs < 0.05)  return '#FAEEDA';
+  return '#FCEBEB';
+}
+
+function buildChart() {
+  var svg = document.getElementById('corrSvg');
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', '0 0 ' + SVG_W + ' ' + SVG_H);
+
+  var data = getData();
+  var vals = data.map(function(d){ return Math.abs(d.val); });
+  var maxV = Math.max.apply(null, vals);
+  // ensure min max so bars are visible
+  if (maxV < 0.1) maxV = 0.1;
+
+  var n = data.length;
+  var gap = 6;
+  var barH = (CHART_H - gap * (n - 1)) / n;
+
+  // vertical center line at x=PL (zero line)
+  var zeroX = PL;
+
+  // gridlines
+  for (var g = 0; g <= 4; g++) {
+    var gv = (maxV / 4) * g;
+    var gx = PL + (gv / maxV) * CHART_W;
+    var gl = document.createElementNS('http://www.w3.org/2000/svg','line');
+    gl.setAttribute('x1', gx); gl.setAttribute('x2', gx);
+    gl.setAttribute('y1', PT); gl.setAttribute('y2', PT + CHART_H);
+    gl.setAttribute('stroke', '#e8e6df'); gl.setAttribute('stroke-width', '1');
+    svg.appendChild(gl);
+    // label
+    var gt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    gt.setAttribute('x', gx); gt.setAttribute('y', PT + CHART_H + 14);
+    gt.setAttribute('text-anchor','middle'); gt.setAttribute('font-size','9');
+    gt.setAttribute('fill','#bbb');
+    gt.textContent = gv.toFixed(2);
+    svg.appendChild(gt);
+  }
+
+  data.forEach(function(d, i) {
+    var absVal = Math.abs(d.val);
+    var barW = Math.max((absVal / maxV) * CHART_W, 3);
+    var y = PT + i * (barH + gap);
+    var color = getBarColor(d.val, currentView);
+    var isSelected = selectedIdx === i;
+
+    // bar rect
+    var rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x', PL);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', barW);
+    rect.setAttribute('height', barH);
+    rect.setAttribute('fill', color);
+    rect.setAttribute('rx', '3');
+    rect.setAttribute('opacity', isSelected ? '1' : '0.82');
+    if (isSelected) {
+      rect.setAttribute('stroke', color);
+      rect.setAttribute('stroke-width', '2');
+    }
+    rect.style.cursor = 'pointer';
+
+    // value label
+    var vl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    vl.setAttribute('x', PL + barW + 5);
+    vl.setAttribute('y', y + barH/2 + 4);
+    vl.setAttribute('font-size', '10');
+    vl.setAttribute('font-weight', '600');
+    vl.setAttribute('fill', color);
+    vl.textContent = d.val.toFixed(3);
+
+    // y-axis label (feature name)
+    var yl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    yl.setAttribute('x', PL - 8);
+    yl.setAttribute('y', y + barH/2 + 4);
+    yl.setAttribute('text-anchor', 'end');
+    yl.setAttribute('font-size', '10');
+    yl.setAttribute('fill', isSelected ? color : '#555');
+    yl.setAttribute('font-weight', isSelected ? '600' : '400');
+
+    // handle multi-line labels
+    var parts = d.label.split('\n');
+    if (parts.length > 1) {
+      yl.setAttribute('y', y + barH/2);
+      parts.forEach(function(part, pi) {
+        var t = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+        t.setAttribute('x', PL - 8);
+        t.setAttribute('dy', pi === 0 ? '-0.2em' : '1.1em');
+        t.textContent = part;
+        yl.appendChild(t);
+      });
+    } else {
+      yl.textContent = d.label;
+    }
+
+    // click handlers
+    ;(function(idx, d, c) {
+      rect.addEventListener('mouseenter', function(){ rect.setAttribute('opacity','0.65'); });
+      rect.addEventListener('mouseleave', function(){ rect.setAttribute('opacity', selectedIdx===idx?'1':'0.82'); });
+      rect.addEventListener('click', function(){ selectedIdx=idx; buildChart(); showInsight(d,c); });
+      vl.addEventListener('click', function(){ selectedIdx=idx; buildChart(); showInsight(d,c); });
+      yl.addEventListener('click', function(){ selectedIdx=idx; buildChart(); showInsight(d,c); });
+      yl.style.cursor='pointer'; vl.style.cursor='pointer';
+    })(i, d, color);
+
+    svg.appendChild(rect);
+    svg.appendChild(yl);
+    svg.appendChild(vl);
+  });
+
+  // x-axis title
+  var xt = document.createElementNS('http://www.w3.org/2000/svg','text');
+  xt.setAttribute('x', PL + CHART_W/2);
+  xt.setAttribute('y', SVG_H - 2);
+  xt.setAttribute('text-anchor','middle');
+  xt.setAttribute('font-size','9');
+  xt.setAttribute('fill','#bbb');
+  xt.textContent = 'Nilai korelasi (absolut)';
+  svg.appendChild(xt);
+}
+
+function showInsight(d, color) {
+  var card  = document.getElementById('insightCard');
+  var lbl   = document.getElementById('insightLbl');
+  var txt   = document.getElementById('insightTxt');
+  var badge = document.getElementById('insightBadge');
+  var bg    = getLightBg(d.val, currentView);
+
+  card.style.background  = bg;
+  card.style.borderColor = color;
+  lbl.style.color  = color;
+  lbl.textContent  = d.label.replace('\n',' ') + ' — korelasi: ' + d.val.toFixed(3);
+  txt.style.color  = '#1a1a18';
+  txt.textContent  = d.insight;
+  badge.style.display    = 'inline-block';
+  badge.style.background = color;
+  badge.textContent      = d.badge;
+}
+
+function resetInsight() {
+  var card = document.getElementById('insightCard');
+  card.style.background  = 'white';
+  card.style.borderColor = '#e0e0e0';
+  document.getElementById('insightLbl').style.color   = '#aaa';
+  document.getElementById('insightLbl').textContent   = 'Pilih batang';
+  document.getElementById('insightTxt').style.color   = '#333';
+  document.getElementById('insightTxt').textContent   = 'Klik salah satu batang untuk membaca makna auditnya secara mendalam.';
+  document.getElementById('insightBadge').style.display = 'none';
+}
+
+function setView(view) {
+  currentView = view;
+  selectedIdx = null;
+  document.getElementById('tabExpl').innerHTML = tabExplanations[view];
+  document.getElementById('btn-fraud').className  = view==='fraud'  ? 'tab-btn active-fraud'  : 'tab-btn';
+  document.getElementById('btn-struct').className = view==='struct' ? 'tab-btn active-struct' : 'tab-btn';
+  resetInsight();
+  buildChart();
+}
+
+buildChart();
+</script>
+</body>
+</html>
