@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feature Selection — Peta Perjalanan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #fafaf8;
+    color: #1a1a18;
+    padding: 28px 24px;
+    max-width: 740px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .tag {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    color: #185FA5; text-transform: uppercase; margin-bottom: 6px;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 21px; font-weight: 400; line-height: 1.3;
+    color: #1a1a18; margin-bottom: 6px;
+  }
+  .subtitle { font-size: 12px; color: #888; line-height: 1.5; margin-bottom: 24px; }
+
+  /* ── HOW TO READ ── */
+  .how-to {
+    background: #f2f0ea; border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 24px;
+    font-size: 12px; color: #555; line-height: 1.6;
+  }
+  .how-to strong { color: #1a1a18; }
+
+  /* ── SECTION LABEL ── */
+  .sec-lbl {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #bbb; margin-bottom: 12px;
+  }
+
+  /* ── JOURNEY CARDS ── */
+  .journey { display: flex; flex-direction: column; gap: 0; margin-bottom: 28px; }
+
+  .journey-item {
+    display: grid;
+    grid-template-columns: 140px 32px 1fr;
+    align-items: stretch;
+    gap: 0;
+    cursor: pointer;
+  }
+
+  /* left: discovery label */
+  .disc-box {
+    background: #f2f0ea;
+    border-radius: 10px 0 0 10px;
+    padding: 14px 14px;
+    display: flex; flex-direction: column; justify-content: center;
+    border: 1.5px solid #e8e6df;
+    border-right: none;
+    transition: background 0.15s;
+  }
+  .disc-tag {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #aaa; margin-bottom: 3px;
+  }
+  .disc-txt { font-size: 11px; color: #555; line-height: 1.4; }
+
+  /* middle: arrow connector */
+  .arrow-col {
+    display: flex; align-items: center; justify-content: center;
+    background: white;
+    border-top: 1.5px solid #e8e6df;
+    border-bottom: 1.5px solid #e8e6df;
+    position: relative; z-index: 1;
+  }
+  .arrow-svg { width: 20px; height: 20px; }
+
+  /* right: feature card */
+  .feat-card {
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    border: 1.5px solid transparent;
+    border-left: none;
+    transition: all 0.15s;
+  }
+  .feat-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
+  }
+  .feat-badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+    padding: 2px 9px; border-radius: 12px; white-space: nowrap;
+  }
+  .feat-meaning {
+    font-size: 11px; color: #888; font-style: italic;
+  }
+  .feat-why {
+    font-size: 12px; line-height: 1.55;
+  }
+
+  /* connector line between items */
+  .connector {
+    display: flex; justify-content: center;
+    height: 16px; position: relative;
+  }
+  .connector::before {
+    content: '';
+    position: absolute;
+    left: 140px; top: 0;
+    width: 1.5px; height: 100%;
+    background: #e8e6df;
+  }
+
+  /* ── EXCLUDED SECTION ── */
+  .excluded-wrap { margin-bottom: 28px; }
+  .excluded-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .excl-card {
+    background: #f8f8f6; border-radius: 10px;
+    border: 1.5px solid #e8e6df; border-left: 3px solid #aaa;
+    padding: 14px 16px;
+  }
+  .excl-tag {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; color: #aaa; margin-bottom: 4px;
+  }
+  .excl-name {
+    font-size: 13px; font-weight: 600; color: #888; margin-bottom: 4px;
+    text-decoration: line-through;
+  }
+  .excl-why { font-size: 11px; color: #aaa; line-height: 1.5; }
+
+  /* ── INSIGHT PANEL ── */
+  .insight-panel {
+    border-radius: 10px; border: 1.5px solid #e0e0e0;
+    padding: 14px 18px; background: white; min-height: 90px;
+    margin-bottom: 20px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .ins-lbl {
+    font-size: 10px; font-weight: 600; color: #aaa;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px;
+  }
+  .ins-txt { font-size: 13px; color: #333; line-height: 1.7; }
+  .ins-badge {
+    display: none; margin-top: 8px;
+    font-size: 11px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px; color: white;
+  }
+
+  /* ── AUDIT BOX ── */
+  .audit-box { background: #1a1a18; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  .audit-tag {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #639922; margin-bottom: 8px;
+  }
+  .audit-box p { font-size: 13px; color: #d0cfc8; line-height: 1.65; }
+  .audit-box strong { color: #fff; }
+
+  .footer { font-size: 10px; color: #bbb; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="tag">Feature Selection — Machine Learning untuk Audit</div>
+<h1>Dari temuan eksplorasi data ke pemilihan variabel model</h1>
+<p class="subtitle">Setiap variabel yang digunakan dalam model dipilih berdasarkan pemahaman bisnis — bukan sekadar angka statistik. Klik setiap baris untuk membaca alasan pemilihannya.</p>
+
+<div class="how-to">
+  <strong>Cara membaca:</strong> kolom kiri menunjukkan apa yang ditemukan selama eksplorasi data, panah di tengah menunjukkan hubungannya, dan kolom kanan menunjukkan variabel yang dipilih beserta alasan auditnya.
+</div>
+
+<div class="sec-lbl">Variabel yang dipilih — dan alasan di baliknya</div>
+<div class="journey" id="journeyWrap"></div>
+
+<div class="insight-panel" id="insightPanel">
+  <div class="ins-lbl" id="insLbl">Pilih variabel</div>
+  <div class="ins-txt" id="insTxt">Klik salah satu baris di atas untuk membaca penjelasan lengkap mengapa variabel ini dipilih dan apa maknanya dalam konteks audit.</div>
+  <span class="ins-badge" id="insBadge"></span>
+</div>
+
+<div class="sec-lbl">Variabel yang sengaja tidak digunakan</div>
+<div class="excluded-wrap">
+  <div class="excluded-grid">
+    <div class="excl-card">
+      <div class="excl-tag">Dieksklusi</div>
+      <div class="excl-name">nameOrig</div>
+      <div class="excl-why">Nama akun pengirim hanya berfungsi sebagai identitas — bukan karakteristik transaksi. Model yang belajar dari nama akun hanya akan "hafal" siapa yang pernah fraud, tapi gagal mengenali fraud dari akun baru.</div>
+    </div>
+    <div class="excl-card">
+      <div class="excl-tag">Dieksklusi</div>
+      <div class="excl-name">nameDest</div>
+      <div class="excl-why">Nama akun penerima memiliki masalah yang sama. Di dunia nyata, pelaku fraud justru sering menggunakan akun baru — sehingga model berbasis nama akun akan gagal tepat saat paling dibutuhkan.</div>
+    </div>
+  </div>
+</div>
+
+<div class="audit-box">
+  <div class="audit-tag">Prinsip Utama</div>
+  <p>Dalam audit analytics, memilih variabel bukan hanya soal <strong>angka statistik</strong> — tapi soal <strong>makna bisnis dan kemampuan untuk dipertanggungjawabkan</strong>. Setiap variabel yang masuk ke dalam model harus bisa dijelaskan kepada auditor mengapa ia relevan, dan kepada klien mengapa ia digunakan. Inilah yang membedakan audit analytics dari data science biasa.</p>
+</div>
+
+<div class="footer">
+  Sumber: PaySim synthetic dataset — Lopez Rojas et al., The 28th EMSS 2016.<br>
+  Visualisasi: Rosliana Dwi Astuti — Audit &amp; Data Insight Journey.
+</div>
+
+<script>
+var features = [
+  {
+    disc: 'Fraud hanya di TRANSFER & CASH_OUT — tipe transaksi mencerminkan strategi pelaku',
+    discColor: '#E24B4A',
+    name: 'type',
+    meaning: 'Jenis transaksi',
+    color: '#E24B4A', light: '#FCEBEB', text: '#791F1F',
+    why: 'Jenis transaksi adalah petunjuk paling langsung tentang strategi yang dijalankan pelaku. TRANSFER digunakan untuk menyamarkan asal dana, CASH_OUT untuk mengambilnya. Tanpa variabel ini, model tidak bisa membedakan konteks di mana fraud paling sering terjadi.',
+    badge: 'Indikator strategi fraud — wajib ada'
+  },
+  {
+    disc: 'Pengurasan saldo yang agresif adalah red flag terkuat — korelasi 0.3625 dengan fraud',
+    discColor: '#E24B4A',
+    name: 'selisih_saldo_pengirim',
+    meaning: 'Perubahan saldo pengirim (sebelum - sesudah)',
+    color: '#E24B4A', light: '#FCEBEB', text: '#791F1F',
+    why: 'Ini adalah variabel yang dibuat khusus dari selisih saldo awal dan akhir pengirim. Dengan korelasi 0.3625 — tertinggi di antara semua variabel — ia adalah sinyal terkuat fraud yang bisa diukur. Transaksi fraud rata-rata menguras saldo hampir setengah juta, sementara transaksi normal hampir tidak mengubah saldo sama sekali.',
+    badge: 'Sinyal terkuat fraud — korelasi 0.3625'
+  },
+  {
+    disc: 'Fraud tidak selalu bernilai besar — tapi nominal tetap bagian dari pola',
+    discColor: '#EF9F27',
+    name: 'amount',
+    meaning: 'Nilai transaksi',
+    color: '#EF9F27', light: '#FAEEDA', text: '#633806',
+    why: 'Meskipun korelasi amount dengan fraud hanya 0.077, nilai transaksi tetap dimasukkan karena ia berperan dalam kombinasi — bukan sebagai indikator tunggal. Model perlu melihat apakah nilai transaksi konsisten dengan pola historis akun dan proporsional dengan perubahan saldo yang terjadi.',
+    badge: 'Relevan dalam kombinasi — bukan sendirian'
+  },
+  {
+    disc: 'Saldo sebelum transaksi menunjukkan kondisi akun — apakah wajar atau tidak',
+    discColor: '#185FA5',
+    name: 'oldbalanceOrg',
+    meaning: 'Saldo pengirim sebelum transaksi',
+    color: '#185FA5', light: '#E6F1FB', text: '#0C447C',
+    why: 'Saldo awal pengirim memberikan konteks: apakah pengurasan saldo yang terjadi proporsional dengan kondisi akun sebelumnya? Seseorang yang saldonya 10 ribu lalu tiba-tiba mentransfer 5 juta adalah anomali yang perlu diperhatikan. Model perlu tahu titik awalnya untuk menilai kewajaran perubahan yang terjadi.',
+    badge: 'Konteks kondisi awal akun'
+  },
+  {
+    disc: 'Saldo sesudah transaksi menunjukkan dampak — apakah terkuras habis atau tidak',
+    discColor: '#185FA5',
+    name: 'newbalanceOrig',
+    meaning: 'Saldo pengirim sesudah transaksi',
+    color: '#185FA5', light: '#E6F1FB', text: '#0C447C',
+    why: 'Saldo akhir pengirim melengkapi gambaran yang dimulai oleh saldo awal. Jika saldo akhir mendekati nol setelah transaksi — terutama untuk transaksi TRANSFER atau CASH_OUT — itu adalah tanda pengurasan yang agresif. Kombinasi saldo awal dan akhir pengirim membantu model memahami besarnya dampak finansial sebuah transaksi.',
+    badge: 'Dampak transaksi pada saldo pengirim'
+  },
+  {
+    disc: 'Saldo penerima memberikan gambaran tentang ke mana dana mengalir',
+    discColor: '#185FA5',
+    name: 'oldbalanceDest',
+    meaning: 'Saldo penerima sebelum menerima dana',
+    color: '#185FA5', light: '#E6F1FB', text: '#0C447C',
+    why: 'Saldo awal penerima membantu model memahami konteks akun tujuan. Apakah akun penerima adalah akun yang aktif dengan riwayat saldo yang wajar, atau akun yang tidak pernah aktif dan tiba-tiba menerima dana besar? Pola yang terakhir sering menjadi indikasi akun penampung dalam skema fraud.',
+    badge: 'Konteks akun tujuan dana'
+  },
+  {
+    disc: 'Perubahan saldo penerima menunjukkan apakah dana langsung ditarik atau disimpan',
+    discColor: '#185FA5',
+    name: 'newbalanceDest',
+    meaning: 'Saldo penerima sesudah menerima dana',
+    color: '#185FA5', light: '#E6F1FB', text: '#0C447C',
+    why: 'Saldo akhir penerima melengkapi analisis pergerakan dana. Dalam pola fraud yang umum, dana yang masuk ke akun penerima segera ditarik — sehingga saldo akhir penerima kembali mendekati nol meski baru saja menerima dana besar. Pola "masuk langsung keluar" ini adalah sinyal yang penting untuk dikenali model.',
+    badge: 'Pola pergerakan dana di akun tujuan'
+  },
+  {
+    disc: 'Fraud terjadi di semua jam — tapi waktu tetap bagian dari pola keseluruhan',
+    discColor: '#639922',
+    name: 'step',
+    meaning: 'Waktu transaksi (jam ke-berapa)',
+    color: '#639922', light: '#EAF3DE', text: '#27500A',
+    why: 'Meskipun waktu transaksi sendirian bukan penentu fraud (korelasi hanya 0.032), ia tetap dimasukkan karena memberikan konteks temporal. Model perlu mengetahui kapan transaksi terjadi untuk memahami pola keseluruhan — misalnya apakah ada serangkaian transaksi mencurigakan yang terjadi dalam waktu berdekatan di jam yang sama.',
+    badge: 'Konteks waktu — bagian dari pola keseluruhan'
+  }
+];
+
+var selectedIdx = null;
+
+function buildJourney() {
+  var wrap = document.getElementById('journeyWrap');
+  wrap.innerHTML = '';
+
+  features.forEach(function(f, i) {
+    // connector between items (not before first)
+    if (i > 0) {
+      var conn = document.createElement('div');
+      conn.className = 'connector';
+      wrap.appendChild(conn);
+    }
+
+    var item = document.createElement('div');
+    item.className = 'journey-item';
+
+    // left: discovery
+    var disc = document.createElement('div');
+    disc.className = 'disc-box';
+    if (selectedIdx === i) {
+      disc.style.background = f.light;
+      disc.style.borderColor = f.color;
+    }
+    disc.innerHTML = '<div class="disc-tag">Temuan eksplorasi</div>' +
+      '<div class="disc-txt">' + f.disc + '</div>';
+
+    // middle: arrow
+    var arrow = document.createElement('div');
+    arrow.className = 'arrow-col';
+    if (selectedIdx === i) {
+      arrow.style.background = f.light;
+      arrow.style.borderColor = f.color;
+    }
+    arrow.innerHTML = '<svg class="arrow-svg" viewBox="0 0 20 20" fill="none">' +
+      '<path d="M4 10h12M12 6l4 4-4 4" stroke="' + (selectedIdx===i ? f.color : '#ccc') + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg>';
+
+    // right: feature
+    var feat = document.createElement('div');
+    feat.className = 'feat-card';
+    feat.style.background = selectedIdx === i ? f.light : 'white';
+    feat.style.borderColor = selectedIdx === i ? f.color : '#e8e6df';
+    feat.innerHTML =
+      '<div class="feat-header">' +
+        '<span class="feat-badge" style="background:' + (selectedIdx===i ? f.color : f.light) + ';color:' + (selectedIdx===i ? 'white' : f.color) + ';">' + f.name + '</span>' +
+      '</div>' +
+      '<div class="feat-meaning" style="color:' + (selectedIdx===i ? f.text : '#aaa') + ';">' + f.meaning + '</div>' +
+      '<div class="feat-why" style="color:' + (selectedIdx===i ? f.text : '#888') + ';margin-top:4px;font-size:11px;">' +
+        (selectedIdx===i ? f.why.substring(0,80)+'...' : f.meaning) +
+      '</div>';
+
+    // click
+    ;(function(idx, f) {
+      [disc, arrow, feat, item].forEach(function(el) {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', function() {
+          selectedIdx = idx;
+          buildJourney();
+          showInsight(f);
+        });
+      });
+    })(i, f);
+
+    item.appendChild(disc);
+    item.appendChild(arrow);
+    item.appendChild(feat);
+    wrap.appendChild(item);
+  });
+}
+
+function showInsight(f) {
+  var panel = document.getElementById('insightPanel');
+  var lbl   = document.getElementById('insLbl');
+  var txt   = document.getElementById('insTxt');
+  var badge = document.getElementById('insBadge');
+
+  panel.style.background   = f.light;
+  panel.style.borderColor  = f.color;
+  lbl.style.color  = f.color;
+  lbl.textContent  = f.name + ' — ' + f.meaning;
+  txt.style.color  = f.text;
+  txt.textContent  = f.why;
+  badge.style.display    = 'inline-block';
+  badge.style.background = f.color;
+  badge.textContent      = f.badge;
+}
+
+buildJourney();
+</script>
+</body>
+</html>
