@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model = Decision Support — 7 Slides</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #eceae4;
+    padding: 32px 24px;
+    min-height: 100vh;
+  }
+
+  /* ── CAROUSEL WRAPPER ── */
+  .carousel-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #aaa; text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .carousel-outer {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .slides-wrap {
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
+  .slides-track {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* each slide: 900×506 (16:9 landscape) */
+  .slide {
+    min-width: 900px;
+    height: 506px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── SLIDE NAV ── */
+  .nav-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; margin-top: 20px;
+  }
+  .nav-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: none; background: white; color: #1a1a18;
+    font-size: 16px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { background: #1a1a18; color: white; }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .dots { display: flex; gap: 6px; align-items: center; }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #ccc; transition: all 0.2s; cursor: pointer;
+  }
+  .dot.active { background: #1a1a18; width: 20px; border-radius: 4px; }
+
+  .slide-counter {
+    font-size: 11px; color: #aaa; min-width: 40px; text-align: center;
+  }
+
+  /* ── SLIDE THEMES ── */
+
+  /* S1: dark hero */
+  .s1 { background: #1a1a18; }
+  .s1 .s-tag   { color: #639922; }
+  .s1 .s-title { color: #fff; font-family: 'DM Serif Display', serif; font-size: 38px; font-weight: 400; line-height: 1.2; }
+  .s1 .s-sub   { color: #888; font-size: 14px; margin-top: 10px; }
+
+  /* flow bar */
+  .flow-bar {
+    display: flex; align-items: center; gap: 0;
+    margin-top: 32px;
+  }
+  .flow-item {
+    background: #2a2a28; border-radius: 8px;
+    padding: 10px 18px; text-align: center;
+    transition: all 0.2s;
+  }
+  .flow-item.big {
+    background: #639922; padding: 14px 24px;
+    box-shadow: 0 4px 16px rgba(99,153,34,0.3);
+  }
+  .flow-item .fi-label { font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #666; margin-bottom: 3px; }
+  .flow-item.big .fi-label { color: rgba(255,255,255,0.7); }
+  .flow-item .fi-name { font-size: 14px; font-weight: 600; color: #aaa; }
+  .flow-item.big .fi-name { font-size: 16px; color: #fff; }
+  .flow-arrow { font-size: 18px; color: #444; padding: 0 8px; }
+
+  /* S2: problem */
+  .s2 { background: #fafaf8; }
+  .s2 .s-tag   { color: #E24B4A; }
+  .s2 .s-title { color: #1a1a18; font-family: 'DM Serif Display', serif; font-size: 30px; font-weight: 400; line-height: 1.25; }
+
+  .signal-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin: 24px 0 20px;
+  }
+  .signal-box {
+    background: #f2f0ea; border-radius: 10px;
+    padding: 14px 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .signal-icon { font-size: 22px; }
+  .signal-txt  { font-size: 13px; font-weight: 500; color: #444; }
+
+  .problem-footer {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; background: #FCEBEB;
+    border-radius: 10px; border-left: 3px solid #E24B4A;
+  }
+  .problem-footer .pf-x { font-size: 18px; }
+  .problem-footer .pf-txt { font-size: 13px; color: #791F1F; font-weight: 500; }
+
+  /* S3: ML role */
+  .s3 { background: #1a1a18; }
+  .s3 .s-tag   { color: #378ADD; }
+  .s3 .s-title { color: #fff; font-family: 'DM Serif Display', serif; font-size: 30px; font-weight: 400; line-height: 1.25; }
+
+  .ml-flow {
+    display: flex; gap: 0; align-items: stretch;
+    margin-top: 28px; border-radius: 12px; overflow: hidden;
+  }
+  .ml-col {
+    flex: 1; padding: 20px 18px; text-align: center;
+  }
+  .ml-col.input  { background: #2a2a28; }
+  .ml-col.process{ background: #185FA5; }
+  .ml-col.output { background: #2a2a28; }
+  .ml-col .mc-tag   { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+  .ml-col.input  .mc-tag { color: #666; }
+  .ml-col.process.mc-tag { color: rgba(255,255,255,0.6); }
+  .ml-col.output .mc-tag { color: #666; }
+  .ml-col .mc-icon  { font-size: 28px; margin-bottom: 8px; }
+  .ml-col .mc-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .ml-col.input  .mc-title { color: #aaa; }
+  .ml-col.process .mc-title { color: #fff; }
+  .ml-col.output .mc-title { color: #aaa; }
+  .ml-col .mc-items { font-size: 11px; line-height: 1.8; }
+  .ml-col.input  .mc-items { color: #666; }
+  .ml-col.process .mc-items { color: rgba(255,255,255,0.75); }
+  .ml-col.output .mc-items { color: #666; }
+  .ml-divider { width: 2px; background: #111; align-self: stretch; }
+  .ml-caption { font-size: 12px; color: #555; margin-top: 16px; font-style: italic; }
+
+  /* S4: limitation */
+  .s4 { background: #fafaf8; }
+  .s4 .s-tag   { color: #EF9F27; }
+  .s4 .s-title { color: #1a1a18; font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; line-height: 1.25; margin-bottom: 24px; }
+
+  .limit-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-bottom: 24px;
+  }
+  .limit-col { border-radius: 10px; padding: 18px 18px; }
+  .limit-col.can    { background: #EAF3DE; }
+  .limit-col.cannot { background: #FCEBEB; }
+  .limit-col .lc-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+  .limit-col.can    .lc-tag { color: #3B6D11; }
+  .limit-col.cannot .lc-tag { color: #A32D2D; }
+  .limit-col .lc-item { font-size: 13px; font-weight: 500; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 8px; }
+  .limit-col.can    .lc-item { color: #27500A; }
+  .limit-col.cannot .lc-item { color: #791F1F; }
+  .lc-mark { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+  .punchline {
+    background: #1a1a18; border-radius: 10px;
+    padding: 16px 24px; text-align: center;
+  }
+  .punchline p { font-size: 18px; font-weight: 600; color: #fff; line-height: 1.4; }
+  .punchline span { color: #639922; }
+
+  /* S5: analogy */
+  .s5 { background: #1a1a18; }
+  .s5 .s-tag   { color: #EF9F27; }
+  .s5 .s-title { color: #fff; font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; line-height: 1.25; margin-bottom: 28px; }
+
+  .analogy-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-bottom: 20px;
+  }
+  .analogy-col { border-radius: 12px; padding: 20px 18px; }
+  .analogy-col.mri { background: #2a2a28; }
+  .analogy-col.ml  { background: #185FA5; }
+  .analogy-col .ac-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .analogy-col.mri .ac-tag { color: #666; }
+  .analogy-col.ml  .ac-tag { color: rgba(255,255,255,0.6); }
+  .analogy-col .ac-icon  { font-size: 28px; margin-bottom: 8px; }
+  .analogy-col .ac-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+  .analogy-col.mri .ac-title { color: #ccc; }
+  .analogy-col.ml  .ac-title { color: #fff; }
+  .analogy-col .ac-item { font-size: 12px; margin-bottom: 6px; display: flex; gap: 7px; }
+  .analogy-col.mri .ac-item { color: #888; }
+  .analogy-col.ml  .ac-item { color: rgba(255,255,255,0.75); }
+
+  .analogy-footer {
+    background: #2a2a28; border-radius: 10px;
+    padding: 14px 20px; text-align: center;
+    font-size: 14px; font-weight: 500; color: #aaa;
+  }
+  .analogy-footer strong { color: #fff; }
+
+  /* S6: collaboration */
+  .s6 { background: #fafaf8; }
+  .s6 .s-tag   { color: #185FA5; }
+  .s6 .s-title { color: #1a1a18; font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; line-height: 1.25; margin-bottom: 28px; }
+
+  .collab-grid {
+    display: grid; grid-template-columns: 1fr 60px 1fr;
+    gap: 0; align-items: center; margin-bottom: 20px;
+  }
+  .collab-col { border-radius: 12px; padding: 20px 18px; }
+  .collab-col.analyst { background: #E6F1FB; }
+  .collab-col.auditor { background: #EAF3DE; }
+  .collab-col .cc-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .collab-col.analyst .cc-tag { color: #185FA5; }
+  .collab-col.auditor .cc-tag { color: #3B6D11; }
+  .collab-col .cc-icon  { font-size: 28px; margin-bottom: 8px; }
+  .collab-col .cc-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+  .collab-col.analyst .cc-title { color: #0C447C; }
+  .collab-col.auditor .cc-title { color: #27500A; }
+  .collab-col .cc-item { font-size: 12px; margin-bottom: 6px; display: flex; gap: 7px; }
+  .collab-col.analyst .cc-item { color: #378ADD; }
+  .collab-col.auditor .cc-item { color: #639922; }
+
+  .collab-center { text-align: center; font-size: 28px; color: #ccc; }
+
+  .collab-footer {
+    background: #f2f0ea; border-radius: 10px;
+    padding: 12px 20px; text-align: center;
+    font-size: 13px; color: #555;
+  }
+  .collab-footer strong { color: #1a1a18; }
+
+  /* S7: closing */
+  .s7 {
+    background: linear-gradient(135deg, #1a1a18 0%, #2a3a1a 100%);
+    text-align: center;
+  }
+  .s7 .s-tag   { color: #639922; margin-bottom: 16px; }
+  .s7 .s-title { color: #fff; font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; line-height: 1.3; margin-bottom: 16px; }
+  .s7 .s-big   { font-family: 'DM Serif Display', serif; font-size: 36px; font-weight: 400; color: #639922; line-height: 1.25; margin-bottom: 16px; }
+  .s7 .s-sub   { font-size: 14px; color: #888; margin-bottom: 28px; font-style: italic; }
+  .s7 .refs    { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .s7 .ref-pill { background: rgba(255,255,255,0.08); border-radius: 20px; padding: 5px 14px; font-size: 11px; color: #666; }
+
+  /* shared */
+  .s-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="carousel-label">Audit & Data Insight Journey — Machine Learning for Audit</div>
+
+<div class="carousel-outer">
+  <div class="slides-wrap">
+    <div class="slides-track" id="track">
+
+      <!-- ═══════════════════════════════════════════════ SLIDE 1 -->
+      <div class="slide s1">
+        <div class="s-tag">Machine Learning for Risk Signal Detection</div>
+        <div class="s-title">Model memberi sinyal.<br>Auditor yang memutuskan.</div>
+        <div class="s-sub">Mengapa AI dalam audit bekerja sebagai alat bantu — bukan pengambil keputusan.</div>
+
+        <div class="flow-bar">
+          <div class="flow-item">
+            <div class="fi-label">Input</div>
+            <div class="fi-name">Data</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">
+            <div class="fi-label">Proses</div>
+            <div class="fi-name">Model</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item">
+            <div class="fi-label">Output</div>
+            <div class="fi-name">Risk Score</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-item big">
+            <div class="fi-label">Keputusan</div>
+            <div class="fi-name">AUDITOR</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════ SLIDE 2 -->
+      <div class="slide s2">
+        <div class="s-tag">Masalah</div>
+        <div class="s-title">Fraud tidak muncul sebagai satu tanda yang jelas.</div>
+
+        <div class="signal-grid">
+          <div class="signal-box">
+            <div class="signal-icon">💰</div>
+            <div class="signal-txt">Nilai transaksi tinggi</div>
+          </div>
+          <div class="signal-box">
+            <div class="signal-icon">🕐</div>
+            <div class="signal-txt">Waktu transaksi tidak biasa</div>
+          </div>
+          <div class="signal-box">
+            <div class="signal-icon">📉</div>
+            <div class="signal-txt">Perubahan saldo mendadak</div>
+          </div>
+          <div class="signal-box">
+            <div class="signal-icon">🔀</div>
+            <div class="signal-txt">Jenis transaksi tertentu</div>
+          </div>
+        </div>
+
+        <div class="problem-footer">
+          <div class="pf-x">❌</div>
+          <div class="pf-txt">Tidak ada satu indikator yang cukup. Fraud biasanya muncul dari kombinasi banyak sinyal sekaligus.</div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════ SLIDE 3 -->
+      <div class="slide s3">
+        <div class="s-tag">Peran Machine Learning</div>
+        <div class="s-title" style="color:#fff;">Machine learning membaca banyak sinyal sekaligus.</div>
+
+        <div class="ml-flow">
+          <div class="ml-col input">
+            <div class="mc-tag" style="color:#666;">Transaksi masuk</div>
+            <div class="mc-icon">🗄️</div>
+            <div class="mc-title">6,3 juta transaksi</div>
+            <div class="mc-items">Semua diperiksa<br>Bukan sampel<br>Sekaligus</div>
+          </div>
+          <div class="ml-divider"></div>
+          <div class="ml-col process" style="background:#185FA5;">
+            <div class="mc-tag" style="color:rgba(255,255,255,0.6);">Model membaca</div>
+            <div class="mc-icon">🤖</div>
+            <div class="mc-title" style="color:#fff;">Banyak sinyal bersamaan</div>
+            <div class="mc-items" style="color:rgba(255,255,255,0.8);">Nilai transaksi<br>Perubahan saldo<br>Jenis transaksi<br>Waktu</div>
+          </div>
+          <div class="ml-divider"></div>
+          <div class="ml-col output">
+            <div class="mc-tag" style="color:#666;">Hasil</div>
+            <div class="mc-icon">📋</div>
+            <div class="mc-title">"Transaksi ini berisiko tinggi"</div>
+            <div class="mc-items">Diurutkan dari<br>yang paling<br>berisiko</div>
+          </div>
+        </div>
+        <div class="ml-caption" style="color:#555;">Model membantu menemukan pola yang sulit terlihat secara manual.</div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════ SLIDE 4 -->
+      <div class="slide s4">
+        <div class="s-tag">Batasan Model</div>
+        <div class="s-title">Tapi model tidak memahami konteks bisnis.</div>
+
+        <div class="limit-grid">
+          <div class="limit-col can">
+            <div class="lc-tag">Model bisa ✅</div>
+            <div class="lc-item"><span class="lc-mark">✅</span> Membaca pola transaksi</div>
+            <div class="lc-item"><span class="lc-mark">✅</span> Memberi risk score</div>
+            <div class="lc-item"><span class="lc-mark">✅</span> Memprioritaskan area berisiko</div>
+          </div>
+          <div class="limit-col cannot">
+            <div class="lc-tag">Model tidak bisa ❌</div>
+            <div class="lc-item"><span class="lc-mark">❌</span> Wawancara manajemen</div>
+            <div class="lc-item"><span class="lc-mark">❌</span> Memahami konteks bisnis klien</div>
+            <div class="lc-item"><span class="lc-mark">❌</span> Mengevaluasi penjelasan klien</div>
+            <div class="lc-item"><span class="lc-mark">❌</span> Mengambil keputusan audit</div>
+          </div>
+        </div>
+
+        <div class="punchline">
+          <p>Model memberi sinyal. <span>Auditor yang memutuskan.</span></p>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════ SLIDE 5 -->
+      <div class="slide s5">
+        <div class="s-tag">Analogi</div>
+        <div class="s-title">Machine learning dalam audit mirip MRI pada dokter.</div>
+
+        <div class="analogy-grid">
+          <div class="analogy-col mri">
+            <div class="ac-tag">MRI</div>
+            <div class="ac-icon">🏥</div>
+            <div class="ac-title">Alat bantu dokter</div>
+            <div class="ac-item"><span>→</span> Menghasilkan gambar detail</div>
+            <div class="ac-item"><span>→</span> Membantu mendeteksi masalah</div>
+            <div class="ac-item"><span>→</span> Bukan yang menentukan diagnosis</div>
+          </div>
+          <div class="analogy-col ml">
+            <div class="ac-tag">Machine Learning</div>
+            <div class="ac-icon">🤖</div>
+            <div class="ac-title">Alat bantu auditor</div>
+            <div class="ac-item"><span>→</span> Menghasilkan risk score</div>
+            <div class="ac-item"><span>→</span> Membantu mendeteksi fraud</div>
+            <div class="ac-item"><span>→</span> Bukan yang menentukan kesimpulan audit</div>
+          </div>
+        </div>
+
+        <div class="analogy-footer">
+          Dokter tetap memutuskan. &nbsp;|&nbsp; <strong>Auditor juga tetap memutuskan.</strong>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════ SLIDE 6 -->
+      <div class="slide s6">
+        <div class="s-tag">Kolaborasi</div>
+        <div class="s-title">Audit modern semakin kolaboratif.</div>
+
+        <div class="collab-grid">
+          <div class="collab-col analyst">
+            <div class="cc-tag">Data Analyst</div>
+            <div class="cc-icon">💻</div>
+            <div class="cc-title">Mengolah data & model</div>
+            <div class="cc-item"><span>→</span> Memproses data transaksi</div>
+            <div class="cc-item"><span>→</span> Membangun dan melatih model</div>
+            <div class="cc-item"><span>→</span> Menghasilkan daftar prioritas risiko</div>
+          </div>
+          <div class="collab-center">⇄</div>
+          <div class="collab-col auditor">
+            <div class="cc-tag">Auditor</div>
+            <div class="cc-icon">👩‍💼</div>
+            <div class="cc-title">Memeriksa & memutuskan</div>
+            <div class="cc-item"><span>→</span> Memahami konteks bisnis klien</div>
+            <div class="cc-item"><span>→</span> Mengevaluasi area berisiko</div>
+            <div class="cc-item"><span>→</span> Mengambil keputusan audit</div>
+          </div>
+        </div>
+
+        <div class="collab-footer">
+          Teknologi memperluas jangkauan auditor. <strong>Bukan menggantikannya.</strong>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════ SLIDE 7 -->
+      <div class="slide s7">
+        <div class="s-tag">Penutup</div>
+        <div class="s-title">Masa depan audit bukan manusia vs AI.</div>
+        <div class="s-big">Tetapi manusia yang mampu<br>bekerja bersama AI.</div>
+        <div class="s-sub">Dan mungkin, itulah bentuk profesi audit yang sedang berkembang hari ini.</div>
+        <div class="refs">
+          <span class="ref-pill">IIA GIAS 2025</span>
+          <span class="ref-pill">KPMG Trusted AI Framework</span>
+          <span class="ref-pill">Nirwana & Permana (2025)</span>
+          <span class="ref-pill">PaySim — Lopez Rojas et al. (2016)</span>
+        </div>
+      </div>
+
+    </div><!-- /slides-track -->
+  </div><!-- /slides-wrap -->
+
+  <!-- NAVIGATION -->
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn" onclick="go(-1)" disabled>‹</button>
+    <div class="dots" id="dotsWrap"></div>
+    <button class="nav-btn" id="nextBtn" onclick="go(1)">›</button>
+    <div class="slide-counter" id="counter">1 / 7</div>
+  </div>
+</div>
+
+<script>
+var total = 7;
+var cur   = 0;
+
+var track   = document.getElementById('track');
+var dots    = document.getElementById('dotsWrap');
+var prevBtn = document.getElementById('prevBtn');
+var nextBtn = document.getElementById('nextBtn');
+var counter = document.getElementById('counter');
+
+// build dots
+for (var i = 0; i < total; i++) {
+  var d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.setAttribute('data-i', i);
+  d.addEventListener('click', (function(idx){ return function(){ goTo(idx); }; })(i));
+  dots.appendChild(d);
+}
+
+function goTo(idx) {
+  cur = idx;
+  track.style.transform = 'translateX(-' + (cur * 900) + 'px)';
+  dots.querySelectorAll('.dot').forEach(function(d, i) {
+    d.classList.toggle('active', i === cur);
+  });
+  prevBtn.disabled = cur === 0;
+  nextBtn.disabled = cur === total - 1;
+  counter.textContent = (cur + 1) + ' / ' + total;
+}
+
+function go(dir) {
+  var next = cur + dir;
+  if (next >= 0 && next < total) goTo(next);
+}
+
+// keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight') go(1);
+  if (e.key === 'ArrowLeft')  go(-1);
+});
+</script>
+</body>
+</html>
