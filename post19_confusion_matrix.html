@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post 19 — Confusion Matrix</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #eceae4;
+    padding: 32px 24px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .page-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #aaa;
+    margin-bottom: 14px; text-align: center;
+  }
+
+  /* ── MAIN CARD ── */
+  .main-card {
+    width: 980px;
+    background: #fafaf8;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+
+  /* ── TOP HEADER BAND ── */
+  .top-band {
+    background: #1a1a18;
+    padding: 20px 28px;
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 24px;
+  }
+  .tb-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #639922; margin-bottom: 5px; }
+  .tb-title { font-family: 'DM Serif Display', serif; font-size: 19px; font-weight: 400; color: #fff; line-height: 1.3; }
+  .tb-sub { font-size: 11px; color: #555; margin-top: 4px; }
+
+  .top-pills { display: flex; gap: 8px; flex-shrink: 0; align-items: flex-start; }
+  .tp-pill {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 8px 14px; text-align: center;
+  }
+  .tp-pill.hi { background: rgba(226,75,74,0.18); border-color: rgba(226,75,74,0.4); }
+  .tp-pill .pv { font-size: 15px; font-weight: 700; color: #fff; }
+  .tp-pill.hi .pv { color: #E24B4A; }
+  .tp-pill .pl { font-size: 9px; color: #555; margin-top: 2px; }
+
+  /* ── BODY: left (matrix + flow) | divider | right (detail) ── */
+  .body-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1px 340px;
+    min-height: 480px;
+  }
+
+  /* ══ LEFT COLUMN ══ */
+  .left-col { display: flex; flex-direction: column; }
+
+  /* -- Matrix section -- */
+  .matrix-section { padding: 20px 24px 16px; border-bottom: 1px solid #e8e6df; }
+
+  .matrix-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .mh-title { font-size: 12px; font-weight: 600; color: #555; }
+  .mh-hint  { font-size: 10px; color: #bbb; font-style: italic; }
+
+  /* grid: blank | col-label | col-label / row-label | cell | cell */
+  .matrix-grid {
+    display: grid;
+    grid-template-columns: 78px 1fr 1fr;
+    grid-template-rows: 26px 1fr 1fr;
+    gap: 6px;
+  }
+  .ax-blank {}
+  .ax-col {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.07em;
+    text-transform: uppercase; border-radius: 6px; padding: 4px 8px;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+  }
+  .ax-col.pf { background: #FCEBEB; color: #A32D2D; }
+  .ax-col.pn { background: #EAF3DE; color: #3B6D11; }
+  .ax-row {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #888; display: flex;
+    align-items: center; justify-content: flex-end;
+    padding-right: 8px; text-align: right; line-height: 1.3;
+  }
+
+  /* cells */
+  .m-cell {
+    border-radius: 10px; padding: 13px 12px;
+    cursor: pointer; border: 2px solid transparent;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-height: 110px; position: relative;
+  }
+  .m-cell:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
+  .m-cell.active { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+
+  .cell-tp { background: #EAF3DE; }
+  .cell-tp.active { border-color: #639922; }
+  .cell-fn { background: #E24B4A; }
+  .cell-fn.active { border-color: #E24B4A; }
+  .cell-fp { background: #FAEEDA; }
+  .cell-fp.active { border-color: #EF9F27; }
+  .cell-tn { background: #E6F1FB; }
+  .cell-tn.active { border-color: #185FA5; }
+
+  .cell-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 4px; }
+  .cbadge {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 10px;
+  }
+  .cell-tp .cbadge { background: rgba(99,153,34,0.15); color: #27500A; }
+  .cell-fn .cbadge { background: rgba(255,255,255,0.2); color: #fff; }
+  .cell-fn .calert { background: #fff; color: #E24B4A; }
+  .cell-fn.active { border-color: #9B1C1C; box-shadow: 0 6px 20px rgba(226,75,74,0.4); }
+  .cell-fp .cbadge { background: rgba(239,159,39,0.15); color: #633806; }
+  .cell-tn .cbadge { background: rgba(24,95,165,0.12); color: #0C447C; }
+
+  .calert { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 10px; background: #E24B4A; color: white; }
+
+  .cval  { font-size: 26px; font-weight: 700; line-height: 1; margin-top: 6px; }
+  .cell-tp .cval { color: #27500A; }
+  .cell-fn .cval  { color: #fff; }
+  .cell-fn .cname { color: rgba(255,255,255,0.9); }
+  .cell-fn .cmini { color: rgba(255,255,255,0.65); }
+  .cell-fp .cval { color: #633806; }
+  .cell-tn .cval { color: #0C447C; }
+
+  .cname { font-size: 11px; font-weight: 600; margin-top: 2px; }
+  .cell-tp .cname { color: #3B6D11; }
+  .cell-fn .cname { color: #A32D2D; }
+  .cell-fp .cname { color: #854F0B; }
+  .cell-tn .cname { color: #185FA5; }
+
+  .cmini { font-size: 10px; margin-top: 3px; opacity: 0.65; line-height: 1.3; }
+
+  /* -- Flow section (below matrix) -- */
+  .flow-section {
+    padding: 16px 24px 20px;
+    display: flex; flex-direction: column; gap: 8px;
+    flex: 1;
+  }
+  .fs-title { font-size: 12px; font-weight: 600; color: #1a1a18; }
+  .fs-sub   { font-size: 10px; color: #aaa; font-style: italic; margin-bottom: 2px; }
+
+  .flow-steps { display: flex; flex-direction: column; gap: 3px; }
+  .fstep { display: flex; gap: 8px; align-items: flex-start; }
+  .fnum {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #1a1a18; color: white; font-size: 9px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .fcontent { flex: 1; }
+  .ftitle { font-size: 11px; font-weight: 600; color: #333; margin-bottom: 2px; }
+  .fbody  { font-size: 10px; color: #777; line-height: 1.5; }
+  .farrow { padding-left: 9px; font-size: 11px; color: #ccc; line-height: 1; }
+
+  .fsplit { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 3px; }
+  .fsplit-l { font-size: 10px; font-weight: 500; padding: 4px 8px; border-radius: 6px; background: #FCEBEB; color: #791F1F; text-align: center; }
+  .fsplit-r { font-size: 10px; font-weight: 500; padding: 4px 8px; border-radius: 6px; background: #EAF3DE; color: #27500A; text-align: center; }
+
+  .foutcomes { display: flex; flex-direction: column; gap: 3px; margin-top: 3px; }
+  .foutcome  { font-size: 10px; padding: 5px 8px; border-radius: 6px; line-height: 1.4; }
+  .fo-tp { background: #EAF3DE; color: #27500A; }
+  .fo-fn { background: #FCEBEB; color: #791F1F; font-weight: 500; }
+  .fo-fp { background: #FAEEDA; color: #633806; }
+  .fo-tn { background: #E6F1FB; color: #0C447C; }
+
+  .finsight { background: #1a1a18; border-radius: 8px; padding: 10px 13px; margin-top: 4px; }
+  .fi-label { font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #639922; margin-bottom: 4px; }
+  .fi-body  { font-size: 11px; color: #aaa; line-height: 1.55; }
+
+  /* ══ DIVIDER ══ */
+  .col-divider { background: #e8e6df; }
+
+  /* ══ RIGHT COLUMN: detail card ══ */
+  .right-col {
+    padding: 20px 20px;
+    display: flex; flex-direction: column; gap: 10px;
+    overflow-y: auto;
+  }
+
+  /* default empty state */
+  .empty-state {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 10px; text-align: center;
+  }
+  .es-icon { font-size: 28px; opacity: 0.25; }
+  .es-txt  { font-size: 11px; color: #ccc; line-height: 1.5; }
+
+  /* detail card */
+  .det-card { display: none; flex-direction: column; gap: 10px; }
+  .det-card.show { display: flex; }
+
+  .det-head { border-radius: 10px; padding: 13px 14px; }
+  .dh-tag   { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+  .dh-title { font-size: 14px; font-weight: 700; line-height: 1.25; margin-bottom: 6px; }
+  .dh-val   { font-size: 24px; font-weight: 700; line-height: 1; }
+  .dh-sub   { font-size: 10px; opacity: 0.7; margin-top: 2px; }
+
+  /* flow steps inside detail */
+  .det-flow { display: flex; flex-direction: column; gap: 3px; }
+  .df-step  { background: #f8f8f6; border-radius: 7px; padding: 8px 11px; }
+  .df-step.tradeoff { background: #f2f0ea; }
+  .dfs-label { font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #bbb; margin-bottom: 3px; }
+  .df-step.tradeoff .dfs-label { color: #aaa; }
+  .dfs-body  { font-size: 11px; color: #444; line-height: 1.55; }
+  .df-step.tradeoff .dfs-body { color: #777; font-style: italic; }
+  .df-arrow  { text-align: center; font-size: 11px; color: #ddd; line-height: 1; padding: 1px 0; }
+
+  /* ── BOTTOM STRIP ── */
+  .bottom-strip {
+    background: #f2f0ea; padding: 11px 28px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    border-top: 1px solid #e8e6df;
+  }
+  .bs-txt { font-size: 11px; color: #555; line-height: 1.5; }
+  .bs-txt strong { color: #1a1a18; }
+  .bs-refs { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+  .bs-ref  { font-size: 9px; padding: 3px 8px; border-radius: 10px; background: #e0ddd5; color: #888; }
+</style>
+</head>
+<body>
+
+<div class="page-label">Post 19 — Confusion Matrix · Audit & Data Insight Journey</div>
+
+<div class="main-card">
+
+  <!-- TOP BAND -->
+  <div class="top-band">
+    <div>
+      <div class="tb-tag">Confusion Matrix — Konteks Fintech Mobile Money</div>
+      <div class="tb-title">Empat kemungkinan hasil model — dan apa artinya bagi auditor</div>
+      <div class="tb-sub">Model diuji pada 1.272.524 transaksi. Klik setiap sel untuk membaca dampak auditnya.</div>
+    </div>
+    <div class="top-pills">
+      <div class="tp-pill"><div class="pv">1,27 jt</div><div class="pl">transaksi diuji</div></div>
+      <div class="tp-pill"><div class="pv">1.643</div><div class="pl">fraud sesungguhnya</div></div>
+      <div class="tp-pill hi"><div class="pv">7</div><div class="pl">fraud lolos</div></div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body-wrap">
+
+    <!-- ══ LEFT: matrix + flow ══ -->
+    <div class="left-col">
+
+      <!-- Matrix -->
+      <div class="matrix-section">
+        <div class="matrix-header">
+          <div class="mh-title">Hasil prediksi vs kenyataan</div>
+          <div class="mh-hint">Klik sel untuk detail →</div>
+        </div>
+        <div class="matrix-grid">
+          <div class="ax-blank"></div>
+          <div class="ax-col pf">Diprediksi Fraud</div>
+          <div class="ax-col pn">Diprediksi Normal</div>
+
+          <div class="ax-row">Kenyataannya Fraud</div>
+          <div class="m-cell cell-tp" id="c-tp" onclick="pick('tp')">
+            <div class="cell-top"><span class="cbadge">True Positive</span></div>
+            <div>
+              <div class="cval">1.636</div>
+              <div class="cname">Fraud terdeteksi ✓</div>
+              <div class="cmini">Model benar mengenali fraud</div>
+            </div>
+          </div>
+          <div class="m-cell cell-fn" id="c-fn" onclick="pick('fn')">
+            <div class="cell-top">
+              <span class="cbadge">False Negative</span>
+              <span class="calert">⚠ Kritis</span>
+            </div>
+            <div>
+              <div class="cval">7</div>
+              <div class="cname">Fraud yang lolos ✗</div>
+              <div class="cmini">Model salah menilai sebagai normal</div>
+            </div>
+          </div>
+
+          <div class="ax-row">Kenyataannya Normal</div>
+          <div class="m-cell cell-fp" id="c-fp" onclick="pick('fp')">
+            <div class="cell-top"><span class="cbadge">False Positive</span></div>
+            <div>
+              <div class="cval">107</div>
+              <div class="cname">Alarm palsu ✗</div>
+              <div class="cmini">Model salah menandai sebagai fraud</div>
+            </div>
+          </div>
+          <div class="m-cell cell-tn" id="c-tn" onclick="pick('tn')">
+            <div class="cell-top"><span class="cbadge">True Negative</span></div>
+            <div>
+              <div class="cval">1.270.774</div>
+              <div class="cname">Normal teridentifikasi ✓</div>
+              <div class="cmini">Model benar mengenali transaksi aman</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow explanation -->
+      <div class="flow-section">
+        <div class="fs-title">Bagaimana confusion matrix terbentuk?</div>
+        <div class="fs-sub">Setiap transaksi selalu melewati proses ini.</div>
+        <div class="flow-steps">
+
+          <div class="fstep">
+            <div class="fnum">1</div>
+            <div class="fcontent">
+              <div class="ftitle">Transaksi masuk</div>
+              <div class="fbody">Sistem menerima transaksi TRANSFER atau CASH_OUT.</div>
+            </div>
+          </div>
+          <div class="farrow">↓</div>
+
+          <div class="fstep">
+            <div class="fnum">2</div>
+            <div class="fcontent">
+              <div class="ftitle">Model mengevaluasi pola transaksi</div>
+              <div class="fbody">Model membaca jumlah transaksi, frekuensi, pola perpindahan dana, dan perilaku akun.</div>
+            </div>
+          </div>
+          <div class="farrow">↓</div>
+
+          <div class="fstep">
+            <div class="fnum">3</div>
+            <div class="fcontent">
+              <div class="ftitle">Model memberi prediksi</div>
+              <div class="fsplit">
+                <div class="fsplit-l">🟥 Diprediksi Fraud</div>
+                <div class="fsplit-r">🟩 Diprediksi Normal</div>
+              </div>
+            </div>
+          </div>
+          <div class="farrow">↓</div>
+
+          <div class="fstep">
+            <div class="fnum">4</div>
+            <div class="fcontent">
+              <div class="ftitle">Dibandingkan dengan kenyataan</div>
+              <div class="fbody">Apakah prediksi model sesuai kondisi sebenarnya?</div>
+            </div>
+          </div>
+          <div class="farrow">↓</div>
+
+          <div class="fstep">
+            <div class="fnum">5</div>
+            <div class="fcontent">
+              <div class="ftitle">Muncul 4 kemungkinan hasil</div>
+              <div class="foutcomes">
+                <div class="foutcome fo-tp">🟩 TRUE POSITIVE — Model benar mendeteksi fraud → kasus masuk prioritas investigasi</div>
+                <div class="foutcome fo-fn">🟥 FALSE NEGATIVE — Fraud lolos sebagai transaksi normal → risiko paling kritis dalam audit fraud</div>
+                <div class="foutcome fo-fp">🟨 FALSE POSITIVE — Transaksi normal ikut dicurigai → perlu verifikasi tambahan auditor</div>
+                <div class="foutcome fo-tn">🟦 TRUE NEGATIVE — Transaksi normal dikenali dengan benar → mayoritas transaksi tidak perlu diperiksa</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="finsight">
+          <div class="fi-label">Insight utama</div>
+          <div class="fi-body">Confusion matrix bukan hanya menunjukkan berapa sering model benar, tetapi juga jenis kesalahan yang masih dibuat model.</div>
+        </div>
+      </div>
+
+    </div><!-- /left-col -->
+
+    <!-- divider -->
+    <div class="col-divider"></div>
+
+    <!-- ══ RIGHT: detail card ══ -->
+    <div class="right-col">
+
+      <!-- empty state -->
+      <div class="empty-state" id="empty">
+        <div class="es-icon">👆</div>
+        <div class="es-txt">Klik salah satu sel di sebelah kiri untuk membaca dampak auditnya dalam konteks fintech mobile money.</div>
+      </div>
+
+      <!-- TP -->
+      <div class="det-card" id="d-tp">
+        <div class="det-head" style="background:#EAF3DE;">
+          <div class="dh-tag" style="color:#3B6D11;">True Positive — Fraud Terdeteksi</div>
+          <div class="dh-title" style="color:#27500A;">1.636 fraud berhasil ditemukan</div>
+          <div class="dh-val" style="color:#639922;">1.636</div>
+          <div class="dh-sub" style="color:#3B6D11;">transaksi fraud dikenali model</div>
+        </div>
+        <div class="det-flow">
+          <div class="df-step"><div class="dfs-label">STATE</div><div class="dfs-body">1.636 transaksi fraud berhasil dikenali model.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">PENYEBAB</div><div class="dfs-body">Pola transaksi fraud cukup berbeda dari aktivitas normal sehingga berhasil dikenali sistem.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">DAMPAK BISNIS</div><div class="dfs-body">Dana mencurigakan bisa segera ditahan, ditinjau, atau diinvestigasi sebelum kerugiannya membesar.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">IMPLIKASI AUDIT</div><div class="dfs-body">Auditor mendapat daftar prioritas investigasi tanpa harus memeriksa 1,27 juta transaksi secara manual.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step tradeoff"><div class="dfs-label">TRADE-OFF</div><div class="dfs-body">Semakin agresif model mencari fraud, biasanya jumlah alarm palsu juga ikut meningkat.</div></div>
+        </div>
+      </div>
+
+      <!-- FN -->
+      <div class="det-card" id="d-fn">
+        <div class="det-head" style="background:#FCEBEB;">
+          <div class="dh-tag" style="color:#A32D2D;">False Negative — Fraud Lolos ⚠ Paling Kritis</div>
+          <div class="dh-title" style="color:#791F1F;">7 fraud tidak terdeteksi model</div>
+          <div class="dh-val" style="color:#E24B4A;">7</div>
+          <div class="dh-sub" style="color:#A32D2D;">fraud lolos tanpa terdeteksi</div>
+        </div>
+        <div class="det-flow">
+          <div class="df-step"><div class="dfs-label">STATE</div><div class="dfs-body">7 transaksi fraud dinilai normal oleh model.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">PENYEBAB</div><div class="dfs-body">Pelaku berhasil menyamarkan pola transaksi agar terlihat seperti aktivitas normal.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">DAMPAK BISNIS</div><div class="dfs-body">Dana bisa berhasil dipindahkan, dilayering, dicairkan, atau digunakan kembali sebelum sempat dicegah.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">IMPLIKASI AUDIT</div><div class="dfs-body">Kasus seperti ini menjadi perhatian paling kritis karena setiap fraud yang lolos adalah potensi kerugian nyata yang tidak teridentifikasi lebih awal.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step tradeoff"><div class="dfs-label">TRADE-OFF</div><div class="dfs-body">Mengurangi fraud yang lolos biasanya membuat model lebih sensitif dan meningkatkan false positive.</div></div>
+        </div>
+      </div>
+
+      <!-- FP -->
+      <div class="det-card" id="d-fp">
+        <div class="det-head" style="background:#FAEEDA;">
+          <div class="dh-tag" style="color:#854F0B;">False Positive — Alarm Palsu</div>
+          <div class="dh-title" style="color:#633806;">107 transaksi normal salah ditandai</div>
+          <div class="dh-val" style="color:#EF9F27;">107</div>
+          <div class="dh-sub" style="color:#854F0B;">alarm palsu dihasilkan model</div>
+        </div>
+        <div class="det-flow">
+          <div class="df-step"><div class="dfs-label">STATE</div><div class="dfs-body">107 transaksi normal salah ditandai sebagai fraud.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">PENYEBAB</div><div class="dfs-body">Model melihat pola transaksi yang tampak mencurigakan padahal sebenarnya masih normal.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">DAMPAK BISNIS</div><div class="dfs-body">Transaksi bisa tertunda, perlu verifikasi tambahan, atau membuat pengalaman nasabah terganggu.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">IMPLIKASI AUDIT</div><div class="dfs-body">Auditor tetap perlu memeriksa kasus-kasus ini secara manual untuk memastikan tidak ada fraud yang terlewat.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step tradeoff"><div class="dfs-label">TRADE-OFF</div><div class="dfs-body">Semakin ketat model mendeteksi fraud, biasanya semakin banyak transaksi normal yang ikut tertandai.</div></div>
+        </div>
+      </div>
+
+      <!-- TN -->
+      <div class="det-card" id="d-tn">
+        <div class="det-head" style="background:#E6F1FB;">
+          <div class="dh-tag" style="color:#185FA5;">True Negative — Transaksi Normal Aman</div>
+          <div class="dh-title" style="color:#0C447C;">1.270.774 transaksi normal dikenali benar</div>
+          <div class="dh-val" style="color:#185FA5;">1.270.774</div>
+          <div class="dh-sub" style="color:#185FA5;">transaksi aman teridentifikasi</div>
+        </div>
+        <div class="det-flow">
+          <div class="df-step"><div class="dfs-label">STATE</div><div class="dfs-body">1.270.774 transaksi normal berhasil dikenali sebagai aman.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">PENYEBAB</div><div class="dfs-body">Mayoritas pola transaksi normal konsisten dan tidak menunjukkan indikator risiko fraud.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">DAMPAK BISNIS</div><div class="dfs-body">Sebagian besar transaksi dapat berjalan lancar tanpa gangguan atau investigasi tambahan.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step"><div class="dfs-label">IMPLIKASI AUDIT</div><div class="dfs-body">Inilah sumber efisiensi terbesar dalam audit berbasis data karena auditor bisa fokus hanya pada transaksi berisiko tinggi.</div></div>
+          <div class="df-arrow">↓</div>
+          <div class="df-step tradeoff"><div class="dfs-label">TRADE-OFF</div><div class="dfs-body">Jika model terlalu fokus menjaga transaksi tetap lancar, ada risiko sebagian fraud ikut lolos tanpa terdeteksi.</div></div>
+        </div>
+      </div>
+
+    </div><!-- /right-col -->
+
+  </div><!-- /body-wrap -->
+
+  <!-- BOTTOM STRIP -->
+  <div class="bottom-strip">
+    <div class="bs-txt"><strong>Kesimpulan kunci:</strong> False negative sekecil apapun tetap bermakna dalam audit fraud, karena setiap fraud yang lolos adalah kerugian nyata bagi nasabah yang tidak teridentifikasi lebih awal.</div>
+    <div class="bs-refs">
+      <span class="bs-ref">FATF 2025 — AML Mobile Money</span>
+      <span class="bs-ref">IIA GIAS 2025</span>
+      <span class="bs-ref">PaySim — EMSS 2016</span>
+      <span class="bs-ref">Rosliana Dwi Astuti</span>
+    </div>
+  </div>
+
+</div><!-- /main-card -->
+
+<script>
+var keys = ['tp','fn','fp','tn'];
+var cur  = null;
+
+function pick(key) {
+  /* reset all cells */
+  keys.forEach(function(k) {
+    document.getElementById('c-'+k).classList.remove('active');
+    document.getElementById('d-'+k).classList.remove('show');
+  });
+  /* hide/show */
+  document.getElementById('empty').style.display = 'none';
+  document.getElementById('c-'+key).classList.add('active');
+  document.getElementById('d-'+key).classList.add('show');
+  cur = key;
+}
+</script>
+
+</body>
+</html>
