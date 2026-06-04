@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul: Strategi Ketahanan Siber, Perspektif Internal Audit</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B1F3A;--navy-light:#2A4F7C;--accent:#0FA3B1;--accent-soft:#E3F7F9;--amber:#E8A838;--amber-soft:#FDF3DC;--red-soft:#FDE8E8;--red:#C94040;--green:#2E7D5E;--green-soft:#E5F5EE;--gray-100:#F6F7F9;--gray-200:#EAECF0;--gray-400:#9BA3AF;--gray-600:#4B5563;--text:#1A2535;--text-muted:#5A6475;--border:rgba(11,31,58,0.12);--shadow-sm:0 1px 3px rgba(11,31,58,0.08);--radius:12px;--radius-sm:8px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--text);line-height:1.7;font-size:15px;}
+.hero{background:var(--navy);color:white;padding:0;position:relative;overflow:hidden;}
+.hero-inner{max-width:900px;margin:0 auto;padding:56px 40px 48px;position:relative;z-index:2;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;border:60px solid rgba(15,163,177,0.1);}
+.hero::after{content:'';position:absolute;bottom:-60px;left:40%;width:250px;height:250px;border-radius:50%;border:40px solid rgba(15,163,177,0.06);}
+.badge-event{display:inline-flex;align-items:center;gap:8px;background:rgba(15,163,177,0.18);color:#7FD9E2;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;border:1px solid rgba(15,163,177,0.3);margin-bottom:20px;}
+.badge-event span{width:6px;height:6px;border-radius:50%;background:#0FA3B1;display:inline-block;}
+.hero h1{font-family:'Lora',serif;font-size:34px;font-weight:600;line-height:1.25;color:white;margin-bottom:16px;max-width:640px;}
+.hero-sub{color:rgba(255,255,255,0.62);font-size:15px;max-width:560px;margin-bottom:32px;line-height:1.65;}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;}
+.meta-item{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.55);}
+.meta-item strong{color:rgba(255,255,255,0.85);font-weight:500;}
+.meta-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.3);display:inline-block;}
+.nav-strip{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
+.nav-wrap{max-width:900px;margin:0 auto;padding:0 40px;display:flex;align-items:stretch;position:relative;}
+.nav-inner{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;}
+.nav-inner::-webkit-scrollbar{display:none;}
+.nav-tab{display:flex;align-items:center;gap:6px;padding:13px 13px;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+.nav-tab:hover{color:var(--navy);}
+.nav-tab.active{color:var(--navy);border-bottom-color:var(--accent);}
+.nav-num{width:19px;height:19px;border-radius:50%;background:var(--gray-200);color:var(--gray-600);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-tab.active .nav-num{background:var(--accent);color:white;}
+.nav-arrow{flex-shrink:0;width:32px;background:white;border:none;cursor:pointer;font-size:16px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;transition:color 0.15s;border-bottom:2px solid transparent;padding:0;}
+.nav-arrow:hover{color:var(--navy);}
+.nav-arrow.hidden{opacity:0;pointer-events:none;}
+.main{max-width:900px;margin:0 auto;padding:40px 40px 80px;}
+.section{display:none;}
+.section.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.section-header{margin-bottom:32px;}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+.section-header h2{font-family:'Lora',serif;font-size:26px;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:12px;}
+.section-header p{color:var(--text-muted);font-size:15px;line-height:1.7;max-width:680px;}
+.card{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:24px 28px;margin-bottom:20px;box-shadow:var(--shadow-sm);}
+.card-title{font-weight:600;font-size:15px;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.card p{color:var(--text-muted);font-size:14px;line-height:1.7;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+.stat-card{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:20px 22px;box-shadow:var(--shadow-sm);}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:8px;}
+.stat-value{font-family:'Lora',serif;font-size:28px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.stat-desc{font-size:12px;color:var(--text-muted);line-height:1.5;}
+.accent-card{border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;border-left:4px solid;}
+.accent-card.blue{background:#EEF6FC;border-color:var(--accent);}
+.accent-card.amber{background:var(--amber-soft);border-color:var(--amber);}
+.accent-card.red{background:var(--red-soft);border-color:var(--red);}
+.accent-card.green{background:var(--green-soft);border-color:var(--green);}
+.accent-card .ac-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:7px;}
+.accent-card.blue .ac-label{color:#0B7E8A;}
+.accent-card.amber .ac-label{color:#8B5E0A;}
+.accent-card.red .ac-label{color:#8B2020;}
+.accent-card.green .ac-label{color:#1B5C3D;}
+.accent-card p{font-size:14px;color:var(--text);line-height:1.65;}
+.accent-card strong{font-weight:600;}
+.blockquote{border-left:3px solid var(--accent);padding:16px 20px 16px 24px;background:var(--accent-soft);border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:20px 0;font-family:'Lora',serif;font-style:italic;font-size:15px;color:#0B3D47;line-height:1.65;}
+.table-wrap{overflow-x:auto;margin-bottom:20px;}
+table{width:100%;border-collapse:collapse;font-size:14px;background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--border);}
+thead th{background:var(--navy);color:white;padding:12px 16px;text-align:left;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;}
+tbody tr:nth-child(even) td{background:var(--gray-100);}
+td{padding:12px 16px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:top;line-height:1.55;}
+td:first-child{font-weight:500;color:var(--navy);}
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;white-space:nowrap;}
+.badge-amber{background:var(--amber-soft);color:#8B5E0A;}
+.badge-navy{background:var(--navy);color:white;}
+.badge-gray{background:var(--gray-200);color:var(--gray-600);}
+.badge-green{background:var(--green-soft);color:var(--green);}
+.pillar-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.pillar-btn{padding:8px 20px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--text-muted);transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.pillar-btn:hover{border-color:var(--accent);color:var(--accent);}
+.pillar-btn.active{background:var(--navy);color:white;border-color:var(--navy);}
+.pillar-content{display:none;}
+.pillar-content.active{display:block;animation:fadeIn 0.25s ease;}
+.accordion{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:white;margin-bottom:20px;box-shadow:var(--shadow-sm);}
+.accordion-item{border-bottom:1px solid var(--border);}
+.accordion-item:last-child{border-bottom:none;}
+.accordion-btn{width:100%;text-align:left;padding:16px 20px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--navy);background:none;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;transition:background 0.15s;}
+.accordion-btn:hover{background:var(--gray-100);}
+.accordion-btn.open{background:var(--accent-soft);color:#0B7E8A;}
+.accordion-chevron{font-size:16px;transition:transform 0.2s;flex-shrink:0;line-height:1;}
+.accordion-btn.open .accordion-chevron{transform:rotate(180deg);}
+.accordion-body{display:none;padding:4px 20px 18px;font-size:14px;color:var(--text-muted);line-height:1.7;}
+.accordion-body.open{display:block;}
+.step-list{list-style:none;margin-bottom:20px;}
+.step-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border);}
+.step-item:last-child{border-bottom:none;}
+.step-num{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:var(--navy);color:white;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.step-content h4{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.step-content p{font-size:14px;color:var(--text-muted);line-height:1.6;}
+.checklist{list-style:none;}
+.checklist li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-200);font-size:14px;color:var(--text);line-height:1.6;}
+.checklist li:last-child{border-bottom:none;}
+.check-icon{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--green-soft);display:flex;align-items:center;justify-content:center;margin-top:2px;font-size:11px;color:var(--green);font-weight:700;}
+.compare-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:20px;}
+.compare-row{display:grid;grid-template-columns:160px 1fr 1fr;gap:0;border-bottom:1px solid var(--border);font-size:13.5px;background:white;}
+.compare-row:last-child{border-bottom:none;}
+.compare-label{padding:12px 14px;font-weight:500;color:var(--text-muted);background:var(--gray-100);border-right:1px solid var(--border);}
+.compare-a{padding:12px 14px;color:var(--text);line-height:1.55;}
+.compare-b{padding:12px 14px;color:var(--text);line-height:1.55;border-left:1px solid var(--border);background:#F0FBF9;}
+.compare-head-label{padding:10px 14px;background:var(--gray-200);border-right:1px solid var(--border);}
+.compare-head-a{padding:10px 14px;background:#E8F4FB;font-weight:600;color:var(--navy);font-size:13px;}
+.compare-head-b{padding:10px 14px;background:#D1F0EA;font-weight:600;color:#0D5944;font-size:13px;border-left:1px solid var(--border);}
+.resp-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:0;background:white;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:20px;font-size:13px;}
+.resp-header{background:var(--navy);color:white;padding:10px 14px;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;}
+.resp-cell{padding:11px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
+.resp-cell.label{justify-content:flex-start;font-weight:500;color:var(--text);}
+.resp-csp{background:#EEF6FC;color:#0B7E8A;font-size:12px;font-weight:600;border-radius:4px;padding:4px 8px;}
+.resp-bank{background:#FDF3DC;color:#8B5E0A;font-size:12px;font-weight:600;border-radius:4px;padding:4px 8px;}
+.resp-shared{background:var(--green-soft);color:var(--green);font-size:12px;font-weight:600;border-radius:4px;padding:4px 8px;}
+.case-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:20px;}
+.case-row{background:white;border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 20px;display:grid;grid-template-columns:180px 1fr;gap:16px;align-items:start;box-shadow:var(--shadow-sm);}
+.case-pillar{font-size:12px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:6px;}
+.case-pillar-badge{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.case-content{font-size:13.5px;color:var(--text-muted);line-height:1.6;}
+.case-content strong{color:var(--text);font-weight:600;}
+.quiz-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow-sm);margin-bottom:20px;}
+.quiz-q{font-family:'Lora',serif;font-size:17px;font-weight:600;color:var(--navy);margin-bottom:20px;line-height:1.45;}
+.quiz-options{display:flex;flex-direction:column;gap:10px;}
+.quiz-opt{padding:13px 18px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;transition:all 0.15s;color:var(--text);background:white;text-align:left;font-family:'DM Sans',sans-serif;line-height:1.5;width:100%;}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);color:#0B7E8A;}
+.quiz-opt.correct{background:var(--green-soft);border-color:var(--green);color:var(--green);font-weight:500;}
+.quiz-opt.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.quiz-opt:disabled{cursor:default;}
+.quiz-feedback{margin-top:16px;padding:14px 18px;border-radius:var(--radius-sm);font-size:14px;line-height:1.6;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.ok{background:var(--green-soft);color:#1B5C3D;}
+.quiz-feedback.nok{background:var(--red-soft);color:#8B2020;}
+.quiz-nav{margin-top:20px;display:flex;gap:10px;align-items:center;}
+.btn-primary{background:var(--navy);color:white;border:none;padding:10px 22px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.15s;}
+.btn-primary:hover{background:var(--navy-light);}
+.btn-primary:disabled{background:var(--gray-400);cursor:default;}
+.quiz-score-text{font-size:13px;color:var(--text-muted);}
+.action-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;display:flex;gap:16px;align-items:flex-start;box-shadow:var(--shadow-sm);margin-bottom:12px;}
+.action-num{flex-shrink:0;width:36px;height:36px;border-radius:var(--radius-sm);background:var(--navy);color:white;font-family:'Lora',serif;font-weight:600;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.action-body h4{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:5px;}
+.action-body p{font-size:13.5px;color:var(--text-muted);line-height:1.6;}
+.glossary-search{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);margin-bottom:16px;outline:none;transition:border-color 0.15s;background:white;}
+.glossary-search:focus{border-color:var(--accent);}
+.glossary-list{list-style:none;}
+.glossary-item{padding:14px 0;border-bottom:1px solid var(--gray-200);}
+.glossary-item:last-child{border-bottom:none;}
+.glossary-term{font-weight:600;font-size:14px;color:var(--navy);margin-bottom:4px;}
+.glossary-def{font-size:14px;color:var(--text-muted);line-height:1.6;}
+.progress-wrap{background:var(--gray-200);border-radius:100px;height:6px;margin-bottom:4px;overflow:hidden;}
+.progress-bar{height:100%;border-radius:100px;background:var(--accent);transition:width 0.4s ease;}
+.divider{height:1px;background:var(--border);margin:28px 0;}
+.module-footer{max-width:900px;margin:0 auto;padding:28px 40px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-info{font-size:12px;color:var(--text-muted);line-height:1.6;}
+.footer-info strong{color:var(--text);font-weight:500;}
+.sr-only{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+@media(max-width:680px){
+  .hero-inner{padding:40px 20px 36px;}
+  .hero h1{font-size:24px;}
+  .nav-wrap{padding:0 8px;}
+  .nav-tab{padding:12px 10px;font-size:11px;}
+  .main{padding:28px 20px 60px;}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .resp-grid{grid-template-columns:1.5fr 1fr 1fr 1fr;font-size:12px;}
+  .compare-row{grid-template-columns:110px 1fr 1fr;}
+  .case-row{grid-template-columns:1fr;}
+  .module-footer{padding:20px 20px 40px;}
+}
+</style>
+</head>
+<body>
+<h1 class="sr-only">Modul Interaktif: Strategi Ketahanan Siber di Industri Jasa Keuangan, Perspektif Internal Audit</h1>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge-event"><span></span> Modul Webinar OJK Institute, 21 Mei 2026</div>
+    <h1>Strategi Ketahanan Siber<br>di Industri Jasa Keuangan</h1>
+    <p class="hero-sub">Perspektif Internal Audit dan Audit Committee. Berdasarkan materi sesi 3 oleh Agustinus Nicholas L. Tobing, IIA Indonesia.</p>
+    <div class="hero-meta">
+      <div class="meta-item"><strong>6 Topik Utama</strong></div>
+      <div class="meta-dot"></div>
+      <div class="meta-item"><strong>Standar IIA TR 2025</strong></div>
+      <div class="meta-dot"></div>
+      <div class="meta-item"><strong>Uji Pemahaman Interaktif</strong></div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav-strip" aria-label="Navigasi modul">
+  <div class="nav-wrap">
+    <button class="nav-arrow hidden" id="nav-left" onclick="scrollNav(-1)" aria-label="Scroll kiri">&#8249;</button>
+    <div class="nav-inner" id="nav-inner">
+      <button class="nav-tab active" onclick="showSection('s1',this)"><span class="nav-num">1</span> Lanskap Ancaman</button>
+      <button class="nav-tab" onclick="showSection('s2',this)"><span class="nav-num">2</span> Paradigma Baru</button>
+      <button class="nav-tab" onclick="showSection('s3',this)"><span class="nav-num">3</span> Tiga Pilar IIA</button>
+      <button class="nav-tab" onclick="showSection('s4',this)"><span class="nav-num">4</span> Cloud &amp; Shared Responsibility</button>
+      <button class="nav-tab" onclick="showSection('s5',this)"><span class="nav-num">5</span> Studi Kasus Cloud</button>
+      <button class="nav-tab" onclick="showSection('s6',this)"><span class="nav-num">6</span> Lima Aksi Strategis</button>
+      <button class="nav-tab" onclick="showSection('s7',this)"><span class="nav-num">7</span> Uji Pemahaman</button>
+      <button class="nav-tab" onclick="showSection('s8',this)"><span class="nav-num">8</span> Glosarium</button>
+    </div>
+    <button class="nav-arrow" id="nav-right" onclick="scrollNav(1)" aria-label="Scroll kanan">&#8250;</button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- BAGIAN 1 -->
+<section id="s1" class="section active">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 1</div>
+    <h2>Mengapa Sektor Keuangan Jadi Target Utama?</h2>
+    <p>Risiko siber bukan lagi sekadar masalah IT. Ini adalah risiko bisnis strategis yang memengaruhi keberlangsungan operasional, kepercayaan publik, dan stabilitas sistem keuangan secara keseluruhan.</p>
+  </div>
+  <div class="grid-3">
+    <div class="stat-card">
+      <div class="stat-label">Insiden Siber Indonesia</div>
+      <div class="stat-value">403,9 Jt</div>
+      <div class="stat-desc">Total insiden tercatat oleh BSSN sepanjang tahun 2023.</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Kerugian Bybit 2025</div>
+      <div class="stat-value">USD 1,5 M</div>
+      <div class="stat-desc">Kerugian akibat peretasan crypto exchange Bybit, Februari 2025. Sumber: CSIS.</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Pemulihan Colonial Pipeline</div>
+      <div class="stat-value">USD 5 Jt</div>
+      <div class="stat-desc">Biaya pemulihan ransomware Colonial Pipeline 2021, belum termasuk kerugian rantai pasok.</div>
+    </div>
+  </div>
+  <div class="accent-card amber">
+    <div class="ac-label">Proyeksi IIA, Risk in Focus</div>
+    <p>Risiko siber tercatat sebagai <strong>risiko teratas</strong> yang dihadapi organisasi saat ini dan diproyeksikan tetap menjadi yang tertinggi dalam tiga tahun ke depan. Sifatnya <strong>lintas sektor dan persisten,</strong> dari jasa keuangan, kesehatan, energi, hingga sektor publik.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Mengapa Perbankan Paling Rentan?</div>
+    <p style="margin-bottom:16px;color:var(--text-muted);font-size:14px;">Ada empat faktor struktural yang membuat perbankan berada di garis depan ancaman siber. Klik masing-masing untuk memahami lebih dalam.</p>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>1. Attack Surface yang Terus Meluas</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">Mobile banking, internet banking, e-wallet, Open API, kemitraan dengan fintech, dan adopsi cloud semuanya memperluas titik masuk yang harus dijaga. Setiap layanan digital baru adalah pintu yang berpotensi dimanfaatkan penyerang.</div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>2. Risiko Sistemik dan Kepercayaan Publik</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">Insiden pada satu bank dapat memicu efek domino ke bank lain dan mengikis kepercayaan publik terhadap sistem keuangan secara keseluruhan. Berbeda dengan industri lain, dampak perbankan bersifat sangat sistemik.</div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>3. Tekanan Regulasi yang Semakin Ketat</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">POJK 11/2022 dan SEOJK 29/2022 mengatur manajemen risiko TI, ketahanan siber, dan pelaporan insiden sebagai kewajiban. Kegagalan ketahanan siber bukan sekadar kerugian operasional karena ini bisa berujung pada sanksi regulator.</div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>4. Risiko Pihak Ketiga yang Berlipat</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">Vendor TI, BPO (Business Process Outsourcing), dan Cloud Service Provider (CSP) menjadi simpul risiko baru. Kepatuhan vendor adalah perpanjangan kontrol bank. Jika vendor lemah, bank ikut terekspos. Auditor perlu menilai rantai ini, bukan hanya operasional internal.</div>
+      </div>
+    </div>
+  </div>
+  <div class="blockquote">
+    "Pertanyaan kunci industri perbankan hari ini bukanlah apakah kita patuh di atas kertas, melainkan: <strong>apakah kita siap untuk PULIH dengan cepat saat insiden benar-benar terjadi?</strong>"
+    <div style="margin-top:10px;font-size:12px;font-style:normal;color:#2A6E7A;">Agustinus Nicholas L. Tobing, IIA Indonesia</div>
+  </div>
+</section>
+
+<!-- BAGIAN 2 -->
+<section id="s2" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 2</div>
+    <h2>Dari Security menuju Resilience</h2>
+    <p>Tujuan akhirnya tetap sama, yaitu melindungi Confidentiality, Integrity, dan Availability (Triad CIA). Yang berubah adalah cara kita meyakinkan board, regulator, dan publik bahwa kita sungguh siap.</p>
+  </div>
+  <div class="accent-card blue">
+    <div class="ac-label">Konsep Kunci</div>
+    <p>Paradigma lama bertanya <strong>apakah kontrol sudah terpasang,</strong> seperti menilai kesiapan pemadam kebakaran dari ada tidaknya alat pemadam, bukan dari apakah mereka pernah berlatih memadamkan kebakaran sungguhan. Paradigma resilience bertanya: <strong>seberapa cepat kita bisa pulih dan beroperasi normal kembali?</strong></p>
+  </div>
+  <div class="compare-wrap">
+    <div class="compare-row">
+      <div class="compare-head-label"></div>
+      <div class="compare-head-a">Security, Tradisional</div>
+      <div class="compare-head-b">Resilience, Transformatif</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Fokus</div>
+      <div class="compare-a">Apakah kontrol terpasang?</div>
+      <div class="compare-b">Apakah organisasi mampu pulih dalam toleransi waktu?</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Asumsi Dasar</div>
+      <div class="compare-a">Insiden dapat dicegah sepenuhnya.</div>
+      <div class="compare-b">Insiden adalah keniscayaan. Prinsip: assume breach.</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Pola Audit</div>
+      <div class="compare-a">Periodik, snapshot point-in-time.</div>
+      <div class="compare-b">Continuous monitoring dan continuous auditing.</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Cakupan</div>
+      <div class="compare-a">Per sistem, per proses.</div>
+      <div class="compare-b">End-to-end ekosistem: vendor, cloud, supply chain.</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Output Audit</div>
+      <div class="compare-a">Temuan, opini kepatuhan, status patch.</div>
+      <div class="compare-b">Insight, scenario testing, advisory prospektif.</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Pengukuran</div>
+      <div class="compare-a">Jumlah temuan dan tingkat kepatuhan.</div>
+      <div class="compare-b">MTTD, MTTR, RTO/RPO yang teruji secara nyata.</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Memahami Empat Metrik Resilience</div>
+    <p style="margin-bottom:14px;color:var(--text-muted);font-size:14px;">Keempat metrik ini adalah ukuran nyata ketahanan siber, bukan sekadar angka formalitas dalam dokumen.</p>
+    <ul class="checklist">
+      <li><div class="check-icon">M</div><div><strong>MTTD</strong> (Mean Time to Detect) adalah rata-rata waktu yang dibutuhkan untuk mendeteksi bahwa insiden sedang terjadi. Semakin pendek, semakin baik.</div></li>
+      <li><div class="check-icon">M</div><div><strong>MTTR</strong> (Mean Time to Recover) adalah rata-rata waktu untuk memulihkan sistem setelah insiden. Ini yang paling sering ditanyakan regulator.</div></li>
+      <li><div class="check-icon">R</div><div><strong>RTO</strong> (Recovery Time Objective) adalah target maksimum waktu pemulihan yang ditetapkan manajemen. Harus diuji lewat drill nyata, bukan hanya ditulis di dokumen BCP.</div></li>
+      <li><div class="check-icon">R</div><div><strong>RPO</strong> (Recovery Point Objective) adalah seberapa jauh ke belakang data yang boleh hilang dalam skenario insiden. Menentukan frekuensi backup yang diperlukan.</div></li>
+    </ul>
+  </div>
+  <div class="accent-card amber">
+    <div class="ac-label">Tiga Pertanyaan Auditor dalam 5 Menit</div>
+    <p>Pertanyaan berikut dapat mengungkap kesiapan resilience bank secara langsung.<br><br>
+    <strong>Pertama,</strong> kapan terakhir kali tabletop exercise lintas fungsi dijalankan dan skenario apa yang diuji?<br>
+    <strong>Kedua,</strong> apa lessons learned dari insiden atau exercise terakhir, dan apakah action plan-nya sudah selesai dengan due date yang dihormati?<br>
+    <strong>Ketiga,</strong> apakah RTO/RPO core banking sudah pernah dibuktikan lewat <strong>full restore drill,</strong> bukan sekadar dideklarasikan dalam dokumen BCP?</p>
+  </div>
+</section>
+
+<!-- BAGIAN 3 -->
+<section id="s3" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 3</div>
+    <h2>Tiga Pilar IIA Cybersecurity Topical Requirement</h2>
+    <p>Diterbitkan Februari 2025 dan bersifat <strong>mandatory</strong> untuk semua engagement audit bertopik cybersecurity. Ini adalah baseline minimum yang wajib dinilai. Pengecualian harus didokumentasikan dengan alasan yang kuat.</p>
+  </div>
+  <div class="accent-card red">
+    <div class="ac-label">Penting untuk Auditor</div>
+    <p>IIA TR bukan sekadar panduan. Ini adalah standar yang <strong>mengikat secara profesional.</strong> Total ada <strong>17 requirement</strong> yang terbagi dalam tiga pilar. Auditor yang tidak menilai area ini dalam engagement cybersecurity harus mendokumentasikan alasannya secara eksplisit.</p>
+  </div>
+  <div class="pillar-tabs">
+    <button class="pillar-btn active" onclick="showPillar('p1',this)">Pilar 1. Governance (4 req.)</button>
+    <button class="pillar-btn" onclick="showPillar('p2',this)">Pilar 2. Risk Management (6 req.)</button>
+    <button class="pillar-btn" onclick="showPillar('p3',this)">Pilar 3. Controls (7 req.)</button>
+  </div>
+  <div id="p1" class="pillar-content active">
+    <div class="card">
+      <div class="card-title">Pilar 1. Tata Kelola (Governance)</div>
+      <p style="margin-bottom:16px;color:var(--text-muted);font-size:14px;">Empat requirement memastikan bahwa tata kelola siber bukan sekadar ada di atas kertas, tetapi benar-benar dijalankan hingga level dewan komisaris.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Kode</th><th>Requirement</th><th>Bukti yang Dikumpulkan Auditor</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-navy">A</span></td><td>Strategi dan objektif formal, direview board secara periodik, dilengkapi resource dan anggaran.</td><td>Risalah rapat Komite Pemantau Risiko atau Komite TI. Bukti review kuartalan atas KPI cyber, status remediasi, dan anggaran.</td></tr>
+            <tr><td><span class="badge badge-navy">B</span></td><td>Kebijakan dan prosedur dimutakhirkan secara periodik.</td><td>Kebijakan keamanan siber yang telah direview dalam 12 bulan terakhir.</td></tr>
+            <tr><td><span class="badge badge-navy">C</span></td><td>Peran dan tanggung jawab beserta asesmen Knowledge, Skills, Abilities (KSA).</td><td>Job description CISO dan hasil asesmen kompetensi. <strong>Reporting line CISO minimal ke Direktur,</strong> bukan hanya ke CIO.</td></tr>
+            <tr><td><span class="badge badge-navy">D</span></td><td>Engagement stakeholder lintas fungsi: senior management, operasional, ERM, HR, legal, compliance, dan vendor.</td><td>Notulen forum lintas fungsi seperti IT Steering, Risk Committee, dan Vendor Governance. Bukti engagement nyata, bukan sekadar distribusi laporan satu arah.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="accent-card blue">
+      <div class="ac-label">Praktik Perbankan</div>
+      <p>Dalam industri perbankan, governance juga mencakup laporan CISO ke Direksi dan Dewan Komisaris (frekuensi, format dashboard, bukan hanya status hijau-kuning-merah), serta strategi keamanan siber yang selaras dengan <strong>Risk Appetite Statement (RAS)</strong> bank dan diturunkan ke seluruh unit bisnis.</p>
+    </div>
+  </div>
+  <div id="p2" class="pillar-content">
+    <div class="card">
+      <div class="card-title">Pilar 2. Manajemen Risiko (Risk Management)</div>
+      <p style="margin-bottom:16px;color:var(--text-muted);font-size:14px;">Enam requirement memastikan bahwa risiko siber teridentifikasi, dieskalasi dengan cepat, dan ditangani lintas fungsi. Bukan hanya oleh tim IT.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Kode</th><th>Requirement</th><th>Penjelasan</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-amber">A</span></td><td>Identifikasi dan Analisis</td><td>Threat dan vulnerability dipetakan terhadap dampak strategis bank, bukan sekadar daftar teknis.</td></tr>
+            <tr><td><span class="badge badge-amber">B</span></td><td>Eskalasi Cepat</td><td>Trigger eskalasi jelas. Dampak finansial dan non-finansial (reputasi, hukum) dipertimbangkan bersama.</td></tr>
+            <tr><td><span class="badge badge-amber">C</span></td><td>Lintas Fungsi</td><td>Melibatkan IT, ERM, HR, legal, compliance, operasional, supply chain, dan finance. Bukan silo IT.</td></tr>
+            <tr><td><span class="badge badge-amber">D</span></td><td>Awareness dan Komunikasi</td><td>Pelatihan aktif, simulasi phishing, review periodik gap dan defisiensi. Bukan sekadar mengirim email sosialisasi.</td></tr>
+            <tr><td><span class="badge badge-amber">E</span></td><td>Akuntabilitas Pemilik Risiko</td><td>Pemilik risiko ditunjuk secara eksplisit. Ada pelaporan dan monitoring periodik atas status risiko.</td></tr>
+            <tr><td><span class="badge badge-amber">F</span></td><td>Incident Response dan Recovery</td><td>Alur detection, containment, recovery, dan post-incident review. Siklus ini harus <strong>diuji minimal setahun sekali.</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div id="p3" class="pillar-content">
+    <div class="card">
+      <div class="card-title">Pilar 3. Pengendalian (Controls)</div>
+      <p style="margin-bottom:16px;color:var(--text-muted);font-size:14px;">Tujuh area pengendalian untuk melindungi Triad CIA, dari aset fisik hingga ancaman berbasis AI dan IoT.</p>
+      <ol class="step-list">
+        <li class="step-item"><div class="step-num">1</div><div class="step-content"><h4>Pengendalian Internal dan Berbasis Vendor</h4><p>Kontrol yang menjaga Confidentiality, Integrity, dan Availability, baik yang dioperasikan langsung maupun yang didelegasikan ke vendor atau CSP.</p></div></li>
+        <li class="step-item"><div class="step-num">2</div><div class="step-content"><h4>Manajemen Talenta dan Kompetensi Teknis</h4><p>Auditor perlu menilai apakah tim keamanan memiliki KSA yang memadai, termasuk rencana suksesi dan pengembangan kompetensi.</p></div></li>
+        <li class="step-item"><div class="step-num">3</div><div class="step-content"><h4>Pemantauan Ancaman Berkelanjutan</h4><p>Termasuk penggunaan AI dan monitoring perangkat IoT yang makin banyak terhubung ke jaringan perbankan. Ancaman tidak mengenal jadwal audit tahunan.</p></div></li>
+        <li class="step-item"><div class="step-num">4</div><div class="step-content"><h4>Siklus Hidup Aset TI</h4><p>Dari seleksi vendor, pengadaan, operasional, hingga decommissioning. Setiap tahap memiliki risiko yang harus dikelola secara sistematis.</p></div></li>
+        <li class="step-item"><div class="step-num">5</div><div class="step-content"><h4>Hardening dan Konfigurasi Aman</h4><p>Sistem dan perangkat harus dikonfigurasi dengan prinsip least privilege dan default deny, bukan sekadar dipasang dengan konfigurasi bawaan pabrik.</p></div></li>
+        <li class="step-item"><div class="step-num">6</div><div class="step-content"><h4>Keamanan Jaringan dan Endpoint</h4><p>Segmentasi jaringan, monitoring trafik anomali, dan proteksi endpoint termasuk perangkat mobile yang digunakan karyawan.</p></div></li>
+        <li class="step-item"><div class="step-num">7</div><div class="step-content"><h4>Audit Trail dan Forensik Digital</h4><p>Log yang tidak bisa dimanipulasi (tamper-evident) adalah fondasi investigasi forensik dan pembuktian kepatuhan kepada regulator.</p></div></li>
+      </ol>
+    </div>
+    <div class="accent-card green">
+      <div class="ac-label">Catatan IIA Standards 7.2 dan 8.2</div>
+      <p><strong>Komite Audit memegang ultimate responsibility</strong> atas kecukupan fungsi audit internal, termasuk memastikan bahwa 17 requirement IIA TR benar-benar diterapkan dan diperluas sesuai profil risiko spesifik bank: cloud, AI, third-party, dan IoT.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BAGIAN 4 -->
+<section id="s4" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 4</div>
+    <h2>Cloud Bukan Pilihan Opsional</h2>
+    <p>Cloud telah menjadi enabler resilience, efisiensi, dan inovasi produk digital di perbankan. Tapi pindah ke cloud bukan berarti tanggung jawab keamanan ikut berpindah.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Mengapa Bank Beralih ke Cloud?</div>
+      <ul class="step-list" style="margin-top:8px;">
+        <li class="step-item" style="padding:10px 0;"><div class="step-content"><h4>Time-to-Market Lebih Cepat</h4><p style="font-size:13px;">Peluncuran fitur dari bulanan menjadi mingguan. Penting untuk bersaing dengan fintech dan neobank.</p></div></li>
+        <li class="step-item" style="padding:10px 0;"><div class="step-content"><h4>Elastisitas Kapasitas</h4><p style="font-size:13px;">Skala otomatis saat lonjakan trafik seperti gajian, promo, dan lebaran, tanpa investasi hardware berlebih.</p></div></li>
+        <li class="step-item" style="padding:10px 0;"><div class="step-content"><h4>Resilience by Design</h4><p style="font-size:13px;">Multi-AZ deployment, automated failover, dan immutable backup sudah built-in di layanan dasar cloud.</p></div></li>
+        <li class="step-item" style="padding:10px 0;"><div class="step-content"><h4>Akses ke Teknologi Mutakhir</h4><p style="font-size:13px;">GenAI untuk fraud detection, ML untuk credit scoring, dan real-time analytics tanpa capex infrastruktur besar.</p></div></li>
+        <li class="step-item" style="padding:10px 0;"><div class="step-content"><h4>Efisiensi Struktur Biaya</h4><p style="font-size:13px;">Pergeseran dari CapEx ke OpEx. Bank hanya membayar sesuai pemakaian tanpa idle capacity.</p></div></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Regulasi Cloud di Indonesia</div>
+      <div class="accent-card blue" style="margin-bottom:12px;">
+        <div class="ac-label">POJK 11/POJK.03/2022</div>
+        <p style="font-size:13px;">Mengatur penggunaan layanan TI pihak ketiga termasuk cloud. Wajib notifikasi OJK dan due diligence vendor sebelum implementasi.</p>
+      </div>
+      <div class="accent-card amber" style="margin-bottom:12px;">
+        <div class="ac-label">SEOJK 29/SEOJK.03/2022</div>
+        <p style="font-size:13px;">Pedoman penyelenggaraan TI perbankan. Menetapkan ketahanan siber sebagai komponen wajib, termasuk untuk lingkungan cloud.</p>
+      </div>
+      <div class="accent-card green">
+        <div class="ac-label">Lanskap CSP di Indonesia</div>
+        <p style="font-size:13px;">Hyperscaler seperti AWS, Azure, dan GCP telah hadir dengan region lokal di Indonesia untuk memenuhi persyaratan data residency. Hybrid dan multi-cloud menjadi norma baru bagi bank besar.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Shared Responsibility Model: Siapa Bertanggung Jawab Atas Apa?</div>
+    <p style="margin-bottom:16px;font-size:14px;color:var(--text-muted);">Ini adalah konsep yang <strong>paling sering disalahpahami</strong> oleh eksekutif perbankan. Pindah ke cloud tidak berarti tanggung jawab keamanan berpindah ke CSP.</p>
+    <div class="resp-grid">
+      <div class="resp-header">Lapisan</div>
+      <div class="resp-header">IaaS</div>
+      <div class="resp-header">PaaS</div>
+      <div class="resp-header">SaaS</div>
+      <div class="resp-cell label">Data dan Klasifikasi</div>
+      <div class="resp-cell"><span class="resp-bank">Bank</span></div>
+      <div class="resp-cell"><span class="resp-bank">Bank</span></div>
+      <div class="resp-cell"><span class="resp-bank">Bank</span></div>
+      <div class="resp-cell label">Identitas dan Akses</div>
+      <div class="resp-cell"><span class="resp-bank">Bank</span></div>
+      <div class="resp-cell"><span class="resp-bank">Bank</span></div>
+      <div class="resp-cell"><span class="resp-bank">Bank</span></div>
+      <div class="resp-cell label">Aplikasi</div>
+      <div class="resp-cell"><span class="resp-bank">Bank</span></div>
+      <div class="resp-cell"><span class="resp-shared">Bersama</span></div>
+      <div class="resp-cell"><span class="resp-csp">CSP</span></div>
+      <div class="resp-cell label">Sistem Operasi</div>
+      <div class="resp-cell"><span class="resp-bank">Bank</span></div>
+      <div class="resp-cell"><span class="resp-csp">CSP</span></div>
+      <div class="resp-cell"><span class="resp-csp">CSP</span></div>
+      <div class="resp-cell label">Virtualisasi</div>
+      <div class="resp-cell"><span class="resp-csp">CSP</span></div>
+      <div class="resp-cell"><span class="resp-csp">CSP</span></div>
+      <div class="resp-cell"><span class="resp-csp">CSP</span></div>
+      <div class="resp-cell label">Jaringan dan Fisik</div>
+      <div class="resp-cell"><span class="resp-csp">CSP</span></div>
+      <div class="resp-cell"><span class="resp-csp">CSP</span></div>
+      <div class="resp-cell"><span class="resp-csp">CSP</span></div>
+    </div>
+    <div class="accent-card red">
+      <div class="ac-label">Inti untuk Auditor</div>
+      <p>Apapun model layanan yang digunakan, IaaS, PaaS, atau SaaS, <strong>data, identitas, dan konfigurasi selalu menjadi tanggung jawab bank,</strong> bukan CSP. Inilah ladang temuan audit paling produktif di lingkungan cloud.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BAGIAN 5: STUDI KASUS -->
+<section id="s5" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 5</div>
+    <h2>Studi Kasus: Kapabilitas Cloud Mendukung Cyber Resilience Bank</h2>
+    <p>Bagian ini menggambarkan bagaimana layanan cloud-native dapat menjawab setiap requirement IIA TR secara konkret. Profil ilustratifnya adalah bank digital di ASEAN yang menjalankan core banking modern, berstrategi digital-first, dan mendapat izin regulator untuk menggunakan public cloud pada workload non-kritis dan disaster recovery.</p>
+  </div>
+  <div class="accent-card blue">
+    <div class="ac-label">Konteks Studi Kasus</div>
+    <p>Bank ini menerapkan strategi <strong>multi-region</strong> untuk Disaster Recovery, artinya sistem cadangan berada di wilayah geografis berbeda agar jika satu wilayah mengalami gangguan, sistem di wilayah lain bisa mengambil alih secara otomatis. Ini adalah contoh nyata bagaimana cloud mendukung RTO dan RPO yang terukur.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Bagaimana Kapabilitas Cloud Menjawab Tiga Pilar IIA TR</div>
+    <p style="margin-bottom:18px;color:var(--text-muted);font-size:14px;">Setiap baris di bawah menunjukkan hubungan langsung antara requirement IIA TR dan kapabilitas cloud yang bisa dijadikan bukti audit. Contoh kapabilitas diambil dari layanan AWS sebagai ilustrasi.</p>
+    <div class="case-grid">
+      <div class="case-row">
+        <div class="case-pillar">
+          <div class="case-pillar-badge" style="background:#E3F7F9;color:#0B7E8A;">G</div>
+          <span>Pilar Governance</span>
+        </div>
+        <div class="case-content">
+          <strong>Hierarki akun dengan guardrail kebijakan</strong> yang tidak dapat di-bypass oleh developer memastikan bahwa kebijakan keamanan diterapkan secara konsisten di seluruh lingkungan cloud. <strong>Landing zone</strong> yang sudah diselaraskan dengan best practice dan POJK mempercepat onboarding unit bisnis baru. <strong>Federated access</strong> dengan segregation of duties terintegrasi ke Active Directory bank, dan <strong>otomatisasi pengumpulan evidence</strong> mempermudah penyiapan dokumentasi untuk audit internal maupun eksternal. Laporan SOC 1/2/3, ISO 27001, dan PCI DSS dari CSP dapat langsung diverifikasi oleh auditor.
+        </div>
+      </div>
+      <div class="case-row">
+        <div class="case-pillar">
+          <div class="case-pillar-badge" style="background:var(--amber-soft);color:#8B5E0A;">RM</div>
+          <span>Pilar Risk Management</span>
+        </div>
+        <div class="case-content">
+          <strong>Threat detection berbasis ML</strong> mendeteksi anomali perilaku akun dan jaringan secara real-time, jauh lebih cepat dari monitoring manual. <strong>Posture management terpusat</strong> mengagregasi temuan dari seluruh layanan cloud dan memetakannya ke framework seperti CIS, NIST, dan PCI. <strong>Investigasi insiden</strong> menghasilkan timeline dan root cause analysis lintas layanan dalam satu tampilan. <strong>Immutable backup tahan ransomware</strong> menggunakan teknologi WORM (Write Once Read Many) sehingga data tidak bisa dihapus bahkan oleh administrator. <strong>Failover otomatis</strong> saat insiden zona menjadi bukti nyata kemampuan pemulihan saat DR test dilakukan.
+        </div>
+      </div>
+      <div class="case-row">
+        <div class="case-pillar">
+          <div class="case-pillar-badge" style="background:var(--green-soft);color:var(--green);">C</div>
+          <span>Pilar Controls</span>
+        </div>
+        <div class="case-content">
+          <strong>Enkripsi at-rest</strong> menggunakan customer-managed keys memastikan bahwa hanya bank yang memegang kunci data nasabahnya. <strong>HSM (Hardware Security Module)</strong> digunakan untuk operasi kriptografi sensitif seperti PIN block pada transaksi ATM. <strong>Configuration drift detection</strong> memberikan alerting otomatis jika ada layanan penyimpanan yang secara tidak sengaja dibuat publik. <strong>Proteksi aplikasi web banking</strong> mencakup OWASP Top 10 dan serangan DDoS volumetrik. <strong>Vulnerability assessment kontinu</strong> berjalan pada compute, container, dan fungsi serverless. <strong>Audit trail tamper-evident</strong> menjadi basis investigasi forensik dan pembuktian kepada regulator.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Checklist Penerapan IIA TR di Lingkungan Cloud</div>
+    <p style="margin-bottom:14px;color:var(--text-muted);font-size:14px;">Checklist ini dapat langsung digunakan auditor dan komite audit perbankan saat menilai engagement cybersecurity di lingkungan cloud.</p>
+    <ul class="checklist">
+      <li><div class="check-icon">&#10003;</div><div>Verifikasi laporan kepatuhan CSP: SOC 1, SOC 2 Type II, ISO 27001, PCI DSS. Jangan hanya menerima klaim verbal dari vendor.</div></li>
+      <li><div class="check-icon">&#10003;</div><div>Pastikan mekanisme continuous monitoring aktif, bukan hanya laporan bulanan yang dibaca manual oleh tim IT.</div></li>
+      <li><div class="check-icon">&#10003;</div><div>Verifikasi pengujian RTO/RPO aktual lewat full restore drill, bukan sekadar angka yang tertulis di dokumen BCP.</div></li>
+      <li><div class="check-icon">&#10003;</div><div>Periksa apakah shared responsibility model dipahami dengan benar oleh manajemen, bukan diasumsikan sudah diurus otomatis oleh CSP.</div></li>
+      <li><div class="check-icon">&#10003;</div><div>Selaraskan temuan audit dengan regulasi nasional: POJK 11/2022 dan SEOJK 29/2022, serta framework internasional: NIST CSF 2.0 dan COBIT 2019.</div></li>
+      <li><div class="check-icon">&#10003;</div><div>Pastikan mekanisme akses vendor dan CSP ke sistem bank didokumentasikan dan dimonitor, termasuk akses darurat (break-glass access).</div></li>
+    </ul>
+  </div>
+  <div class="accent-card amber">
+    <div class="ac-label">Tantangan Nyata yang Sering Dihadapi</div>
+    <p>Tiga tantangan utama yang kerap muncul dalam adopsi cloud di perbankan Indonesia adalah <strong>talent gap</strong> (kurangnya SDM yang memahami cloud security secara mendalam), <strong>kompleksitas tata kelola lintas CSP</strong> ketika bank menggunakan lebih dari satu penyedia cloud sekaligus, serta <strong>kemampuan auditor</strong> dalam menilai layanan yang berubah sangat cepat. Ketiganya perlu masuk dalam rencana pengembangan kapasitas tim audit internal.</p>
+  </div>
+</section>
+
+<!-- BAGIAN 6: LIMA AKSI -->
+<section id="s6" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 6</div>
+    <h2>Lima Aksi Strategis dan Tiga Pesan Utama</h2>
+    <p>Rekomendasi konkret untuk Direksi, Komite Pemantau Risiko/TI, Komite Audit, dan CISO. Bukan sekadar teori, melainkan langkah yang bisa langsung dieksekusi.</p>
+  </div>
+  <div class="action-card">
+    <div class="action-num">1</div>
+    <div class="action-body"><h4>Put Cyber Risk on the Board Agenda</h4><p>Jadikan risiko siber sebagai agenda rutin dewan komisaris dan direksi, bukan hanya dibahas saat ada insiden. Frekuensi dan kedalaman pembahasan mencerminkan seberapa serius organisasi memandang ancaman ini.</p></div>
+  </div>
+  <div class="action-card">
+    <div class="action-num">2</div>
+    <div class="action-body"><h4>Fund Resilience, Not Just Compliance</h4><p>Alokasikan anggaran untuk continuous monitoring, drill pemulihan, dan automated recovery, bukan hanya untuk memenuhi daftar periksa kepatuhan regulasi. Patuh di atas kertas tidak sama dengan siap menghadapi insiden nyata.</p></div>
+  </div>
+  <div class="action-card">
+    <div class="action-num">3</div>
+    <div class="action-body"><h4>Run a Crisis Simulation Before a Crisis Runs You</h4><p>Lakukan tabletop exercise dan full-scale DR drill minimal setahun sekali dengan skenario realistis: ransomware, supply chain compromise, dan zero-day exploit. Simulasi yang membosankan jauh lebih baik dari insiden nyata yang tidak diantisipasi.</p></div>
+  </div>
+  <div class="action-card">
+    <div class="action-num">4</div>
+    <div class="action-body"><h4>Know Your Crown Jewels and Who Can Touch Them</h4><p>Identifikasi aset kritis seperti core banking, sistem pembayaran, dan data nasabah, lalu petakan setiap entitas yang memiliki akses, baik internal, vendor, maupun CSP. Tanpa peta ini, audit access control hanya bersifat parsial.</p></div>
+  </div>
+  <div class="action-card">
+    <div class="action-num">5</div>
+    <div class="action-body"><h4>Make Your CISO a Strategic Partner, Not a Cost Center</h4><p>Berikan CISO akses langsung ke direksi dan dewan komisaris serta libatkan dalam keputusan strategis bisnis, bukan hanya dipanggil saat terjadi masalah teknis. CISO yang hanya melapor ke CIO memiliki pengaruh yang terbatas.</p></div>
+  </div>
+  <div class="divider"></div>
+  <div class="section-header" style="margin-top:28px;">
+    <div class="section-eyebrow">Tiga Pesan Utama</div>
+    <h2>Yang Perlu Dibawa Pulang</h2>
+  </div>
+  <div class="card" style="border-left:4px solid var(--accent);">
+    <div class="card-title"><span style="font-size:20px;margin-right:4px;">01</span> Resilience adalah outcome. Security adalah cara.</div>
+    <p style="color:var(--text-muted);font-size:14px;">Pertanyaan kita bergeser dari apakah kontrol terpasang menjadi apakah kita mampu pulih dengan kepercayaan publik yang utuh. Bukti harus diuji, bukan diklaim, lewat tabletop exercise, DR drill, dan continuous monitoring.</p>
+  </div>
+  <div class="card" style="border-left:4px solid var(--amber);">
+    <div class="card-title"><span style="font-size:20px;margin-right:4px;">02</span> Cloud adalah enabler, bila tata kelola dilakukan dengan benar.</div>
+    <p style="color:var(--text-muted);font-size:14px;">CSP menyediakan kapabilitas resilience yang dahulu sangat mahal: multi-region failover, immutable backup tahan ransomware, dan threat detection berbasis ML. Namun shared responsibility model menempatkan bank, bukan CSP, di garis depan tata kelola data, identitas, dan konfigurasi.</p>
+  </div>
+  <div class="card" style="border-left:4px solid var(--green);">
+    <div class="card-title"><span style="font-size:20px;margin-right:4px;">03</span> IIA TR adalah baseline, bukan ceiling.</div>
+    <p style="color:var(--text-muted);font-size:14px;">17 requirement IIA Cybersecurity Topical Requirement adalah minimum mandatory. Bagi perbankan dengan profil risiko tinggi, perluas dengan area khusus: cloud, AI, third-party, dan IoT. Komite Audit memegang ultimate responsibility sesuai IIA Standards 7.2 dan 8.2.</p>
+  </div>
+  <div class="blockquote">
+    "Sasaran akhir bukan organisasi yang patuh dalam laporan, melainkan organisasi perbankan yang <strong>siap PULIH dalam toleransi waktu yang dapat diterima,</strong> dengan kepercayaan publik yang tetap utuh."
+    <div style="margin-top:10px;font-size:12px;font-style:normal;color:#2A6E7A;">Agustinus Nicholas L. Tobing, IIA Indonesia, Advisory Committee CPA Australia</div>
+  </div>
+</section>
+
+<!-- BAGIAN 7: KUIS -->
+<section id="s7" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 7</div>
+    <h2>Uji Pemahaman</h2>
+    <p>Enam pertanyaan untuk menguji seberapa dalam kamu memahami materi ini. Klik jawaban yang menurutmu paling tepat.</p>
+  </div>
+  <div class="quiz-card" id="quiz-container">
+    <div id="quiz-body"></div>
+    <div class="quiz-nav">
+      <button class="btn-primary" id="quiz-next-btn" onclick="nextQuestion()" disabled>Pertanyaan Berikutnya</button>
+      <span class="quiz-score-text" id="quiz-score-text"></span>
+    </div>
+  </div>
+  <div id="quiz-result" style="display:none;">
+    <div class="card" style="text-align:center;padding:40px 28px;">
+      <div style="font-size:40px;margin-bottom:12px;" id="result-icon">&#127881;</div>
+      <div style="font-family:'Lora',serif;font-size:22px;font-weight:600;color:var(--navy);margin-bottom:8px;" id="result-title">Selesai!</div>
+      <div style="font-size:15px;color:var(--text-muted);margin-bottom:20px;" id="result-desc"></div>
+      <div style="margin-bottom:20px;">
+        <div class="progress-wrap" style="max-width:300px;margin:0 auto 8px;"><div class="progress-bar" id="result-bar"></div></div>
+        <div style="font-size:13px;color:var(--text-muted);" id="result-fraction"></div>
+      </div>
+      <button class="btn-primary" onclick="restartQuiz()">Ulangi Kuis</button>
+    </div>
+  </div>
+</section>
+
+<!-- BAGIAN 8: GLOSARIUM -->
+<section id="s8" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Referensi</div>
+    <h2>Glosarium Istilah</h2>
+    <p>Kumpulan istilah teknis dan regulasi yang digunakan dalam materi ini, dijelaskan dengan bahasa yang mudah dipahami.</p>
+  </div>
+  <div class="card">
+    <input type="search" class="glossary-search" placeholder="Cari istilah..." id="glossary-input" oninput="filterGlossary()">
+    <ul class="glossary-list" id="glossary-list"></ul>
+  </div>
+</section>
+
+</main>
+
+<footer class="module-footer">
+  <div class="footer-info">
+    <strong>Disusun oleh:</strong> Rosliana Dwi Astuti, S.Ak<br>
+    <strong>Sumber:</strong> Materi Webinar OJK Institute, 21 Mei 2026.<br>
+    Narasumber: Agustinus Nicholas L. Tobing. Audit Committee, IIA Indonesia. Advisory Committee, CPA Australia.
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <span class="badge badge-gray">IIA TR 2025</span>
+    <span class="badge badge-gray">POJK 11/2022</span>
+    <span class="badge badge-gray">NIST CSF 2.0</span>
+    <span class="badge badge-gray">COBIT 2019</span>
+  </div>
+</footer>
+
+<script>
+function showSection(id,tab){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  tab.classList.add('active');
+}
+function toggleAcc(btn){
+  var body=btn.nextElementSibling;
+  var isOpen=body.classList.contains('open');
+  var acc=btn.closest('.accordion');
+  acc.querySelectorAll('.accordion-btn').forEach(function(b){b.classList.remove('open');});
+  acc.querySelectorAll('.accordion-body').forEach(function(b){b.classList.remove('open');});
+  if(!isOpen){btn.classList.add('open');body.classList.add('open');}
+}
+function showPillar(id,btn){
+  document.querySelectorAll('.pillar-content').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.pillar-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+var questions=[
+  {q:"Apa perbedaan mendasar antara paradigma Security dan Resilience dalam konteks ketahanan siber?",opts:["Security menggunakan teknologi cloud, sedangkan Resilience menggunakan on-premise.","Security bertanya apakah kontrol terpasang, sementara Resilience bertanya apakah kita mampu pulih dalam toleransi waktu yang ditentukan.","Resilience hanya berlaku untuk bank besar, sementara Security berlaku untuk semua lembaga keuangan.","Keduanya pada dasarnya sama dan hanya berbeda istilah yang digunakan regulator."],correct:1,explain:"Tepat. Paradigma resilience menggeser fokus dari apakah kontrol ada menjadi apakah kita terbukti mampu pulih. Metrik seperti MTTD, MTTR, RTO, dan RPO adalah alat ukurnya."},
+  {q:"Dalam Shared Responsibility Model di cloud, tanggung jawab mana yang SELALU berada di pihak bank, terlepas apakah menggunakan IaaS, PaaS, atau SaaS?",opts:["Keamanan jaringan fisik dan data center CSP.","Manajemen sistem operasi dan virtualisasi.","Data, identitas, dan konfigurasi akses.","Pemeliharaan hardware dan infrastruktur dasar."],correct:2,explain:"Benar. Data, identitas, dan konfigurasi akses adalah tanggung jawab bank di semua model layanan cloud. Inilah area yang paling sering menjadi temuan audit karena bank salah mengira sudah diurus otomatis oleh CSP."},
+  {q:"IIA Cybersecurity Topical Requirement yang diterbitkan Februari 2025 terdiri dari berapa requirement dan bersifat apa?",opts:["10 requirement, bersifat opsional sebagai panduan best practice.","17 requirement, bersifat mandatory untuk engagement audit cybersecurity.","20 requirement, berlaku hanya untuk bank yang menggunakan cloud.","12 requirement, berlaku hanya untuk audit eksternal."],correct:1,explain:"Tepat. 17 requirement, yaitu 4 Governance, 6 Risk Management, dan 7 Controls, bersifat mandatory. Auditor wajib menilainya dalam setiap engagement cybersecurity. Pengecualian harus didokumentasikan dengan alasan yang kuat."},
+  {q:"Mengapa posisi CISO yang hanya melapor ke CIO dianggap bermasalah dari perspektif tata kelola?",opts:["Karena CIO biasanya tidak memiliki latar belakang teknis yang memadai.","Karena hal ini menciptakan konflik kepentingan. CIO bertanggung jawab atas operasional TI, sementara CISO bertugas mengawasi risiko dari operasional TI yang sama.","Karena regulasi OJK melarang struktur tersebut secara eksplisit.","Karena CISO harus selalu melapor langsung ke Dewan Komisaris."],correct:1,explain:"Tepat. Ada konflik kepentingan struktural. CIO termotivasi mempercepat delivery TI, sementara CISO perlu mengerem bila ada risiko. Jika CISO melapor ke CIO, independensinya terbatas. IIA TR mensyaratkan reporting line CISO minimal ke Direktur."},
+  {q:"Dalam studi kasus bank digital di ASEAN, apa fungsi immutable backup berbasis teknologi WORM dalam mendukung ketahanan siber?",opts:["Mempercepat proses enkripsi data nasabah saat transaksi berlangsung.","Memastikan data backup tidak bisa diubah atau dihapus bahkan oleh administrator, sehingga tahan terhadap serangan ransomware.","Menggantikan kebutuhan audit trail karena semua transaksi tersimpan otomatis.","Memungkinkan data dipulihkan tanpa perlu melakukan DR drill terlebih dahulu."],correct:1,explain:"Tepat. WORM (Write Once Read Many) memastikan data yang sudah ditulis tidak bisa dimodifikasi atau dihapus dalam periode retensi tertentu. Ini sangat kritis karena salah satu taktik ransomware adalah menghapus backup sebelum mengenkripsi data produksi."},
+  {q:"Apa yang dimaksud dengan fund resilience, not just compliance dalam lima aksi strategis?",opts:["Mengurangi anggaran kepatuhan regulasi dan mengalihkannya ke teknologi baru.","Memastikan anggaran tidak hanya untuk memenuhi daftar periksa regulator, tetapi juga untuk continuous monitoring, drill pemulihan, dan automated recovery.","Memprioritaskan investasi cloud karena lebih hemat dari infrastruktur on-premise.","Mengalokasikan anggaran khusus untuk membayar denda regulasi bila terjadi pelanggaran."],correct:1,explain:"Tepat. Patuh di atas kertas bisa dicapai dengan mengisi checklist regulasi, tetapi tidak menjamin kesiapan menghadapi insiden nyata. Anggaran untuk continuous monitoring, latihan tabletop, dan automated recovery adalah investasi dalam kemampuan pulih."}
+];
+var current=0,score=0,answered=false;
+function renderQuestion(){
+  answered=false;
+  document.getElementById('quiz-next-btn').disabled=true;
+  document.getElementById('quiz-score-text').textContent='Pertanyaan '+(current+1)+' dari '+questions.length;
+  var q=questions[current];
+  var optsHtml=q.opts.map(function(o,i){return '<button class="quiz-opt" onclick="selectAnswer('+i+')">'+o+'</button>';}).join('');
+  document.getElementById('quiz-body').innerHTML='<div class="quiz-q">'+q.q+'</div><div class="quiz-options">'+optsHtml+'</div><div class="quiz-feedback" id="qfeedback"></div>';
+}
+function selectAnswer(idx){
+  if(answered)return;
+  answered=true;
+  var q=questions[current];
+  var opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o){o.disabled=true;});
+  var fb=document.getElementById('qfeedback');
+  if(idx===q.correct){opts[idx].classList.add('correct');score++;fb.className='quiz-feedback show ok';fb.innerHTML='<strong>Benar!</strong> '+q.explain;}
+  else{opts[idx].classList.add('wrong');opts[q.correct].classList.add('correct');fb.className='quiz-feedback show nok';fb.innerHTML='<strong>Belum tepat.</strong> '+q.explain;}
+  var btn=document.getElementById('quiz-next-btn');
+  btn.disabled=false;
+  if(current===questions.length-1)btn.textContent='Lihat Hasil';
+}
+function nextQuestion(){
+  if(!answered)return;
+  current++;
+  if(current<questions.length){renderQuestion();}
+  else{showResult();}
+}
+function showResult(){
+  document.getElementById('quiz-container').style.display='none';
+  var pct=Math.round(score/questions.length*100);
+  document.getElementById('quiz-result').style.display='block';
+  document.getElementById('result-icon').textContent=pct>=80?'&#127942;':pct>=60?'&#128077;':'&#128218;';
+  document.getElementById('result-title').textContent=pct>=80?'Pemahaman Sangat Baik!':pct>=60?'Cukup Baik!':'Perlu Lebih Dalam';
+  document.getElementById('result-desc').textContent='Kamu menjawab '+score+' dari '+questions.length+' pertanyaan dengan benar ('+pct+'%). '+(pct>=80?'Kamu sudah memahami konsep inti ketahanan siber dari perspektif audit dengan baik.':'Coba kembali ke bagian yang relevan dan ulangi kuis untuk memperdalam pemahamanmu.');
+  document.getElementById('result-bar').style.width=pct+'%';
+  document.getElementById('result-fraction').textContent=score+' / '+questions.length+' benar';
+}
+function restartQuiz(){
+  current=0;score=0;answered=false;
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-container').style.display='block';
+  document.getElementById('quiz-next-btn').textContent='Pertanyaan Berikutnya';
+  renderQuestion();
+}
+var glossaryData=[
+  {term:"APT (Advanced Persistent Threat)",def:"Serangan siber yang dirancang untuk menembus sistem dan bertahan di dalamnya dalam jangka panjang tanpa terdeteksi, biasanya dilakukan oleh aktor yang disponsori negara atau kelompok terorganisir."},
+  {term:"Assume Breach",def:"Prinsip keamanan yang mengasumsikan bahwa pelanggaran keamanan pasti akan terjadi. Fokusnya bukan hanya mencegah, tetapi mempersiapkan diri untuk mendeteksi dan pulih secepat mungkin."},
+  {term:"BCP (Business Continuity Plan)",def:"Dokumen yang menjabarkan bagaimana organisasi akan melanjutkan operasional penting selama dan setelah bencana atau insiden. BCP yang baik telah diuji melalui drill nyata, bukan hanya tersimpan dalam folder."},
+  {term:"BSSN (Badan Siber dan Sandi Negara)",def:"Lembaga pemerintah Indonesia yang bertanggung jawab atas keamanan siber nasional, termasuk monitoring ancaman dan pengembangan kebijakan keamanan siber."},
+  {term:"CIA Triad",def:"Kerangka dasar keamanan informasi: Confidentiality (data hanya dapat diakses oleh yang berhak), Integrity (data tidak dimodifikasi tanpa izin), dan Availability (data dapat diakses saat dibutuhkan)."},
+  {term:"CISO (Chief Information Security Officer)",def:"Pejabat eksekutif yang bertanggung jawab atas strategi dan pelaksanaan keamanan informasi organisasi. IIA TR mensyaratkan CISO melapor minimal ke level Direktur, bukan hanya ke CIO."},
+  {term:"COBIT 2019",def:"Kerangka tata kelola dan manajemen TI yang dikembangkan oleh ISACA. Digunakan sebagai referensi untuk menilai seberapa matang tata kelola TI sebuah organisasi."},
+  {term:"CSP (Cloud Service Provider)",def:"Penyedia layanan cloud seperti AWS, Microsoft Azure, atau Google Cloud Platform. CSP bertanggung jawab atas keamanan infrastruktur dasar cloud, bukan atas data dan konfigurasi pelanggan."},
+  {term:"Cyber Resilience",def:"Kemampuan organisasi untuk mengantisipasi, bertahan, pulih, dan beradaptasi terhadap serangan siber. Berbeda dari sekadar security yang fokus pada pencegahan, resilience mengakui bahwa insiden pasti akan terjadi."},
+  {term:"Data Residency",def:"Persyaratan bahwa data tertentu harus disimpan dan diproses di dalam wilayah geografis tertentu. Di Indonesia, hyperscaler seperti AWS sudah memiliki region lokal untuk memenuhi persyaratan ini."},
+  {term:"DR Drill (Disaster Recovery Drill)",def:"Latihan pemulihan bencana untuk membuktikan secara nyata bahwa sistem dapat dipulihkan dalam waktu yang ditargetkan (RTO/RPO), bukan sekadar mengklaim angka tersebut dalam dokumen."},
+  {term:"HSM (Hardware Security Module)",def:"Perangkat keras khusus yang melindungi dan mengelola kunci kriptografi. Digunakan di perbankan untuk operasi sensitif seperti enkripsi PIN block pada transaksi ATM."},
+  {term:"IaaS, PaaS, SaaS",def:"Model layanan cloud. IaaS (Infrastructure as a Service) berarti menyewa infrastruktur dasar. PaaS (Platform as a Service) berarti menyewa platform pengembangan. SaaS (Software as a Service) berarti menyewa aplikasi siap pakai."},
+  {term:"IIA TR (Topical Requirement)",def:"Standar mandatory yang diterbitkan Institute of Internal Auditors. IIA Cybersecurity Topical Requirement (Februari 2025) berisi 17 requirement yang harus dinilai dalam setiap engagement audit cybersecurity."},
+  {term:"Immutable Backup",def:"Backup data yang tidak dapat diubah atau dihapus dalam periode tertentu, bahkan oleh administrator sistem sendiri. Ini menjadi kritis untuk bertahan dari serangan ransomware yang mencoba menghapus backup."},
+  {term:"KSA (Knowledge, Skills, Abilities)",def:"Kerangka asesmen kompetensi SDM. Dalam konteks IIA TR, CISO dan tim keamanan harus memiliki KSA yang memadai dan dinilai secara periodik."},
+  {term:"Landing Zone",def:"Lingkungan cloud yang sudah dikonfigurasi sebelumnya sesuai best practice keamanan dan kepatuhan. Mempercepat onboarding unit bisnis baru tanpa harus memulai dari nol."},
+  {term:"MTTD (Mean Time to Detect)",def:"Rata-rata waktu yang dibutuhkan untuk mendeteksi bahwa sebuah insiden siber sedang terjadi. Semakin pendek MTTD, semakin cepat organisasi dapat merespons sebelum kerusakan meluas."},
+  {term:"MTTR (Mean Time to Recover)",def:"Rata-rata waktu untuk memulihkan sistem ke kondisi normal setelah insiden. Ini adalah metrik yang paling sering ditanyakan oleh regulator dan komite audit."},
+  {term:"Multi-AZ Deployment",def:"Strategi penempatan sistem di beberapa zona ketersediaan (Availability Zone) sekaligus. Jika satu zona mengalami gangguan, sistem di zona lain mengambil alih secara otomatis tanpa downtime yang terasa."},
+  {term:"NIST CSF 2.0",def:"Cybersecurity Framework versi 2.0 dari National Institute of Standards and Technology. Kerangka ini mencakup enam fungsi: Govern, Identify, Protect, Detect, Respond, dan Recover."},
+  {term:"POJK 11/2022",def:"Peraturan OJK tentang Penyelenggaraan Teknologi Informasi oleh Bank Umum. Mengatur penggunaan layanan cloud pihak ketiga, termasuk kewajiban notifikasi dan due diligence vendor."},
+  {term:"Ransomware",def:"Jenis malware yang mengenkripsi data korban dan meminta tebusan untuk mendapatkan kunci dekripsi. Salah satu ancaman paling merusak bagi industri keuangan karena dapat menghentikan operasional sepenuhnya."},
+  {term:"RAS (Risk Appetite Statement)",def:"Pernyataan formal yang mendefinisikan seberapa besar risiko yang bersedia diterima organisasi dalam mengejar tujuan bisnisnya. Strategi siber harus selaras dengan RAS bank."},
+  {term:"RPO (Recovery Point Objective)",def:"Seberapa jauh ke belakang data yang boleh hilang dalam skenario pemulihan bencana. Menentukan frekuensi dan metode backup yang diperlukan."},
+  {term:"RTO (Recovery Time Objective)",def:"Target maksimum waktu yang dibutuhkan untuk memulihkan sistem setelah insiden. Angka ini harus divalidasi melalui drill nyata, bukan sekadar dituliskan dalam dokumen BCP."},
+  {term:"SEOJK 29/2022",def:"Surat Edaran OJK tentang Pedoman Penyelenggaraan TI Perbankan. Menetapkan ketahanan siber sebagai komponen wajib dalam operasional bank, termasuk di lingkungan cloud."},
+  {term:"Shared Responsibility Model",def:"Kerangka pembagian tanggung jawab keamanan antara CSP dan pelanggan. CSP bertanggung jawab atas keamanan infrastruktur cloud, sementara pelanggan bertanggung jawab atas data, identitas, dan konfigurasi."},
+  {term:"SOC 2 Type II",def:"Laporan audit kepatuhan yang membuktikan bahwa CSP telah menerapkan kontrol keamanan yang memadai dan telah diuji dalam periode tertentu, bukan hanya pada satu titik waktu. Auditor harus memverifikasi laporan ini, bukan hanya menerima klaim verbal."},
+  {term:"Tabletop Exercise (TTX)",def:"Diskusi berbasis skenario yang menguji kesiapan tim dalam menghadapi insiden siber tanpa melibatkan serangan teknis nyata. Lebih murah dari full-scale drill tetapi penting untuk menguji koordinasi antar fungsi."},
+  {term:"Third-Party Risk",def:"Risiko yang timbul dari hubungan dengan vendor, mitra, dan CSP. Kepatuhan vendor adalah perpanjangan kontrol bank. Kelemahan vendor dapat menjadi pintu masuk ke sistem bank."},
+  {term:"WORM (Write Once Read Many)",def:"Teknologi penyimpanan yang memungkinkan data ditulis hanya sekali dan tidak dapat diubah atau dihapus. Fondasi dari immutable backup untuk perlindungan ransomware."},
+  {term:"Zero-Day",def:"Kerentanan keamanan yang belum diketahui publik atau belum tersedia patch-nya. Serangan zero-day sangat berbahaya karena sistem belum memiliki perlindungan terhadapnya."}
+];
+function renderGlossary(filter){
+  var list=document.getElementById('glossary-list');
+  var data=filter?glossaryData.filter(function(g){return g.term.toLowerCase().includes(filter.toLowerCase())||g.def.toLowerCase().includes(filter.toLowerCase());}):glossaryData;
+  if(data.length===0){list.innerHTML='<li style="padding:24px;text-align:center;color:var(--text-muted);font-size:14px;">Tidak ada istilah yang cocok.</li>';return;}
+  list.innerHTML=data.map(function(g){return '<li class="glossary-item"><div class="glossary-term">'+g.term+'</div><div class="glossary-def">'+g.def+'</div></li>';}).join('');
+}
+function filterGlossary(){renderGlossary(document.getElementById('glossary-input').value);}
+renderQuestion();
+renderGlossary();
+
+function scrollNav(dir){
+  var el=document.getElementById('nav-inner');
+  el.scrollBy({left:dir*160,behavior:'smooth'});
+  setTimeout(updateNavArrows,200);
+}
+function updateNavArrows(){
+  var el=document.getElementById('nav-inner');
+  var btnL=document.getElementById('nav-left');
+  var btnR=document.getElementById('nav-right');
+  if(!el||!btnL||!btnR)return;
+  btnL.classList.toggle('hidden',el.scrollLeft<=4);
+  btnR.classList.toggle('hidden',el.scrollLeft+el.clientWidth>=el.scrollWidth-4);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  var el=document.getElementById('nav-inner');
+  if(el){el.addEventListener('scroll',updateNavArrows);updateNavArrows();}
+});
+</script>
+</body>
+</html>
