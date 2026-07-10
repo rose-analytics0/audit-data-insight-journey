@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Post 20 — Fraud Risk Profiling Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #e8e6e0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; padding: 20px;
+  }
+
+  .pg-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #aaa;
+    margin-bottom: 10px; text-align: center;
+  }
+
+  /* ══════════════════════════════════════════
+     SLIDE — 900 × 600 (taller for content)
+  ══════════════════════════════════════════ */
+  .slide {
+    width: 900px;
+    background: #f7f6f3;
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .hdr {
+    background: #16160f;
+    padding: 14px 24px 12px;
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 20px;
+    flex-shrink: 0;
+  }
+  .hdr-left {}
+  .hdr-phase {
+    font-size: 8.5px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #5a9e2f; margin-bottom: 4px;
+  }
+  .hdr-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; color: #fff; line-height: 1.2; margin-bottom: 3px;
+  }
+  .hdr-sub { font-size: 10px; color: #4a4a44; line-height: 1.4; max-width: 520px; }
+
+  .hdr-chain {
+    display: flex; align-items: center; gap: 4px;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .hc-step {
+    background: rgba(255,255,255,0.06);
+    border-radius: 5px; padding: 5px 9px;
+    text-align: center;
+  }
+  .hc-icon  { font-size: 13px; display: block; }
+  .hc-lbl   { font-size: 7.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+  .hc-step.c1 .hc-lbl { color: #378ADD; }
+  .hc-step.c2 .hc-lbl { color: #888; }
+  .hc-step.c3 .hc-lbl { color: #d4822a; }
+  .hc-step.c4 .hc-lbl { color: #5a9e2f; }
+  .hc-arr { font-size: 12px; color: #333; }
+
+  /* ── 4-COLUMN MAIN BODY ── */
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr 1px 1fr 1px 1fr;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .col-div { background: #e2e0d8; }
+
+  .col {
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 14px 14px 12px;
+    overflow: hidden;
+  }
+
+  /* column headers */
+  .col-num {
+    width: 18px; height: 18px; border-radius: 50%;
+    font-size: 9px; font-weight: 700; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .col-hdr {
+    display: flex; align-items: flex-start; gap: 7px; flex-shrink: 0;
+  }
+  .col-hdr-text {}
+  .col-hdr-tag {
+    font-size: 8px; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; margin-bottom: 2px;
+  }
+  .col-hdr-title {
+    font-size: 12px; font-weight: 600; color: #1a1a14; line-height: 1.2;
+  }
+  .col-hdr-sub { font-size: 9px; color: #888; margin-top: 1px; }
+
+  /* ════ COL 1 — RISK INDICATOR ════ */
+  .col1 { background: #f7f6f3; }
+  .col1 .col-num { background: #378ADD; }
+  .col1 .col-hdr-tag { color: #378ADD; }
+
+  .score-rows { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+  .sr {
+    display: flex; align-items: center; gap: 7px;
+    background: #eeece6; border-radius: 6px; padding: 6px 9px;
+  }
+  .sr-lbl { font-size: 9.5px; color: #555; width: 62px; flex-shrink: 0; }
+  .sr-track { flex: 1; height: 6px; background: #dddbd3; border-radius: 3px; overflow: hidden; }
+  .sr-fill  { height: 100%; border-radius: 3px; }
+  .sr-pct   { font-size: 10px; font-weight: 700; width: 28px; text-align: right; flex-shrink: 0; }
+
+  .sr.rh .sr-fill { background: #c94040; } .sr.rh .sr-pct { color: #c94040; }
+  .sr.rm .sr-fill { background: #c97c20; } .sr.rm .sr-pct { color: #c97c20; }
+  .sr.rl .sr-fill { background: #3070a8; } .sr.rl .sr-pct { color: #3070a8; }
+  .sr.rs .sr-fill { background: #4e8c1e; } .sr.rs .sr-pct { color: #4e8c1e; }
+
+  .note-box {
+    border-radius: 6px; padding: 8px 10px; flex-shrink: 0;
+    border-left: 2.5px solid;
+  }
+  .note-box.blue { background: #deedf8; border-color: #378ADD; }
+  .note-tag  { font-size: 7.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+  .note-box.blue .note-tag { color: #1e5f9a; }
+  .note-body { font-size: 9.5px; line-height: 1.45; }
+  .note-box.blue .note-body { color: #1e4a70; }
+
+  /* ════ COL 2 — RISK ASSESSMENT ════ */
+  .col2 { background: #16160f; }
+  .col2 .col-num { background: #5a9e2f; }
+  .col2 .col-hdr-tag { color: #5a9e2f; }
+  .col2 .col-hdr-title { color: #f0ede6; }
+  .col2 .col-hdr-sub { color: #555; }
+
+  .factor-list { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+  .factor {
+    background: rgba(255,255,255,0.06);
+    border-radius: 5px; padding: 6px 9px;
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+  .factor-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .factor-txt { font-size: 10px; color: #a8a8a0; line-height: 1.35; }
+  .factor-txt strong { color: #e8e6de; display: block; font-size: 10px; margin-bottom: 1px; }
+
+  .pj-box {
+    background: rgba(90,158,47,0.12);
+    border-radius: 6px; padding: 8px 10px;
+    border-left: 2.5px solid #5a9e2f; flex-shrink: 0;
+  }
+  .pj-tag  { font-size: 7.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5a9e2f; margin-bottom: 2px; }
+  .pj-body { font-size: 9.5px; color: #888; line-height: 1.4; }
+
+  /* ════ COL 3 — RISK PRIORITIZATION ════ */
+  .col3 { background: #f7f6f3; }
+  .col3 .col-num { background: #c97c20; }
+  .col3 .col-hdr-tag { color: #c97c20; }
+
+  .risk-cards { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .rc {
+    border-radius: 7px; padding: 8px 10px;
+    border-left: 3px solid;
+  }
+  .rc.rh { background: #f9e8e8; border-color: #c94040; }
+  .rc.rm { background: #faeadb; border-color: #c97c20; }
+  .rc.rl { background: #e4edf6; border-color: #3070a8; }
+
+  .rc-level {
+    font-size: 8px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 3px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .rc.rh .rc-level { color: #8b2020; }
+  .rc.rm .rc-level { color: #7a4a10; }
+  .rc.rl .rc-level { color: #1e4a70; }
+
+  .rc-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  }
+  .rc.rh .rc-dot { background: #c94040; }
+  .rc.rm .rc-dot { background: #c97c20; }
+  .rc.rl .rc-dot { background: #3070a8; }
+
+  .rc-bullet {
+    font-size: 9px; line-height: 1.5; padding-left: 2px;
+  }
+  .rc.rh .rc-bullet { color: #a03030; }
+  .rc.rm .rc-bullet { color: #8a5010; }
+  .rc.rl .rc-bullet { color: #2a5a80; }
+
+  /* ════ COL 4 — AUDIT RESPONSE ════ */
+  .col4 { background: #f2f0ea; }
+  .col4 .col-num { background: #4e8c1e; }
+  .col4 .col-hdr-tag { color: #4e8c1e; }
+
+  .action-rows { display: flex; flex-direction: column; gap: 6px; }
+  .ar { border-radius: 7px; padding: 8px 10px; }
+  .ar.rh { background: #f9e8e8; }
+  .ar.rm { background: #faeadb; }
+  .ar.rl { background: #eeece6; }
+
+  .ar-top {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 2px;
+  }
+  .ar-lv {
+    font-size: 7.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  }
+  .ar.rh .ar-lv { color: #8b2020; }
+  .ar.rm .ar-lv { color: #7a4a10; }
+  .ar.rl .ar-lv { color: #4a4a40; }
+
+  .ar-badge {
+    font-size: 7px; font-weight: 700; padding: 1px 6px;
+    border-radius: 8px; color: white;
+  }
+  .ar.rh .ar-badge { background: #c94040; }
+  .ar.rm .ar-badge { background: #c97c20; }
+  .ar.rl .ar-badge { background: #888; }
+
+  .ar-action { font-size: 11px; font-weight: 600; margin-bottom: 2px; }
+  .ar.rh .ar-action { color: #701010; }
+  .ar.rm .ar-action { color: #603010; }
+  .ar.rl .ar-action { color: #333; }
+
+  .ar-detail { font-size: 9px; line-height: 1.4; }
+  .ar.rh .ar-detail { color: #a03030; }
+  .ar.rm .ar-detail { color: #8a5010; }
+  .ar.rl .ar-detail { color: #666; }
+
+  .assurance-box {
+    background: #16160f; border-radius: 7px;
+    padding: 9px 11px; flex: 1;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .ab-tag  { font-size: 7.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #5a9e2f; margin-bottom: 4px; }
+  .ab-body { font-size: 9.5px; color: #888; line-height: 1.55; }
+  .ab-body strong { color: #e8e6de; }
+
+  /* ── BOTTOM SECTION ── */
+  .bottom {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr 1px 2fr;
+    border-top: 1px solid #e0ddd5;
+    flex-shrink: 0;
+  }
+
+  .bot-div { background: #e0ddd5; }
+
+  /* assurance chain */
+  .bot-chain {
+    padding: 11px 14px;
+    background: #16160f;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .bc-tag { font-size: 7.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5a9e2f; margin-bottom: 5px; }
+  .bc-row {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 9.5px; color: #555;
+  }
+  .bc-row.active { color: #5a9e2f; font-weight: 600; }
+  .bc-dot { width: 5px; height: 5px; border-radius: 50%; background: #333; flex-shrink: 0; }
+  .bc-row.active .bc-dot { background: #5a9e2f; }
+  .bc-arr { font-size: 9px; color: #333; padding-left: 2px; }
+
+  /* governance */
+  .bot-gov {
+    padding: 11px 14px;
+    background: #1e1e16;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .bg-tag { font-size: 7.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-bottom: 3px; }
+  .bg-item {
+    display: flex; align-items: flex-start; gap: 6px;
+    font-size: 9.5px; color: #666; line-height: 1.35;
+  }
+  .bg-check { color: #5a9e2f; font-size: 10px; flex-shrink: 0; }
+
+  /* key message */
+  .bot-msg {
+    padding: 14px 18px;
+    background: #16160f;
+    display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  }
+  .bm-tag { font-size: 7.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5a9e2f; }
+  .bm-quote {
+    font-family: 'DM Serif Display', serif;
+    font-size: 14px; color: #f0ede6; line-height: 1.4;
+  }
+  .bm-quote span { color: #5a9e2f; }
+  .bm-sub { font-size: 9.5px; color: #555; line-height: 1.5; }
+
+  /* footer */
+  .footer {
+    background: #0e0e08;
+    padding: 6px 24px;
+    display: flex; align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .ft-left { font-size: 8.5px; color: #3a3a32; }
+  .ft-right {
+    display: flex; gap: 6px;
+  }
+  .ft-tag {
+    font-size: 7.5px; padding: 2px 7px; border-radius: 8px;
+    background: rgba(255,255,255,0.05); color: #4a4a40;
+  }
+</style>
+</head>
+<body>
+
+<div class="pg-label">Post 20 — Fraud Risk Profiling Report · Audit & Data Insight Journey</div>
+
+<div class="slide">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-phase">Phase 6 — Fraud Risk Profiling Report</div>
+      <div class="hdr-title">Dari Output Model ke Audit Assurance</div>
+      <div class="hdr-sub">Fraud Risk Profiling mengubah output machine learning menjadi prioritas audit yang dapat dipertanggungjawabkan.</div>
+    </div>
+    <div class="hdr-chain">
+      <div class="hc-step c1"><span class="hc-icon">🤖</span><span class="hc-lbl">Risk Score</span></div>
+      <div class="hc-arr">→</div>
+      <div class="hc-step c2"><span class="hc-icon">🔍</span><span class="hc-lbl">Assessment</span></div>
+      <div class="hc-arr">→</div>
+      <div class="hc-step c3"><span class="hc-icon">📋</span><span class="hc-lbl">Prioritization</span></div>
+      <div class="hc-arr">→</div>
+      <div class="hc-step c4"><span class="hc-icon">✅</span><span class="hc-lbl">Audit Action</span></div>
+    </div>
+  </div>
+
+  <!-- 4 COLUMNS -->
+  <div class="cols">
+
+    <!-- COL 1: RISK INDICATOR -->
+    <div class="col col1">
+      <div class="col-hdr">
+        <div class="col-num">1</div>
+        <div class="col-hdr-text">
+          <div class="col-hdr-tag">Risk Indicator</div>
+          <div class="col-hdr-title">Output Model</div>
+          <div class="col-hdr-sub">angka probabilitas fraud</div>
+        </div>
+      </div>
+      <div class="score-rows">
+        <div class="sr rh"><div class="sr-lbl">Transaksi A</div><div class="sr-track"><div class="sr-fill" style="width:97%"></div></div><div class="sr-pct">97%</div></div>
+        <div class="sr rh"><div class="sr-lbl">Transaksi B</div><div class="sr-track"><div class="sr-fill" style="width:84%"></div></div><div class="sr-pct">84%</div></div>
+        <div class="sr rm"><div class="sr-lbl">Transaksi C</div><div class="sr-track"><div class="sr-fill" style="width:61%"></div></div><div class="sr-pct">61%</div></div>
+        <div class="sr rm"><div class="sr-lbl">Transaksi D</div><div class="sr-track"><div class="sr-fill" style="width:41%"></div></div><div class="sr-pct">41%</div></div>
+        <div class="sr rl"><div class="sr-lbl">Transaksi E</div><div class="sr-track"><div class="sr-fill" style="width:23%"></div></div><div class="sr-pct">23%</div></div>
+        <div class="sr rs"><div class="sr-lbl">Transaksi F</div><div class="sr-track"><div class="sr-fill" style="width:8%"></div></div><div class="sr-pct">8%</div></div>
+      </div>
+      <div class="note-box blue">
+        <div class="note-tag">Catatan</div>
+        <div class="note-body">Risk score menunjukkan kemungkinan risiko, bukan keputusan fraud.</div>
+      </div>
+    </div>
+
+    <div class="col-div"></div>
+
+    <!-- COL 2: RISK ASSESSMENT -->
+    <div class="col col2">
+      <div class="col-hdr">
+        <div class="col-num">2</div>
+        <div class="col-hdr-text">
+          <div class="col-hdr-tag">Risk Assessment</div>
+          <div class="col-hdr-title">Interpretasi Auditor</div>
+          <div class="col-hdr-sub">konteks bisnis + judgment</div>
+        </div>
+      </div>
+      <div class="factor-list">
+        <div class="factor">
+          <div class="factor-dot" style="background:#c94040;"></div>
+          <div class="factor-txt"><strong>Transaction Type</strong>TRANSFER (layering) atau CASH_OUT (monetization)</div>
+        </div>
+        <div class="factor">
+          <div class="factor-dot" style="background:#c97c20;"></div>
+          <div class="factor-txt"><strong>Balance Movement</strong>Selisih saldo pengirim yang ekstrem dan tidak proporsional</div>
+        </div>
+        <div class="factor">
+          <div class="factor-dot" style="background:#3070a8;"></div>
+          <div class="factor-txt"><strong>Transaction Amount</strong>Nominal tidak sejalan dengan pola historis saldo akun</div>
+        </div>
+        <div class="factor">
+          <div class="factor-dot" style="background:#4e8c1e;"></div>
+          <div class="factor-txt"><strong>Behavioral Pattern</strong>Timing, frekuensi, dan pola outflow transaksi</div>
+        </div>
+      </div>
+      <div class="pj-box">
+        <div class="pj-tag">+ Professional Judgment</div>
+        <div class="pj-body">Auditor menginterpretasikan kombinasi sinyal ini dalam konteks bisnis yang nyata</div>
+      </div>
+    </div>
+
+    <div class="col-div"></div>
+
+    <!-- COL 3: RISK PRIORITIZATION -->
+    <div class="col col3">
+      <div class="col-hdr">
+        <div class="col-num">3</div>
+        <div class="col-hdr-text">
+          <div class="col-hdr-tag">Risk Prioritization</div>
+          <div class="col-hdr-title">Fraud Risk Profile</div>
+          <div class="col-hdr-sub">sudah menjadi bahasa audit</div>
+        </div>
+      </div>
+      <div class="risk-cards">
+        <div class="rc rh">
+          <div class="rc-level"><div class="rc-dot"></div>HIGH RISK</div>
+          <div class="rc-bullet">Probabilitas fraud tinggi<br>Pola transaksi mencurigakan<br>Potensi dampak signifikan</div>
+        </div>
+        <div class="rc rm">
+          <div class="rc-level"><div class="rc-dot"></div>MEDIUM RISK</div>
+          <div class="rc-bullet">Indikasi anomali parsial<br>Membutuhkan verifikasi tambahan</div>
+        </div>
+        <div class="rc rl">
+          <div class="rc-level"><div class="rc-dot"></div>LOW RISK</div>
+          <div class="rc-bullet">Konsisten dengan pola normal<br>Tidak terdapat red flag utama</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-div"></div>
+
+    <!-- COL 4: AUDIT RESPONSE -->
+    <div class="col col4">
+      <div class="col-hdr">
+        <div class="col-num">4</div>
+        <div class="col-hdr-text">
+          <div class="col-hdr-tag">Audit Response</div>
+          <div class="col-hdr-title">Risk-Based Audit Action</div>
+          <div class="col-hdr-sub">alokasi sumber daya audit</div>
+        </div>
+      </div>
+      <div class="action-rows">
+        <div class="ar rh">
+          <div class="ar-top"><span class="ar-lv">HIGH RISK</span><span class="ar-badge">Segera</span></div>
+          <div class="ar-action">Immediate Review</div>
+          <div class="ar-detail">Investigasi lanjutan · Targeted substantive testing · Eskalasi ke manajemen</div>
+        </div>
+        <div class="ar rm">
+          <div class="ar-top"><span class="ar-lv">MEDIUM RISK</span><span class="ar-badge">Menengah</span></div>
+          <div class="ar-action">Additional Testing</div>
+          <div class="ar-detail">Verifikasi dokumen · Analisis tambahan · Evaluasi kontrol</div>
+        </div>
+        <div class="ar rl">
+          <div class="ar-top"><span class="ar-lv">LOW RISK</span><span class="ar-badge">Berkala</span></div>
+          <div class="ar-action">Monitoring</div>
+          <div class="ar-detail">Pemantauan berkala · Tidak menjadi prioritas investigasi saat ini</div>
+        </div>
+      </div>
+      <div class="assurance-box">
+        <div class="ab-tag">Detection → Assurance</div>
+        <div class="ab-body">Tujuannya bukan menyatakan transaksi <strong>pasti fraud</strong> — melainkan memberikan <strong>assurance yang terarah dan berbasis risiko</strong>.</div>
+      </div>
+    </div>
+
+  </div><!-- /cols -->
+
+  <!-- BOTTOM SECTION -->
+  <div class="bottom">
+
+    <!-- Audit Assurance Chain -->
+    <div class="bot-chain">
+      <div class="bc-tag">Audit Assurance Chain</div>
+      <div class="bc-row">
+        <div class="bc-dot"></div>Transaction Data
+      </div>
+      <div class="bc-arr" style="padding-left:7px;">↓</div>
+      <div class="bc-row active">
+        <div class="bc-dot"></div>Risk Indicator
+      </div>
+      <div class="bc-arr" style="padding-left:7px;">↓</div>
+      <div class="bc-row active">
+        <div class="bc-dot"></div>Risk Assessment
+      </div>
+      <div class="bc-arr" style="padding-left:7px;">↓</div>
+      <div class="bc-row active">
+        <div class="bc-dot"></div>Risk Prioritization
+      </div>
+      <div class="bc-arr" style="padding-left:7px;">↓</div>
+      <div class="bc-row active">
+        <div class="bc-dot"></div>Audit Response
+      </div>
+      <div class="bc-arr" style="padding-left:7px;">↓</div>
+      <div class="bc-row active" style="color:#5a9e2f; font-weight:700;">
+        <div class="bc-dot"></div>Audit Assurance
+      </div>
+    </div>
+
+    <div class="bot-div"></div>
+
+    <!-- Governance -->
+    <div class="bot-gov">
+      <div class="bg-tag">Governance & Professional Judgment</div>
+      <div class="bg-item"><span class="bg-check">✓</span>Profiling dilakukan pada level transaksi, bukan individu</div>
+      <div class="bg-item"><span class="bg-check">✓</span>Model tidak menetapkan fraud secara otomatis</div>
+      <div class="bg-item"><span class="bg-check">✓</span>Setiap indikasi risiko memerlukan verifikasi auditor</div>
+      <div class="bg-item"><span class="bg-check">✓</span>Kesimpulan audit tidak didasarkan pada output model semata</div>
+      <div class="bg-item"><span class="bg-check">✓</span>Professional judgment tetap menjadi dasar keputusan audit</div>
+    </div>
+
+    <div class="bot-div"></div>
+
+    <!-- Key Message -->
+    <div class="bot-msg">
+      <div class="bm-tag">Key Message</div>
+      <div class="bm-quote">
+        Model membantu <span>mengidentifikasi risiko.</span><br>
+        Auditor menentukan <span>prioritas assurance.</span>
+      </div>
+      <div class="bm-sub">Fraud Risk Profiling adalah jembatan antara sinyal analitik dan keputusan audit yang dapat dipertanggungjawabkan.</div>
+    </div>
+
+  </div><!-- /bottom -->
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="ft-left">IIA Global Internal Audit Standards 2025 · KPMG Trusted AI Framework · Rosliana Dwi Astuti — Audit & Data Insight Journey</div>
+    <div class="ft-right">
+      <span class="ft-tag">Risk-Based Assurance</span>
+      <span class="ft-tag">Professional Judgment</span>
+      <span class="ft-tag">Audit Analytics</span>
+    </div>
+  </div>
+
+</div><!-- /slide -->
+
+</body>
+</html>
