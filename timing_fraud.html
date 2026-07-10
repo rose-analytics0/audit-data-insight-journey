@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDA 4 — Timing Fraud</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #fafaf8;
+    color: #1a1a18;
+    padding: 28px 24px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* ── HEADER ── */
+  .tag {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    color: #185FA5; text-transform: uppercase; margin-bottom: 6px;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 21px; font-weight: 400; line-height: 1.35;
+    color: #1a1a18; margin-bottom: 6px;
+  }
+  .subtitle { font-size: 12px; color: #888; line-height: 1.5; margin-bottom: 22px; }
+
+  /* ── STAT CARDS ── */
+  .cards {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; margin-bottom: 22px;
+  }
+  .card { background: #f2f0ea; border-radius: 10px; padding: 13px 12px; text-align: center; }
+  .card.blue { background: #E6F1FB; }
+  .card.red  { background: #FCEBEB; }
+  .card .lbl { font-size: 10px; color: #888; margin-bottom: 3px; }
+  .card.blue .lbl { color: #185FA5; }
+  .card.red  .lbl { color: #A32D2D; }
+  .card .val { font-size: 18px; font-weight: 600; color: #1a1a18; }
+  .card.blue .val { color: #0C447C; }
+  .card.red  .val { color: #791F1F; }
+  .card .sub { font-size: 10px; color: #aaa; margin-top: 3px; }
+  .card.blue .sub { color: #378ADD; }
+  .card.red  .sub { color: #c05050; }
+
+  /* ── CHART ── */
+  #chartSvg { width: 100%; display: block; margin-bottom: 10px; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex; gap: 18px; font-size: 12px;
+    color: #666; margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .ldot { width: 12px; height: 12px; border-radius: 2px; display: inline-block; margin-right: 5px; vertical-align: middle; }
+
+  /* ── CALLOUT BOXES ── */
+  .callouts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+  .callout {
+    border-radius: 10px; padding: 13px 15px;
+    border-left: 3px solid transparent;
+  }
+  .callout.blue { background: #E6F1FB; border-color: #185FA5; }
+  .callout.red  { background: #FCEBEB; border-color: #E24B4A; }
+  .callout .c-tag { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 5px; }
+  .callout.blue .c-tag { color: #185FA5; }
+  .callout.red  .c-tag { color: #A32D2D; }
+  .callout .c-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; line-height: 1.3; }
+  .callout.blue .c-title { color: #0C447C; }
+  .callout.red  .c-title { color: #791F1F; }
+  .callout .c-body { font-size: 12px; line-height: 1.55; }
+  .callout.blue .c-body { color: #378ADD; }
+  .callout.red  .c-body { color: #c05050; }
+
+  /* ── AUDIT BOX ── */
+  .audit-box {
+    background: #1a1a18; border-radius: 10px;
+    padding: 16px 18px; margin-bottom: 16px;
+  }
+  .audit-tag {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #378ADD; margin-bottom: 8px;
+  }
+  .audit-box p { font-size: 13px; color: #d0cfc8; line-height: 1.65; }
+  .audit-box strong { color: #fff; }
+
+  .footer { font-size: 10px; color: #bbb; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="tag">EDA 4 — Transaction Timing Pattern</div>
+<h1>Fraud tidak hanya terjadi di tengah malam</h1>
+<p class="subtitle">PaySim — simulasi transaksi mobile money berbasis data nyata. 24 jam pertama, 271 kasus fraud. Batang biru = volume transaksi · Garis merah = fraud rate per jam.</p>
+
+<div class="cards">
+  <div class="card blue">
+    <div class="lbl">Puncak transaksi</div>
+    <div class="val">Jam 19</div>
+    <div class="sub">51.352 transaksi</div>
+  </div>
+  <div class="card red">
+    <div class="lbl">Fraud rate tertinggi</div>
+    <div class="val">Jam 4</div>
+    <div class="sub">1.770% — jam paling sepi</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Fraud absolut terbanyak</div>
+    <div class="val">Jam 22</div>
+    <div class="sub">8.5% dari semua fraud</div>
+  </div>
+</div>
+
+<!-- SVG chart rendered by JS below -->
+<svg id="chartSvg" height="280"></svg>
+
+<div class="legend">
+  <span><span class="ldot" style="background:#378ADD;"></span>Volume transaksi (skala kiri)</span>
+  <span><span class="ldot" style="background:#E24B4A; border-radius:50%;"></span>Fraud rate % (skala kanan)</span>
+  <span><span class="ldot" style="background:#f2f0ea; border:1.5px solid #ccc;"></span>Jam sepi (1–6 &amp; 21–24)</span>
+</div>
+
+<div class="callouts">
+  <div class="callout blue">
+    <div class="c-tag">Jam sibuk (7–20)</div>
+    <div class="c-title">Volume tinggi, fraud tersembunyi</div>
+    <div class="c-body">Fraud rate rendah, tapi secara absolut lebih banyak fraud terjadi karena volume transaksinya sangat besar. Sulit dideteksi secara manual.</div>
+  </div>
+  <div class="callout red">
+    <div class="c-tag">Jam sepi (1–6 &amp; 21–24)</div>
+    <div class="c-title">Volume kecil, fraud rate melonjak</div>
+    <div class="c-body">Jam 4 mencapai fraud rate 1.770% — 30–170x lebih tinggi dari jam sibuk. Saat sistem paling sepi, setiap transaksi justru paling berisiko.</div>
+  </div>
+</div>
+
+<div class="audit-box">
+  <div class="audit-tag">Implikasi audit</div>
+  <p>Asumsi bahwa <strong>"transaksi di luar jam kerja lebih mencurigakan"</strong> tidak cukup. Data menunjukkan dua risiko yang berbeda: <strong>jam sepi berisiko karena fraud rate-nya tinggi</strong>, sementara <strong>jam sibuk berisiko karena fraud-nya banyak dan mudah tersamar</strong> dalam volume besar. Audit berbasis waktu saja tidak memadai — diperlukan analisis yang mempertimbangkan konteks volume sekaligus pola perilaku transaksi.</p>
+</div>
+
+<div class="footer">
+  Sumber: PaySim synthetic dataset — Lopez Rojas et al., The 28th European Modeling and Simulation Symposium (EMSS) 2016.<br>
+  Visualisasi: Rosliana Dwi Astuti — Audit &amp; Data Insight Journey.
+</div>
+
+<script>
+// ── DATA (dari Colab output) ──────────────────────────────────────────────
+var hours  = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
+var total  = [2708,1014,552,565,665,1660,6837,21097,37628,35991,37241,36153,37515,41485,44609,42471,43361,49579,51352,40625,19152,12635,6144,3216];
+var frate  = [0.591,0.789,0.725,1.770,0.902,1.325,0.176,0.057,0.050,0.031,0.019,0.039,0.037,0.029,0.045,0.024,0.016,0.032,0.021,0.010,0.026,0.182,0.033,0.187];
+
+// ── SVG DIMENSIONS ───────────────────────────────────────────────────────
+var W = 660, H = 280;
+var PL = 46, PR = 46, PT = 24, PB = 32; // left/right padding for dual y-axis
+var BH = H - PT - PB;  // bar area height
+var BW = W - PL - PR;  // bar area width
+
+var svg = document.getElementById('chartSvg');
+svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+
+var n    = hours.length;
+var gap  = 4;
+var barW = (BW - gap * (n - 1)) / n;
+
+var maxTotal = Math.max.apply(null, total);   // for left y-axis (volume)
+var maxRate  = Math.max.apply(null, frate);   // for right y-axis (fraud rate)
+
+// ── HELPER: is a "quiet" hour? ────────────────────────────────────────────
+function isQuiet(h) { return h <= 6 || h >= 21; }
+
+// ── GRIDLINES (4 steps on volume axis) ───────────────────────────────────
+for (var g = 0; g <= 4; g++) {
+  var gv  = (maxTotal / 4) * g;
+  var gy  = PT + BH - (gv / maxTotal) * BH;
+
+  var gl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  gl.setAttribute('x1', PL); gl.setAttribute('x2', W - PR);
+  gl.setAttribute('y1', gy); gl.setAttribute('y2', gy);
+  gl.setAttribute('stroke', '#e8e6df'); gl.setAttribute('stroke-width', '1');
+  svg.appendChild(gl);
+
+  // left label (volume)
+  var lt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  lt.setAttribute('x', PL - 4); lt.setAttribute('y', gy + 4);
+  lt.setAttribute('text-anchor', 'end'); lt.setAttribute('font-size', '9'); lt.setAttribute('fill', '#378ADD');
+  lt.textContent = gv >= 1000 ? Math.round(gv / 1000) + 'k' : Math.round(gv);
+  svg.appendChild(lt);
+
+  // right label (fraud rate, scaled to same grid)
+  var rv  = (maxRate / 4) * g;
+  var rt  = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  rt.setAttribute('x', W - PR + 4); rt.setAttribute('y', gy + 4);
+  rt.setAttribute('text-anchor', 'start'); rt.setAttribute('font-size', '9'); rt.setAttribute('fill', '#E24B4A');
+  rt.textContent = rv.toFixed(2) + '%';
+  svg.appendChild(rt);
+}
+
+// ── BARS (volume) ─────────────────────────────────────────────────────────
+var linePoints = []; // collect points for fraud-rate polyline
+
+hours.forEach(function(h, i) {
+  var x    = PL + i * (barW + gap);
+  var barH = Math.max((total[i] / maxTotal) * BH, 2);
+  var y    = PT + BH - barH;
+
+  // bar fill: quiet hours get lighter shade
+  var fill = isQuiet(h) ? '#C8DFF5' : '#378ADD';
+
+  var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x);       rect.setAttribute('y', y);
+  rect.setAttribute('width', barW); rect.setAttribute('height', barH);
+  rect.setAttribute('fill', fill);  rect.setAttribute('rx', '2');
+  svg.appendChild(rect);
+
+  // x-axis hour label
+  var xl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  xl.setAttribute('x', x + barW / 2);
+  xl.setAttribute('y', PT + BH + 14);
+  xl.setAttribute('text-anchor', 'middle');
+  xl.setAttribute('font-size', '8.5');
+  xl.setAttribute('fill', '#aaa');
+  xl.textContent = h;
+  svg.appendChild(xl);
+
+  // collect fraud-rate line point (centre-top of bar position, but scaled to rate axis)
+  var cx  = x + barW / 2;
+  var cy  = PT + BH - (frate[i] / maxRate) * BH;
+  linePoints.push([cx, cy]);
+});
+
+// ── FRAUD RATE POLYLINE ───────────────────────────────────────────────────
+var ptStr = linePoints.map(function(p) { return p[0] + ',' + p[1]; }).join(' ');
+
+// filled area under the line (subtle)
+var areaStr = 'M ' + linePoints[0][0] + ',' + (PT + BH) +
+              ' L ' + linePoints.map(function(p){ return p[0]+','+p[1]; }).join(' L ') +
+              ' L ' + linePoints[linePoints.length-1][0] + ',' + (PT + BH) + ' Z';
+var area = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+area.setAttribute('d', areaStr);
+area.setAttribute('fill', '#E24B4A'); area.setAttribute('opacity', '0.10');
+svg.appendChild(area);
+
+// the line itself
+var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+poly.setAttribute('points', ptStr);
+poly.setAttribute('fill', 'none');
+poly.setAttribute('stroke', '#E24B4A');
+poly.setAttribute('stroke-width', '1.8');
+poly.setAttribute('stroke-linejoin', 'round');
+poly.setAttribute('stroke-linecap', 'round');
+svg.appendChild(poly);
+
+// dots on each point
+linePoints.forEach(function(p, i) {
+  var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  dot.setAttribute('cx', p[0]); dot.setAttribute('cy', p[1]);
+  // highlight the peak (jam 4, index 3)
+  var isPeak = (i === 3);
+  dot.setAttribute('r', isPeak ? '5' : '3');
+  dot.setAttribute('fill', '#E24B4A');
+  dot.setAttribute('stroke', '#fafaf8');
+  dot.setAttribute('stroke-width', isPeak ? '2' : '1');
+  svg.appendChild(dot);
+
+  // label the peak and a couple of notable hours
+  if (isPeak || i === 21 || i === 18) {
+    var lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    lbl.setAttribute('x', p[0]);
+    lbl.setAttribute('y', p[1] - 8);
+    lbl.setAttribute('text-anchor', 'middle');
+    lbl.setAttribute('font-size', '9');
+    lbl.setAttribute('font-weight', '600');
+    lbl.setAttribute('fill', '#E24B4A');
+    lbl.textContent = frate[i] + '%';
+    svg.appendChild(lbl);
+  }
+});
+
+// ── ANNOTATION: peak volume (jam 19) ─────────────────────────────────────
+(function() {
+  var i   = 18; // jam 19 = index 18
+  var x   = PL + i * (barW + gap) + barW / 2;
+  var barH= (total[i] / maxTotal) * BH;
+  var y   = PT + BH - barH - 6;
+
+  var ann = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  ann.setAttribute('x', x); ann.setAttribute('y', y);
+  ann.setAttribute('text-anchor', 'middle');
+  ann.setAttribute('font-size', '9'); ann.setAttribute('font-weight', '600');
+  ann.setAttribute('fill', '#0C447C');
+  ann.textContent = '51.352';
+  svg.appendChild(ann);
+})();
+
+// ── Y-AXIS TITLES ─────────────────────────────────────────────────────────
+// left: volume
+var lTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+lTitle.setAttribute('x', 10); lTitle.setAttribute('y', PT + BH / 2);
+lTitle.setAttribute('text-anchor', 'middle');
+lTitle.setAttribute('font-size', '9'); lTitle.setAttribute('fill', '#378ADD');
+lTitle.setAttribute('transform', 'rotate(-90 10 ' + (PT + BH / 2) + ')');
+lTitle.textContent = 'Volume transaksi';
+svg.appendChild(lTitle);
+
+// right: fraud rate
+var rTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+rTitle.setAttribute('x', W - 8); rTitle.setAttribute('y', PT + BH / 2);
+rTitle.setAttribute('text-anchor', 'middle');
+rTitle.setAttribute('font-size', '9'); rTitle.setAttribute('fill', '#E24B4A');
+rTitle.setAttribute('transform', 'rotate(90 ' + (W-8) + ' ' + (PT + BH/2) + ')');
+rTitle.textContent = 'Fraud rate (%)';
+svg.appendChild(rTitle);
+
+// ── X-AXIS TITLE ──────────────────────────────────────────────────────────
+var xTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+xTitle.setAttribute('x', W / 2); xTitle.setAttribute('y', H - 2);
+xTitle.setAttribute('text-anchor', 'middle');
+xTitle.setAttribute('font-size', '9'); xTitle.setAttribute('fill', '#bbb');
+xTitle.textContent = 'Jam ke- (Step)';
+svg.appendChild(xTitle);
+</script>
+</body>
+</html>
