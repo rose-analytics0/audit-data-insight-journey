@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul: Audit & Data Insight Journey Sesi 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B1F3A;--navy-light:#2A4F7C;--accent:#0FA3B1;--accent-soft:#E3F7F9;--amber:#E8A838;--amber-soft:#FDF3DC;--red:#C94040;--red-soft:#FDE8E8;--green:#2E7D5E;--green-soft:#E5F5EE;--gray-100:#F6F7F9;--gray-200:#EAECF0;--gray-400:#9BA3AF;--gray-600:#4B5563;--text:#1A2535;--text-muted:#5A6475;--border:rgba(11,31,58,0.12);--shadow-sm:0 1px 3px rgba(11,31,58,0.08);--shadow-md:0 4px 16px rgba(11,31,58,0.10);--radius:12px;--radius-sm:8px;--teal:#0E7C7B;--teal-light:#E4F4F3;--amber-dark:#C97C1B;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--text);line-height:1.75;font-size:15px;}
+
+/* HERO */
+.hero{background:linear-gradient(180deg,#081426,#0B1F3A 60%,#13294B);color:white;position:relative;overflow:hidden;padding:72px 0 60px;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:420px;height:420px;border-radius:50%;border:60px solid rgba(15,163,177,0.09);}
+.hero::after{content:'';position:absolute;bottom:-60px;left:38%;width:260px;height:260px;border-radius:50%;border:40px solid rgba(232,168,56,0.07);}
+.hero-inner{max-width:940px;margin:0 auto;padding:0 40px;position:relative;z-index:2;}
+.badge-event{display:inline-flex;align-items:center;gap:8px;background:rgba(232,168,56,0.18);color:var(--amber);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:6px 14px;border-radius:100px;border:1px solid rgba(232,168,56,0.3);margin-bottom:20px;font-family:'IBM Plex Mono',monospace;}
+.badge-event span{width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block;}
+.hero h1{font-family:'Lora',serif;font-size:clamp(1.9rem,4vw,3rem);font-weight:600;line-height:1.18;color:white;margin-bottom:16px;max-width:720px;}
+.hero h1 em{color:var(--accent);font-style:normal;}
+.hero-sub{color:rgba(255,255,255,0.65);font-size:15px;max-width:620px;margin-bottom:36px;line-height:1.75;}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.12);border-radius:14px;overflow:hidden;margin-top:10px;}
+.hero-stats .hcell{background:rgba(8,20,38,0.5);padding:18px 16px;}
+.hero-stats .hnum{font-family:'IBM Plex Mono',monospace;font-size:1.45rem;font-weight:500;color:var(--amber);display:block;}
+.hero-stats .hlab{font-size:12px;color:rgba(255,255,255,0.55);margin-top:4px;}
+
+/* NAV */
+.nav-strip{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
+.nav-wrap{max-width:940px;margin:0 auto;padding:0 28px;display:flex;align-items:stretch;}
+.nav-inner{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;}
+.nav-inner::-webkit-scrollbar{display:none;}
+.nav-tab{display:flex;align-items:center;gap:6px;padding:13px 14px;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+.nav-tab:hover{color:var(--navy);}
+.nav-tab.active{color:var(--navy);border-bottom-color:var(--accent);}
+.nav-num{width:19px;height:19px;border-radius:50%;background:var(--gray-200);color:var(--gray-600);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-tab.active .nav-num{background:var(--accent);color:white;}
+.nav-arrow{flex-shrink:0;width:32px;background:white;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;transition:color 0.15s;border-bottom:2px solid transparent;padding:0;}
+.nav-arrow:hover{color:var(--navy);}
+.nav-arrow.hidden{opacity:0;pointer-events:none;}
+
+/* MAIN */
+.main{max-width:940px;margin:0 auto;padding:44px 40px 90px;}
+.section{display:none;}
+.section.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.section-header{margin-bottom:34px;}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;font-family:'IBM Plex Mono',monospace;}
+.section-header h2{font-family:'Lora',serif;font-size:26px;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:12px;}
+.section-intro{color:var(--text-muted);font-size:15px;line-height:1.75;max-width:700px;margin-bottom:28px;}
+
+/* ACCORDION */
+.acc-item{background:white;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;transition:box-shadow 0.2s;box-shadow:var(--shadow-sm);}
+.acc-item.open{box-shadow:var(--shadow-md);border-color:var(--accent);}
+.acc-btn{width:100%;text-align:left;background:none;border:none;cursor:pointer;padding:18px 22px;display:flex;align-items:center;gap:14px;font-family:'DM Sans',sans-serif;transition:background 0.15s;}
+.acc-btn:hover{background:var(--gray-100);}
+.acc-btn.open-btn{background:var(--accent-soft);}
+.acc-idx{font-family:'IBM Plex Mono',monospace;font-size:11px;color:white;background:var(--navy);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.acc-item.open .acc-idx{background:var(--accent);}
+.acc-title{font-family:'Lora',serif;font-weight:600;font-size:15px;color:var(--navy);flex:1;}
+.acc-chev{color:var(--text-muted);transition:transform 0.2s;flex-shrink:0;font-size:16px;}
+.acc-item.open .acc-chev{transform:rotate(180deg);color:var(--accent);}
+.acc-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease;}
+.acc-body-inner{padding:0 22px 24px 64px;color:var(--text-muted);font-size:14px;line-height:1.8;}
+.acc-body-inner p{margin:0 0 1em 0;}
+.acc-body-inner p:last-child{margin-bottom:0;}
+
+/* DEFINITION BOX */
+.definition{background:var(--teal-light);border:1px solid var(--accent);border-radius:10px;padding:12px 16px;margin:0 0 18px 0;font-size:13.5px;color:var(--navy);}
+.definition .dlabel{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;color:var(--teal);display:block;margin-bottom:4px;}
+
+/* HIGHLIGHT */
+.highlight{background:var(--amber-soft);border-left:3px solid var(--amber);padding:11px 15px;border-radius:0 8px 8px 0;font-size:13.5px;color:#3a2800;margin:14px 0;}
+
+/* VIZ LINK */
+.viz-link{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:9px 16px;background:var(--navy);color:white!important;text-decoration:none;border-radius:8px;font-size:13px;font-weight:500;transition:background 0.18s;}
+.viz-link:hover{background:var(--accent);}
+
+/* STAT ROW */
+.stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0;}
+.stat-chip{background:var(--teal-light);border:1px solid var(--accent);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--navy);font-family:'IBM Plex Mono',monospace;}
+.stat-chip b{color:var(--teal);}
+
+/* COMPARE TABLE */
+.compare-wrap{background:white;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:22px 0;box-shadow:var(--shadow-sm);}
+.compare-wrap h3{padding:20px 24px 0;font-family:'Lora',serif;font-size:17px;color:var(--navy);}
+.compare-wrap .sub{padding:4px 24px 14px;color:var(--text-muted);font-size:13px;}
+table.compare{width:100%;border-collapse:collapse;font-size:13.5px;}
+table.compare th{background:var(--navy);color:white;text-align:left;padding:12px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;font-family:'IBM Plex Mono',monospace;}
+table.compare td{padding:12px 16px;border-top:1px solid var(--border);color:var(--text-muted);vertical-align:top;}
+table.compare tr:nth-child(odd) td{background:var(--gray-100);}
+
+/* FLOW DIAGRAM */
+.flow-wrap{margin:22px 0;}
+.flow-wrap h3{font-family:'Lora',serif;font-size:17px;color:var(--navy);margin-bottom:6px;}
+.flow-wrap .sub{color:var(--text-muted);font-size:13px;margin-bottom:16px;}
+.flow{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:8px;}
+.flow-step{background:white;border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;min-width:148px;flex-shrink:0;}
+.flow-step .ftag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;}
+.flow-step h4{font-family:'Lora',serif;font-size:13.5px;margin:5px 0 4px;color:var(--navy);}
+.flow-step p{font-size:12px;color:var(--text-muted);margin:0;}
+.flow-arrow{display:flex;align-items:center;justify-content:center;color:var(--amber);font-size:20px;padding:0 6px;flex-shrink:0;}
+.flow-step.model{border-color:var(--accent);background:var(--accent-soft);}
+.flow-step.human{border-color:var(--amber);background:var(--amber-soft);}
+
+/* CONFUSION MATRIX */
+.cm-wrap{margin:22px 0;}
+.cm-wrap h3{font-family:'Lora',serif;font-size:17px;color:var(--navy);margin-bottom:16px;}
+.cm-grid{display:grid;grid-template-columns:auto 1fr 1fr;gap:2px;max-width:560px;background:var(--border);border-radius:var(--radius);overflow:hidden;}
+.cm-grid .hd{background:var(--navy);color:white;padding:12px;font-size:11px;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;justify-content:center;text-align:center;}
+.cm-grid .lbl{background:var(--navy-light);color:white;padding:12px;font-size:11px;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;justify-content:center;text-align:center;writing-mode:vertical-rl;}
+.cm-grid .cell{background:white;padding:18px 12px;text-align:center;}
+.cm-grid .cell .n{font-family:'IBM Plex Mono',monospace;font-size:1.25rem;font-weight:600;display:block;}
+.cm-grid .cell .t{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.cm-grid .cell.tp .n{color:var(--green);}
+.cm-grid .cell.tn .n{color:var(--green);}
+.cm-grid .cell.fp .n{color:var(--amber-dark);}
+.cm-grid .cell.fn .n{color:var(--red);}
+
+/* GLOSSARY */
+.glossary-search{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);margin-bottom:18px;outline:none;transition:border-color 0.15s;background:white;}
+.glossary-search:focus{border-color:var(--accent);}
+.gloss-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+.gloss-item{background:white;border:1px solid var(--border);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow-sm);}
+.gloss-item dt{font-family:'Lora',serif;font-weight:600;color:var(--amber-dark);font-size:14px;margin-bottom:4px;}
+.gloss-item dd{margin:0;font-size:13px;color:var(--text-muted);line-height:1.65;}
+.gloss-item.hide{display:none;}
+
+/* QUIZ */
+.qcard{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px;box-shadow:var(--shadow-sm);}
+.qtext{font-family:'Lora',serif;font-weight:600;color:var(--navy);margin-bottom:14px;font-size:15px;line-height:1.5;}
+.qopts{display:flex;flex-direction:column;gap:8px;}
+.qopt{text-align:left;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:var(--gray-100);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text-muted);transition:all 0.15s;}
+.qopt:hover{border-color:var(--accent);}
+.qopt.correct{background:var(--green-soft);border-color:var(--green);color:var(--green);font-weight:600;}
+.qopt.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.qopt[disabled]{cursor:default;}
+.qfeedback{margin-top:12px;font-size:13.5px;color:var(--text-muted);padding-top:10px;border-top:1px dashed var(--border);display:none;}
+.quiz-score{text-align:center;padding:18px;background:var(--navy);color:white;border-radius:var(--radius);font-family:'IBM Plex Mono',monospace;margin-top:14px;}
+
+/* FOOTER */
+.module-footer{max-width:940px;margin:0 auto;padding:28px 40px 52px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.footer-info{font-size:12px;color:var(--text-muted);line-height:1.7;}
+.footer-info strong{color:var(--text);font-weight:500;}
+.badge-sm{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;white-space:nowrap;background:var(--gray-200);color:var(--gray-600);}
+.teal-light{background:var(--teal-light);}
+
+@media(max-width:700px){
+  .hero{padding:44px 0 40px;}
+  .hero-inner{padding:0 20px;}
+  .hero h1{font-size:1.8rem;}
+  .hero-stats{grid-template-columns:repeat(2,1fr);}
+  .nav-wrap{padding:0 8px;}
+  .main{padding:28px 20px 64px;}
+  .acc-body-inner{padding:0 16px 20px 16px;}
+  .gloss-grid{grid-template-columns:1fr;}
+  .module-footer{padding:20px 20px 44px;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge-event"><span></span> Audit &amp; Data Insight Journey &middot; Sesi 2</div>
+    <h1>Dari data ke keputusan:<br>membaca risiko fraud lewat mata <em>auditor</em>.</h1>
+    <p class="hero-sub">Modul ini menelusuri kembali studi fraud detection pada transaksi keuangan digital, kali ini bukan sebagai tugas data science, tapi sebagai latihan berpikir audit berbasis risiko: dari pemahaman data, eksplorasi pola, penggunaan machine learning, sampai bagaimana sebuah risk score diterjemahkan menjadi keputusan audit.</p>
+    <div class="hero-stats">
+      <div class="hcell"><span class="hnum">6,3 jt</span><span class="hlab">total transaksi dianalisis</span></div>
+      <div class="hcell"><span class="hnum">0,13%</span><span class="hlab">proporsi transaksi fraud</span></div>
+      <div class="hcell"><span class="hnum">99,57%</span><span class="hlab">recall model deteksi fraud</span></div>
+      <div class="hcell"><span class="hnum">22</span><span class="hlab">insight dalam 6 fase</span></div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav-strip">
+  <div class="nav-wrap">
+    <button class="nav-arrow hidden" id="nav-left" onclick="scrollNav(-1)">&#8249;</button>
+    <div class="nav-inner" id="nav-inner">
+      <button class="nav-tab active" onclick="showSection('s1',this)"><span class="nav-num">1</span> Ketika Sampling Tak Cukup</button>
+      <button class="nav-tab" onclick="showSection('s2',this)"><span class="nav-num">2</span> Data Sebelum Dipercaya</button>
+      <button class="nav-tab" onclick="showSection('s3',this)"><span class="nav-num">3</span> Ke Mana Risiko Bersembunyi</button>
+      <button class="nav-tab" onclick="showSection('s4',this)"><span class="nav-num">4</span> ML Masuk Ruang Audit</button>
+      <button class="nav-tab" onclick="showSection('s5',this)"><span class="nav-num">5</span> Di Balik Angka Akurasi</button>
+      <button class="nav-tab" onclick="showSection('s6',this)"><span class="nav-num">6</span> Dari Skor ke Keputusan</button>
+      <button class="nav-tab" onclick="showSection('s7',this)"><span class="nav-num">7</span> Kuis</button>
+      <button class="nav-tab" onclick="showSection('s8',this)"><span class="nav-num">8</span> Glosarium</button>
+    </div>
+    <button class="nav-arrow" id="nav-right" onclick="scrollNav(1)">&#8250;</button>
+  </div>
+</nav>
+
+<main class="main">
+
+<section id="s1" class="section active">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 1</div>
+    <h2>Ketika Sampling Tidak Lagi Cukup</h2>
+  </div>
+  <p class="section-intro">Sebelum menyentuh data, pertanyaannya dulu yang perlu diluruskan: kenapa cara audit tradisional mulai kewalahan menghadapi transaksi digital, dan kenapa itu penting untuk dipahami sebelum mulai menganalisis apa pun.</p>
+  
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">1</span><span class="acc-title">Dari skripsi ke praktik</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Fraud detection adalah upaya mengenali transaksi yang mencurigakan atau berpotensi merugikan dari kumpulan data, bukan sekadar menduga-duga. Bab ini adalah titik pindah dari belajar teorinya (Sesi 1) ke mencobanya langsung pada studi kasus nyata (Sesi 2).</div>
+      <p>Setelah menyelesaikan Sesi 1, saya mulai menyadari bahwa memahami konsep saja ternyata belum cukup. Selama Sesi 1, saya banyak belajar tentang bagaimana data analytics digunakan dalam konteks audit, khususnya untuk fraud detection, mulai dari precision, recall, trade-off, confusion matrix, sampai kenapa accuracy bisa menyesatkan.</p>
+      <p>Tapi semakin dipelajari, semakin terasa bahwa ini bukan sekadar tentang model atau angka. Fraud detection bukan hanya masalah klasifikasi, setiap kesalahan model punya implikasi risiko, dan metrik evaluasi mencerminkan konsekuensi audit, bukan sekadar performa. Auditor tidak mulai dari data, tapi dari risiko, tidak langsung percaya pada hasil analytics, dan membutuhkan dokumentasi agar setiap proses bisa dipertanggungjawabkan.</p>
+      <div class="highlight">Di Sesi 2 ini, saya mencoba menjawab satu pertanyaan: bagaimana semua ini diterapkan dalam praktik, dengan melihat kembali skripsi saya tentang fraud detection pada transaksi keuangan digital, kali ini dari sudut pandang audit dan risk assessment.</div>
+      <p>Tujuannya bukan hanya "mengerti", tapi benar-benar belajar bagaimana menggunakan data untuk berpikir seperti auditor.</p>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">2</span><span class="acc-title">Kenapa sampling gagal</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Sampling adalah teknik memeriksa sebagian kecil data untuk mewakili keseluruhan populasi. Ini biasa dipakai karena memeriksa semua data dianggap terlalu memakan waktu dan biaya, tapi ada harga yang harus dibayar seperti yang dijelaskan di bawah.</div>
+      <p>Bagaimana kalau data transaksi sebesar ini diaudit dengan cara tradisional, sampling, memilih sebagian transaksi, lalu menarik kesimpulan? Sekilas cukup. Tapi setelah dilihat lebih dalam, ada masalah mendasar.</p>
+      <div class="stat-row">
+        <span class="stat-chip">Total: <b>6.362.620</b> transaksi</span>
+        <span class="stat-chip">Fraud: <b>8.213</b> (&#8776;0,13%)</span>
+      </div>
+      <p>Fraud itu sangat jarang, tapi bukan berarti tidak penting. Justru di situ masalahnya: semakin kecil proporsi fraud, semakin tinggi risiko fraud tidak terdeteksi lewat sampling acak. Kalau auditor hanya mengambil sampel acak, kemungkinan besar transaksi fraud tidak ikut terpilih, dan audit bisa saja menyimpulkan "tidak ada masalah" padahal risikonya sebenarnya ada.</p>
+      <div class="highlight">Pertanyaannya bergeser: bukan lagi "berapa banyak transaksi yang diperiksa", tapi "bagaimana kita bisa mengidentifikasi transaksi berisiko tinggi dari seluruh populasi".</div>
+      <p style="font-size:.82rem;color:var(--ink-500);">Catatan: analisis ini menggunakan dataset simulasi transaksi keuangan digital (PaySim). Insight yang diperoleh tidak dimaksudkan untuk digeneralisasi langsung ke kasus nyata, namun untuk memahami pola risiko dan mendukung cara berpikir audit dalam konteks data driven environment.</p>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">3</span><span class="acc-title">Population-wide vs traditional audit</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Population-wide analysis berarti memeriksa seluruh data yang ada, bukan hanya sebagian. Ini dimungkinkan karena data transaksi digital tersimpan otomatis dan siap diolah, berbeda dari data konvensional yang butuh proses digitalisasi manual dulu.</div>
+      <p>Menemukan fraud dalam jutaan transaksi tidak jauh berbeda dari mencari jarum di tumpukan jerami. Mengambil segenggam jerami dari satu sudut mungkin terasa cukup, tapi tidak menjamin jarumnya memang tidak ada.</p>
+      <p>Sampling bukan tanpa alasan, memeriksa 100% data jarang bisa dibenarkan secara waktu dan biaya. Tapi dalam konteks data digital, setiap transaksi otomatis meninggalkan jejak yang terstruktur dan siap dianalisis, sehingga data analytics bisa langsung bekerja pada seluruh populasi, bukan hanya sampel.</p>
+      <div class="highlight">Pergeseran cara berpikir: dari sample-based audit menuju population-wide analysis. Bukan mengambil sebagian data untuk menarik kesimpulan, tapi memahami keseluruhan populasi untuk melihat bagaimana risiko tersebar.</div>
+      <p>Ini bukan revolusi tiba-tiba, melainkan evolusi bertahap. Bukan berarti semua transaksi diperiksa manual satu per satu, melainkan data analytics bekerja seperti magnet yang disapu ke seluruh tumpukan jerami: memproses seluruh data, mengidentifikasi pola, dan mengarahkan fokus ke area berisiko tinggi. Tapi tanpa arah yang jelas, data besar justru bisa membuat analisis makin kompleks, seperti punya rekaman CCTV dari seluruh kota tapi tidak tahu harus mencari apa.</p>
+    </div></div></div>
+
+  <div class="compare-wrap">
+    <h3>Sampling tradisional vs population-wide analysis</h3>
+    <p class="sub">Dua cara pandang, dua risiko yang berbeda saat menghadapi transaksi digital dalam jumlah besar.</p>
+    <table class="compare">
+      <tr><th>Aspek</th><th>Sampling tradisional</th><th>Population-wide analysis</th></tr>
+      <tr><td>Cakupan data</td><td>Sebagian populasi (sampel terpilih)</td><td>Seluruh populasi transaksi</td></tr>
+      <tr><td>Risiko utama</td><td>Fraud langka bisa tidak terpilih sama sekali</td><td>Volume besar butuh arah analisis yang jelas</td></tr>
+      <tr><td>Kesimpulan salah</td><td>"Tidak ada masalah" padahal risiko ada</td><td>Risiko terpetakan, tapi tetap butuh interpretasi</td></tr>
+      <tr><td>Peran auditor</td><td>Memilih sampel</td><td>Memahami distribusi risiko dalam data</td></tr>
+    </table>
+  </div>
+
+</section>
+
+<section id="s2" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 2</div>
+    <h2>Data yang Perlu Dipercaya Dulu</h2>
+  </div>
+  <p class="section-intro">Sebelum data bisa dianalisis, ia harus dipahami dan dipercaya dulu. Dua langkah ini sering dianggap remeh, padahal jadi fondasi seluruh proses audit berikutnya.</p>
+  
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">4</span><span class="acc-title">Dataset = representasi bisnis</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Dataset adalah kumpulan data yang tersusun rapi (biasanya berbentuk tabel) yang menggambarkan kejadian nyata. Di sini, setiap baris mewakili satu transaksi keuangan dan setiap kolom mewakili satu ciri dari transaksi itu.</div>
+      <p>Dataset bukan sekadar kumpulan angka, ia representasi dari aktivitas bisnis. Dataset yang dipakai (PaySim) bersifat simulasi, dikembangkan dari pola transaksi mobile money di dunia nyata lalu direplikasi untuk mencerminkan perilaku normal sekaligus skenario fraud. Meski simulasi, ia tetap membawa "logika bisnis" di dalamnya.</p>
+      <p>Setiap kolom bukan sekadar variabel: <b>type</b> adalah jenis aktivitas transaksi, <b>amount</b> nilai perpindahan dana, <b>balance</b> kondisi sebelum-sesudah, <b>time</b> kapan aktivitas terjadi. Setiap baris adalah satu kejadian dalam sistem.</p>
+      <div class="highlight">Tanpa memahami konteks bisnis: pola bisa disalahartikan, anomali bisa terlihat normal, dan risiko bisa terlewat. Data analytics dalam audit bukan hanya soal teknik, tapi memahami cerita di balik data.</div>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">5</span><span class="acc-title">Data validation = prosedur audit awal</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Data validation adalah proses memeriksa apakah data yang akan dianalisis sudah benar, lengkap, dan bisa dipercaya, seperti mengecek bahan baku sebelum mulai memasak.</div>
+      <p>Sebelum menganalisis apa pun: apakah data ini bisa dipercaya? Standar Audit (SA) 520 tentang prosedur analitis mewajibkan auditor eksternal mengevaluasi keandalan data sebelum menggunakannya sebagai dasar analisis. Bagi auditor internal, Global Internal Audit Standards (GIAS) 2025 dari The Institute of Internal Auditors (IIA) menegaskan hal yang sama: auditor internal wajib mengevaluasi keandalan dan relevansi data sebelum menjadikannya dasar simpulan audit. Memastikan data bisa dipercaya bukan langkah tambahan, tapi bagian dari kewajiban profesional auditor, baik eksternal maupun internal.</p>
+      <p>Beberapa hal yang diperiksa: apakah struktur dan tipe data sudah sesuai, apakah ada missing values atau duplikasi, apakah ada nilai yang tidak masuk akal, dan apakah hubungan antar data konsisten secara logika bisnis.</p>
+      <div class="highlight">Untuk peran auditor internal, GIAS 2025 menjadikan evaluasi keandalan data ini bagian eksplisit dari standar praktik profesional, bukan sekadar rekomendasi teknis.</div>
+      <div class="highlight">Data validation bukan hanya soal "data siap dipakai", tapi memastikan data mencerminkan realitas yang sebenarnya. Jika datanya tidak bisa dipercaya, hasil analisis berikutnya pun tidak bisa dipertanggungjawabkan.</div>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">6</span><span class="acc-title">Data integrity penting</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Data integrity adalah keadaan ketika seluruh bagian data saling terhubung secara logis dan konsisten, tidak ada bagian yang saling bertentangan satu sama lain.</div>
+      <p>Data yang terstruktur belum tentu data yang berintegritas. Pertanyaannya lebih dalam dari "apakah datanya bersih": apakah hubungan antar data mencerminkan realitas yang konsisten dan dapat dipercaya?</p>
+      <p>Saldo sebelum transaksi, jumlah yang ditransfer, dan saldo sesudah transaksi harus saling terhubung secara masuk akal. Jika tidak konsisten, itu bukan sekadar masalah teknis, tapi sinyal ada sesuatu yang tidak berjalan sebagaimana mestinya.</p>
+      <div class="stat-row"><span class="stat-chip">Konsistensi variabel saldo: <b>terkonfirmasi sangat tinggi</b></span></div>
+      <p>Artinya, fondasi datanya cukup kuat untuk digunakan dalam analisis lebih lanjut, dan dari sini mulai terlihat pola risiko yang tidak terlihat dari apa yang selama ini dianggap penting.</p>
+    </div></div></div>
+
+</section>
+
+<section id="s3" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 3</div>
+    <h2>Ke Mana Risiko Fraud Bersembunyi</h2>
+  </div>
+  <p class="section-intro">Inti dari perjalanan Sesi 2: menelusuri bagaimana risiko fraud sebenarnya tersebar, lewat nilai transaksi, waktu, jenis transaksi, pergerakan saldo, dan akhirnya kombinasi semuanya.</p>
+  
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">7</span><span class="acc-title">Risiko tidak merata (skewed & outliers)</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Outlier adalah data yang nilainya jauh berbeda dari kebanyakan data lain. Distribusi yang skewed (condong) berarti sebagian besar data mengumpul di satu sisi, sementara sedikit data lain melenceng jauh ke sisi lainnya.</div>
+      <p>Mayoritas transaksi kecil dan rutin, tapi segelintir transaksi bernilai puluhan juta hampir tidak terlihat di antara jutaan data lainnya, dan justru di sanalah risiko materialnya tersembunyi.</p>
+      <div class="stat-row">
+        <span class="stat-chip">94,6% transaksi &lt; Rp500rb</span>
+        <span class="stat-chip">Maks: Rp92,4 jt</span>
+        <span class="stat-chip">Median: Rp74.872</span>
+        <span class="stat-chip">Mean: Rp179.862</span>
+      </div>
+      <p>Mean hampir 2,4 kali lebih besar dari median, artinya rata-rata "tertarik" oleh transaksi ekstrem. Jika auditor hanya melihat mean, gambaran "transaksi normal" bisa menyesatkan. Transaksi di atas 10 juta hanya 2.443 dari 6,3 juta (&lt;0,04%); di atas 50 juta hanya 47 transaksi.</p>
+      <div class="highlight">Dalam sampling acak, peluang transaksi-transaksi ini terpilih hampir mendekati nol, padahal satu transaksi saja bisa bernilai sangat material.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/distribusi_nilai_transaksi.html" target="_blank" rel="noopener">Lihat visualisasi interaktif &rarr;</a>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">8</span><span class="acc-title">Fraud tidak selalu nominal besar</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Fraud rate adalah persentase transaksi yang ternyata fraud dari total transaksi pada kelompok tertentu. Angka ini berbeda dari "jumlah kasus fraud", karena fraud rate memperhitungkan seberapa besar kelompoknya.</div>
+      <p>Dua cara melihat risiko fraud berdasarkan nilai transaksi, dan keduanya sama benarnya. Pertama, di mana fraud paling banyak terjadi: 52,8% kasus fraud terjadi di transaksi di bawah Rp500rb. Kedua, seberapa berisiko tiap transaksi: fraud rate di rentang Rp0&ndash;100rb hanya 0,048%, tapi di rentang Rp5&ndash;10jt melonjak ke 8,2%, hampir 170 kali lebih tinggi.</p>
+      <div class="highlight">Kedua perspektif saling melengkapi: fraud tersebar di seluruh spektrum transaksi. Pendekatan "periksa semua transaksi di atas nilai X" akan selalu melewatkan sebagian besar fraud, karena sebagian besar justru terjadi di transaksi kecil yang terlihat normal.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/fraud_amount.html" target="_blank" rel="noopener">Lihat visualisasi interaktif &rarr;</a>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">9</span><span class="acc-title">Class imbalance & jebakan "accuracy illusion"</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Class imbalance adalah kondisi ketika satu kategori data (transaksi normal) jauh lebih banyak dari kategori lain (transaksi fraud). Accuracy adalah persentase prediksi yang benar dari keseluruhan data, angka ini bisa menipu kalau datanya timpang seperti ini.</div>
+      <p>Bayangkan sistem yang selalu menjawab "bukan fraud" untuk setiap transaksi, tanpa analisis apa pun. Akurasinya tetap 99,87%, karena memang segitu proporsi transaksi normal dalam dataset. Tapi ia tidak mendeteksi satu pun fraud.</p>
+      <div class="stat-row"><span class="stat-chip">6.362.620 total</span><span class="stat-chip">8.213 fraud (&#8776;0,13%)</span></div>
+      <p>Ketika data sangat tidak seimbang, sampling acak hampir pasti melewatkan fraud, dan sistem deteksi bisa "tertipu" terlihat akurat tanpa benar-benar memahami risiko.</p>
+      <div class="highlight">Akurasi bukan lagi metrik yang cukup. Yang lebih penting: seberapa baik kita menangkap kasus yang jarang tapi paling berisiko, precision dan recall, atau dalam bahasa audit: berpikir risk-based.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/class_imbalance.html" target="_blank" rel="noopener">Lihat visualisasi interaktif &rarr;</a>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">10</span><span class="acc-title">Timing fraud: tidak ada "jam aman"</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Melihat pola waktu berarti mengecek kapan suatu kejadian paling sering muncul, baik dari sisi persentase risiko (fraud rate per jam) maupun dari sisi jumlah kejadian (volume fraud per jam). Keduanya bisa memberi cerita yang berbeda.</div>
+      <p>Dua pola yang terlihat bertentangan tapi keduanya benar. Dari sisi proporsi, jam 4 pagi mencatat fraud rate tertinggi (1,77%), jam paling sepi justru paling berisiko secara proporsional. Dari sisi volume, jam 22 menyumbang &#8776;8,5% dari total fraud, sementara volume transaksi tertinggi ada di jam 19 (&gt;51 ribu transaksi).</p>
+      <div class="highlight">Jam sepi &rarr; volume kecil, fraud rate tinggi. Jam sibuk &rarr; volume besar, fraud tersembunyi di tengah aktivitas normal. Tidak ada "jam aman"; pendekatan "fokus di luar jam kerja" tidak cukup.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/timing_fraud.html" target="_blank" rel="noopener">Lihat visualisasi interaktif &rarr;</a>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">11</span><span class="acc-title">Transaction type & financial crime logic</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Layering adalah upaya menyamarkan asal dana ilegal lewat beberapa transaksi berantai, supaya sulit ditelusuri. Monetization adalah tahap mencairkan dana ilegal itu menjadi uang tunai yang bisa langsung dipakai bebas.</div>
+      <p>Dari lima tipe transaksi (CASH_IN, CASH_OUT, DEBIT, PAYMENT, TRANSFER), fraud hanya muncul di dua: <b>CASH_OUT</b> (4.116 kasus) dan <b>TRANSFER</b> (4.097 kasus). Tiga lainnya bersih sepenuhnya, bukan kebetulan statistik, ini pola.</p>
+      <p>TRANSFER memindahkan dana antar akun, memisahkan dana dari sumbernya, membuat jejak sulit ditelusuri (fraud rate tertinggi: 0,769%). CASH_OUT jadi tahap akhir saat dana ditarik jadi tunai, jejak digital terputus di situ (menyumbang &gt;50% total volume fraud).</p>
+      <div class="highlight">FATF mengidentifikasi TRANSFER dan CASH_OUT sebagai saluran paling rentan disalahgunakan untuk memindahkan dan merealisasikan dana ilegal dalam ekosistem mobile money. TRANSFER memfasilitasi layering, CASH_OUT jadi saluran monetization final.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/transaction_type_fraud.html" target="_blank" rel="noopener">Lihat visualisasi interaktif &rarr;</a>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">12</span><span class="acc-title">Balance movement = red flag</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Selisih saldo adalah perbedaan jumlah uang di rekening sebelum dan sesudah transaksi terjadi. Semakin drastis dan tidak wajar perubahannya, semakin besar tanda tanya yang perlu diperiksa lebih lanjut.</div>
+      <p>Untuk transaksi non-fraud, median selisih saldo pengirim adalah 0, konsisten dengan perilaku transaksi rutin. Untuk transaksi fraud, median selisih saldo mencapai Rp436.317; bahkan 25% kasus fraud "paling kecil" menguras saldo lebih dari Rp124rb, dan kasus ekstrem menguras hingga Rp10jt dalam satu transaksi.</p>
+      <p>SA 520 menyebutkan auditor eksternal perlu mengevaluasi hubungan antara data keuangan, termasuk pergerakan saldo, sebagai bagian dari prosedur analitis.</p>
+      <div class="highlight">Untuk auditor internal, Global Internal Audit Standards (GIAS) 2025 menegaskan hal serupa: evaluasi hubungan data keuangan, termasuk pergerakan saldo, merupakan bagian dari prosedur analitis substantif dalam audit berbasis risiko. Kombinasi tipe transaksi (TRANSFER/CASH_OUT) dan selisih saldo ekstrem menjadi sinyal risiko yang konkret dan dapat dioperasionalkan.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/balance_movement.html" target="_blank" rel="noopener">Lihat visualisasi interaktif &rarr;</a>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">13</span><span class="acc-title">Fraud itu multivariat</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Korelasi adalah ukuran seberapa erat hubungan antara dua variabel, dari 0 (tidak berhubungan sama sekali) sampai 1 (berhubungan sempurna). Multivariat berarti melihat beberapa variabel sekaligus secara bersamaan, bukan satu per satu.</div>
+      <p>Tidak ada satu pun variabel yang bisa mendeteksi fraud secara mandiri. Variabel terkuat, perubahan saldo pengirim, berkorelasi 0,3625 dengan fraud, moderat, belum cukup berdiri sendiri (masih gagal menjelaskan &#8776;64% kasus fraud). Nilai transaksi hanya 0,077, waktu transaksi hanya 0,032.</p>
+      <p>Yang paling menarik: <b>isFlaggedFraud</b>, "alarm otomatis" berbasis aturan sederhana, korelasinya dengan fraud sesungguhnya hanya 0,044, hampir tidak berfungsi.</p>
+      <div class="highlight">Fraud baru terlihat ketika beberapa sinyal dilihat bersamaan, kombinasi jenis transaksi, perubahan saldo, nilai, dan pola waktu. Inilah pendekatan multivariat, dan alasan mengapa machine learning menjadi relevan: mampu memproses kombinasi banyak sinyal sekaligus dalam skala jutaan transaksi.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/correlation_analysis.html" target="_blank" rel="noopener">Lihat visualisasi interaktif &rarr;</a>
+    </div></div></div>
+
+</section>
+
+<section id="s4" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 4</div>
+    <h2>Saat Machine Learning Masuk ke Ruang Audit</h2>
+  </div>
+  <p class="section-intro">Kalau tidak ada indikator tunggal yang cukup, bagaimana kombinasi sinyal ini benar-benar dibaca? Di sinilah machine learning masuk, bukan sebagai pengganti auditor, tapi sebagai alat bantu membaca pola.</p>
+  
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">14</span><span class="acc-title">Kenapa ML dibutuhkan</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Machine learning adalah metode komputer mempelajari pola dari data masa lalu, lalu memakai pola itu untuk mengenali atau memprediksi kejadian baru, tanpa diberi aturan tetap secara manual.</div>
+      <p>Nilai transaksi tidak cukup, waktu tidak cukup, jenis transaksi saja tidak cukup, bahkan sistem berbasis aturan yang sudah ada hampir tidak efektif (korelasi hanya 0,044). Fraud tidak bekerja lewat satu sinyal, ia bekerja lewat kombinasi: jenis transaksi tertentu, perubahan saldo tidak proporsional, dan pola waktu tidak lazim, terjadi bersamaan.</p>
+      <p>Arah ini juga sudah menjadi standar global profesi audit, dari dua sisi sekaligus. Dari sisi auditor eksternal, seluruh Big Four sudah mengintegrasikan AI ke dalam layanan audit, risk, dan finance mereka. Dari sisi auditor internal, The Institute of Internal Auditors (IIA) melalui Global Internal Audit Standards (GIAS) yang berlaku efektif 9 Januari 2025 juga secara eksplisit mendorong auditor internal memanfaatkan data analytics dan AI sebagai bagian dari standar praktik profesional.</p>
+      <div class="highlight">Auditor eksternal sudah bergerak. Auditor internal sudah punya standarnya sendiri. Dan arahnya sama: bukan menggantikan auditor, melainkan memperluas jangkauan dan kemampuan analisisnya.</div>
+      <p>ML bukan pengganti auditor. Ia alat bantu untuk melihat pola yang sulit terlihat lewat pendekatan manual atau indikator tunggal.</p>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">15</span><span class="acc-title">Feature selection: bukan sekadar keputusan teknis</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Feature selection adalah memilih variabel data mana saja yang akan diajarkan ke model, supaya model belajar pola yang benar-benar relevan, bukan sekadar kebetulan yang tidak bermakna.</div>
+      <p>Dalam audit analytics, memilih variabel bukan hanya soal kontribusi terhadap akurasi model, tapi juga: apakah variabel ini bisa dijelaskan, apakah ia bermakna secara bisnis? SA 520 menegaskan prosedur analitis auditor eksternal harus dirancang berdasarkan relevansi dengan tujuan audit, bukan semata ketersediaan data.</p>
+      <p><b>type</b> dipilih karena fraud hanya muncul di TRANSFER dan CASH_OUT. <b>Selisih saldo pengirim</b> dipilih karena sinyal terkuat (korelasi 0,3625). <b>Amount</b> dan <b>step</b> tetap relevan sebagai bagian dari pola.</p>
+      <p>Nama akun (nameOrig, nameDest) sengaja dieksklusi, seperti satpam yang dilatih hanya dari foto orang yang pernah tertangkap mencuri: sangat pintar mengenali wajah itu, tapi gagal saat pencuri baru datang.</p>
+      <p>Model yang baik bukan hanya yang akurat, tapi yang bisa dijelaskan, dipahami, dan dipertanggungjawabkan, sejalan dengan prinsip KPMG Trusted AI Framework dari sisi praktisi eksternal.</p>
+      <div class="highlight">Bagi auditor internal, Global Internal Audit Standards (GIAS) 2025 menegaskan prinsip yang sama: penggunaan teknologi dan data analytics oleh auditor internal harus tetap bisa dijelaskan dan dipertanggungjawabkan secara profesional, bukan sekadar akurat secara statistik.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/feature_selection_untuk_audit.html" target="_blank" rel="noopener">Lihat peta feature selection &rarr;</a>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">16</span><span class="acc-title">Model = decision support, bukan decision maker</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Decision support berarti alat bantu pengambilan keputusan. Model memberi rekomendasi dan sinyal risiko, tapi keputusan akhir tetap ada di tangan manusia, bukan di tangan mesin.</div>
+      <p>Model bisa membaca jutaan transaksi sekaligus, menemukan pola yang tidak terlihat manual, dan membantu memprioritaskan area berisiko. Tapi model tidak memahami konteks bisnis, tidak tahu apakah transaksi benar-benar bermasalah atau wajar dengan penjelasan tertentu, tidak bisa bicara dengan manajemen, tidak bisa mengevaluasi pengendalian internal, dan tidak bisa mengambil professional judgment.</p>
+      <div class="highlight">Auditor tidak harus jadi data scientist, tapi perlu cukup memahami data untuk mempertanyakan output analitik secara kritis: "Kenapa transaksi ini ditandai model? Apa yang mungkin terlewat? Apakah ini benar-benar risiko, atau hanya anomali statistik?"</div>
+      <p>GIAS 2025 menekankan teknologi digunakan untuk mendukung professional judgment auditor, bukan menggantikannya.</p>
+    </div></div></div>
+
+  <div class="flow-wrap">
+    <h3>Alur kerja: dari data mentah menjadi keputusan audit</h3>
+    <p class="sub">Model dan auditor mengerjakan bagian yang berbeda, dan keduanya sama pentingnya.</p>
+    <div class="flow">
+      <div class="flow-step"><span class="tag">Input</span><h4>Data transaksi</h4><p>6,3 juta baris, tervalidasi & terkonfirmasi integritasnya</p></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><span class="tag">Persiapan</span><h4>Feature selection</h4><p>Pilih variabel yang relevan & bisa dijelaskan</p></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step model"><span class="tag">Model</span><h4>Risk scoring</h4><p>Menghasilkan skor probabilitas fraud per transaksi</p></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step human"><span class="tag">Auditor</span><h4>Risk profiling</h4><p>Interpretasi skor + konteks bisnis</p></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step human"><span class="tag">Output</span><h4>Audit action</h4><p>Investigasi, pengujian tambahan, atau pemantauan</p></div>
+    </div>
+  </div>
+
+</section>
+
+<section id="s5" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 5</div>
+    <h2>Di Balik Angka Akurasi</h2>
+  </div>
+  <p class="section-intro">Model sudah dilatih. Pertanyaannya sekarang bukan lagi seberapa tinggi akurasinya, tapi kesalahan apa yang masih dibuatnya, dan konsekuensi risiko apa dari kesalahan itu.</p>
+  
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">17</span><span class="acc-title">Accuracy misleading</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Precision melihat seberapa akurat alarm yang dibunyikan model (dari yang ditandai fraud, berapa persen yang benar fraud). Recall melihat seberapa lengkap model menangkap kejadian yang benar-benar terjadi (dari semua fraud yang ada, berapa persen yang berhasil ditangkap).</div>
+      <p>Model mencapai akurasi 99,9% dari lebih 1,27 juta transaksi. Terlihat hampir sempurna, tapi akurasi tidak menunjukkan jenis kesalahan yang masih dibuat model, padahal itu yang paling penting bagi auditor.</p>
+      <div class="stat-row">
+        <span class="stat-chip">Precision: <b>93,86%</b></span>
+        <span class="stat-chip">Recall: <b>99,57%</b></span>
+        <span class="stat-chip">107 transaksi normal salah tandai (FP)</span>
+        <span class="stat-chip">7 fraud lolos (FN) dari 1.643</span>
+      </div>
+      <div class="highlight">Memilih metrik evaluasi bukan sekadar keputusan teknis, tapi keputusan tentang risiko apa yang paling ingin diminimalkan: false alarm, atau fraud yang lolos tanpa terdeteksi? Akurasi tinggi tidak sama dengan audit assurance, itu dibangun dari bukti, evaluasi, konteks bisnis, dan professional judgment auditor.</div>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">18</span><span class="acc-title">Evaluasi model: precision, recall, dan konteks fintech</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>F1-score adalah gabungan precision dan recall menjadi satu angka, dipakai ketika keduanya sama-sama penting dan kita ingin melihat keseimbangannya sekaligus.</div>
+      <p><b>Precision</b> bicara kualitas peringatan: 107 transaksi salah ditandai berarti 107 nasabah bisa tertunda transaksinya atau akunnya sementara dibatasi, meski sebenarnya normal. <b>Recall</b> bicara kelengkapan tangkapan: dari 1.643 fraud, hanya 7 yang lolos, kecil secara statistik, tapi dalam TRANSFER/CASH_OUT itu berarti dana yang sudah dipindahkan, dilayering, atau dicairkan sebelum sempat dicegah.</p>
+      <div class="highlight">Dalam real-time detection, precision biasanya diprioritaskan karena false positive bisa memblokir transaksi nasabah secara salah. Dalam audit analytics, recall lebih penting karena auditor ingin memastikan sebanyak mungkin risiko teridentifikasi untuk ditindaklanjuti.</div>
+      <p>Model seperti ini lebih tepat digunakan sebagai early risk filter, bukan pengganti professional judgment auditor.</p>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/metrik_dalam_konteks_fintech.html" target="_blank" rel="noopener">Eksplorasi metrik &rarr;</a>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">19</span><span class="acc-title">False negative vs false positive</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Confusion matrix adalah tabel sederhana yang membandingkan prediksi model dengan kejadian sebenarnya, dibagi menjadi empat kemungkinan: benar mendeteksi fraud, benar mengenali normal, salah membunyikan alarm, dan lolos tak terdeteksi.</div>
+      <p>Confusion matrix membuka dengan jelas kesalahan yang masih tersisa, tidak sekadar menunjukkan keberhasilan model.</p>
+      <div class="highlight">Semakin sensitif model menangkap fraud, semakin banyak alarm palsu muncul. Semakin sedikit alarm palsu, semakin besar risiko fraud lolos. Trade-off ini bukan keputusan algoritma, melainkan pertimbangan profesional auditor. Umumnya organisasi lebih siap menangani tambahan investigasi daripada menanggung dampak fraud yang terlewat, karena itu fokus sering diarahkan pada pengurangan false negative.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/post19_confusion_matrix.html" target="_blank" rel="noopener">Lihat visualisasi interaktif &rarr;</a>
+    </div></div></div>
+
+  <div class="cm-wrap">
+    <h3>Confusion matrix &middot; 1,27 juta transaksi uji</h3>
+    <div class="cm-grid">
+      <div class="hd"></div>
+      <div class="hd">Prediksi: Fraud</div>
+      <div class="hd">Prediksi: Normal</div>
+      <div class="lbl">Aktual: Fraud</div>
+      <div class="cell tp"><span class="n">1.636</span><span class="t">True Positive &middot; terdeteksi benar</span></div>
+      <div class="cell fn"><span class="n">7</span><span class="t">False Negative &middot; lolos tak terdeteksi</span></div>
+      <div class="lbl">Aktual: Normal</div>
+      <div class="cell fp"><span class="n">107</span><span class="t">False Positive &middot; salah ditandai</span></div>
+      <div class="cell tn"><span class="n">1.270.774</span><span class="t">True Negative &middot; dikenali aman</span></div>
+    </div>
+  </div>
+
+</section>
+
+<section id="s6" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 6</div>
+    <h2>Dari Skor Risiko ke Keputusan Audit</h2>
+  </div>
+  <p class="section-intro">Model berhenti di angka. Di sinilah pekerjaan auditor yang sesungguhnya dimulai: mengubah risk score menjadi profil risiko, dan profil risiko menjadi tindakan audit.</p>
+  
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">20</span><span class="acc-title">Fraud risk profiling</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Risk score adalah angka dari model yang menunjukkan seberapa besar kemungkinan sebuah transaksi berisiko. Risk profiling adalah proses manusia menerjemahkan angka itu menjadi keputusan yang punya konteks bisnis, tidak berhenti di angka saja.</div>
+      <p>Risk scoring adalah pekerjaan model, ia menghasilkan angka: seberapa besar kemungkinan sebuah transaksi punya karakteristik fraud. Model berhenti di sana, ia tidak tahu mengapa skornya tinggi, tidak tahu konteks bisnisnya, tidak tahu tindakan apa yang perlu diambil.</p>
+      <p>Risk profiling adalah pekerjaan auditor: mengategorikan transaksi menjadi High, Medium, atau Low Risk berdasarkan konteks, bukan sekadar angka probabilitas.</p>
+      <div class="highlight">Global Internal Audit Standards (GIAS) 2025 dan kerangka IPPF (International Professional Practices Framework) menegaskan bahwa teknologi dalam audit internal berfungsi mendukung pertimbangan profesional, bukan menggantikannya. Dari sisi praktisi eksternal, KPMG Trusted AI Framework menegaskan output model AI seharusnya jadi input bagi pertimbangan manusia, bukan kesimpulan final.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/post20_risk_profiling.html" target="_blank" rel="noopener">Lihat visualisasi interaktif &rarr;</a>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">21</span><span class="acc-title">High / Medium / Low risk: kenapa skor sama bisa beda kategori</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Segmentasi risiko adalah pengelompokan transaksi ke dalam beberapa tingkat risiko (tinggi, sedang, rendah), supaya sumber daya audit bisa difokuskan pada area yang paling penting lebih dulu.</div>
+      <p>Dua transaksi, nilai sama, tipe sama, risk score sama persis (84%). Satu masuk High Risk, satu Medium Risk. Bedanya: transaksi pertama terjadi malam hari, saldo pengirim hampir habis, beberapa red flag muncul bersamaan. Transaksi kedua terjadi jam operasional normal, saldo hanya berkurang sebagian.</p>
+      <div class="highlight">Tidak ada satu indikator yang otomatis membuat transaksi High Risk. Yang dilihat auditor adalah kombinasi sinyal yang muncul bersamaan. High Risk bukan berarti fraud sudah terbukti; Medium/Low Risk bukan berarti pasti aman.</div>
+      <a class="viz-link" href="https://rose-analytics0.github.io/audit-data-insight-journey/post21_risk_segmentation.html" target="_blank" rel="noopener">Lihat visualisasi interaktif &rarr;</a>
+    </div></div></div>
+
+  <div class="acc-item">
+    <button class="acc-btn" onclick="toggleAcc(this)"><span class="acc-idx">22</span><span class="acc-title">Dari model ke audit action</span><span class="acc-chev">&#8964;</span></button>
+    <div class="acc-body"><div class="acc-body-inner">
+      <div class="definition"><span class="dlabel">Dalam bahasa sederhana</span>Audit action adalah langkah nyata yang diambil auditor setelah risiko diidentifikasi, misalnya investigasi lanjutan, pengujian tambahan, atau pemantauan berkala, tergantung tingkat risikonya.</div>
+      <p>Manfaat terbesar analitik bukan mendeteksi lebih banyak transaksi berisiko, tapi membantu auditor memahami risiko mana yang perlu diprioritaskan lebih dulu. High Risk menjadi prioritas investigasi, Medium Risk memerlukan pengujian tambahan, Low Risk cukup dipantau berkala.</p>
+      <div class="highlight">Fraud dalam data ini tidak muncul acak. Ia cenderung terkonsentrasi pada saluran transaksi tertentu, menyamar di tengah aktivitas normal, dan beradaptasi terhadap kontrol yang ada. Karena itu auditor perlu bergerak dari pendekatan berbasis sampel menuju pendekatan berbasis risiko dan pola.</div>
+      <p>Model menghasilkan sinyal. Auditor mengubah sinyal itu menjadi keputusan, tindakan, dan assurance yang dapat dipertanggungjawabkan. Tujuan audit bukan membangun model yang akurat, tujuannya menghasilkan keputusan yang lebih baik.</p>
+    </div></div></div>
+
+</section>
+
+<section id="s7" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Uji Pemahaman</div>
+    <h2>Kuis Singkat</h2>
+  </div>
+  <p class="section-intro">6 pertanyaan untuk mengecek pemahaman inti Sesi 2. Jawaban terkunci setelah dipilih.</p>
+  <div id="quizContainer"></div>
+  <div class="quiz-score" id="quizScore" style="display:none;"></div>
+</section>
+
+<section id="s8" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Referensi</div>
+    <h2>Glosarium</h2>
+  </div>
+  <p class="section-intro">Istilah kunci dari Sesi 2. Cari cepat sebelum atau sesudah membaca.</p>
+  <input type="search" class="glossary-search" id="glosSearch" placeholder="Cari istilah, misalnya: recall, sampling, GIAS...">
+  <dl class="gloss-grid" id="glossGrid"></dl>
+</section>
+
+</main>
+
+<footer class="module-footer">
+  <div class="footer-info">
+    <strong>Disusun oleh:</strong> Rosliana Dwi Astuti, S.Ak<br>
+    <strong>Seri:</strong> Audit &amp; Data Insight Journey, Sesi 2. Dataset: PaySim (simulasi transaksi mobile money).
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <span class="badge-sm">Fraud Detection</span>
+    <span class="badge-sm">GIAS 2025</span>
+    <span class="badge-sm">SA 520</span>
+    <span class="badge-sm">PaySim</span>
+  </div>
+</footer>
+
+<script>
+function showSection(id,tab){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  tab.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleAcc(btn){
+  var item=btn.closest('.acc-item');
+  var body=item.querySelector('.acc-body');
+  var isOpen=item.classList.contains('open');
+  if(isOpen){
+    item.classList.remove('open');
+    btn.classList.remove('open-btn');
+    body.style.maxHeight=null;
+  } else {
+    item.classList.add('open');
+    btn.classList.add('open-btn');
+    body.style.maxHeight=body.scrollHeight+'px';
+  }
+}
+function scrollNav(dir){
+  var el=document.getElementById('nav-inner');
+  el.scrollBy({left:dir*160,behavior:'smooth'});
+  setTimeout(updateNavArrows,200);
+}
+function updateNavArrows(){
+  var el=document.getElementById('nav-inner');
+  var btnL=document.getElementById('nav-left');
+  var btnR=document.getElementById('nav-right');
+  if(!el||!btnL||!btnR)return;
+  btnL.classList.toggle('hidden',el.scrollLeft<=4);
+  btnR.classList.toggle('hidden',el.scrollLeft+el.clientWidth>=el.scrollWidth-4);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  var el=document.getElementById('nav-inner');
+  if(el){el.addEventListener('scroll',updateNavArrows);updateNavArrows();}
+});
+
+/* GLOSSARY */
+var glossaryTerms = [
+  {t:"Population-wide analysis", d:"Menganalisis seluruh populasi transaksi, bukan hanya sampel, dimungkinkan karena data digital otomatis terstruktur."},
+  {t:"Sampling", d:"Mengambil sebagian data untuk menarik kesimpulan tentang keseluruhan; berisiko melewatkan kejadian langka seperti fraud."},
+  {t:"Class imbalance", d:"Kondisi ketika satu kategori data jauh lebih dominan dari yang lain, contohnya transaksi normal vs fraud (99,87% vs 0,13%)."},
+  {t:"Accuracy illusion", d:"Akurasi tinggi yang menyesatkan karena model bisa terlihat hebat hanya dengan menebak kelas mayoritas, tanpa benar-benar mendeteksi kasus minoritas."},
+  {t:"Precision", d:"Dari semua transaksi yang ditandai model sebagai fraud, berapa persen yang benar-benar fraud. Precision tinggi berarti sedikit alarm palsu."},
+  {t:"Recall", d:"Dari semua fraud yang sebenarnya ada, berapa persen yang berhasil ditangkap model. Recall tinggi berarti sedikit fraud yang lolos."},
+  {t:"F1-score", d:"Nilai yang menyeimbangkan precision dan recall menjadi satu angka, berguna saat prioritas keduanya sama penting."},
+  {t:"Confusion matrix", d:"Tabel yang memetakan hasil prediksi model dibanding kondisi sebenarnya: true positive, true negative, false positive, false negative."},
+  {t:"False positive", d:"Transaksi normal yang salah ditandai model sebagai fraud, memicu verifikasi tambahan yang sebenarnya tidak perlu."},
+  {t:"False negative", d:"Transaksi fraud yang lolos tidak terdeteksi model, konsekuensinya paling kritis dalam konteks audit."},
+  {t:"Feature selection", d:"Proses memilih variabel yang akan dipelajari model, dalam audit harus mempertimbangkan relevansi bisnis, bukan hanya akurasi statistik."},
+  {t:"Risk scoring", d:"Output model berupa angka probabilitas seberapa besar kemungkinan sebuah transaksi memiliki karakteristik fraud."},
+  {t:"Risk profiling", d:"Proses auditor menginterpretasikan risk score dengan konteks bisnis menjadi kategori risiko yang bisa ditindaklanjuti."},
+  {t:"Risk segmentation", d:"Pengelompokan transaksi menjadi High, Medium, dan Low Risk berdasarkan kombinasi sinyal, bukan skor tunggal."},
+  {t:"Data integrity", d:"Konsistensi logis antar variabel dalam data, misalnya hubungan saldo sebelum dan sesudah transaksi yang masuk akal."},
+  {t:"Data validation", d:"Prosedur awal untuk memastikan data bisa dipercaya sebelum digunakan sebagai dasar analisis audit."},
+  {t:"SA 520", d:"Standar Audit tentang Prosedur Analitis, mengharuskan auditor mengevaluasi keandalan data dan hubungan antar data keuangan."},
+  {t:"GIAS 2025", d:"Global Internal Audit Standards dari The Institute of Internal Auditors, berlaku efektif 9 Januari 2025, mendorong penggunaan data analytics dan AI dalam audit internal."},
+  {t:"IPPF", d:"International Professional Practices Framework, menekankan objectivity dan professional judgment auditor dalam setiap penugasan."},
+  {t:"PaySim", d:"Dataset simulasi transaksi mobile money yang direplikasi dari pola dunia nyata, digunakan untuk riset fraud detection."},
+  {t:"TRANSFER & CASH_OUT", d:"Dua jenis transaksi tempat seluruh kasus fraud dalam dataset terkonsentrasi, diidentifikasi FATF sebagai saluran rentan penyalahgunaan."},
+  {t:"Trusted AI Framework", d:"Kerangka dari KPMG yang menegaskan output AI seharusnya menjadi input bagi pertimbangan manusia, bukan kesimpulan final."},
+  {t:"Early risk filter", d:"Peran model machine learning dalam audit, menyaring transaksi berisiko untuk diprioritaskan, bukan menggantikan keputusan akhir auditor."}
+];
+var glossGrid=document.getElementById('glossGrid');
+glossaryTerms.forEach(function(g){
+  var item=document.createElement('div');
+  item.className='gloss-item';
+  item.innerHTML='<dt>'+g.t+'</dt><dd>'+g.d+'</dd>';
+  item.dataset.search=(g.t+' '+g.d).toLowerCase();
+  glossGrid.appendChild(item);
+});
+document.getElementById('glosSearch').addEventListener('input',function(e){
+  var q=e.target.value.toLowerCase().trim();
+  document.querySelectorAll('.gloss-item').forEach(function(item){
+    if(item.dataset.search.indexOf(q)!==-1){item.classList.remove('hide');}
+    else{item.classList.add('hide');}
+  });
+});
+
+/* QUIZ */
+var quizData=[
+  {
+    q: "Kenapa sampling acak berisiko melewatkan fraud dalam dataset transaksi digital?",
+    opts: [
+      "Karena proporsi fraud sangat kecil, sekitar 0,13% dari populasi",
+      "Karena sampling hanya bisa dilakukan pada data offline",
+      "Karena fraud selalu terjadi di transaksi bernilai besar",
+      "Karena auditor tidak diperbolehkan menggunakan sampling"
+    ],
+    correct: 0
+  },
+  {
+    q: "Kenapa akurasi 99,9% belum cukup untuk menilai model deteksi fraud?",
+    opts: [
+      "Karena akurasi hanya berlaku untuk data kecil",
+      "Karena akurasi tidak menunjukkan jenis kesalahan yang masih dibuat model, seperti fraud yang lolos",
+      "Karena akurasi tidak bisa dihitung untuk data tidak seimbang",
+      "Karena akurasi hanya relevan untuk transaksi CASH_OUT"
+    ],
+    correct: 1
+  },
+  {
+    q: "Dalam konteks audit analytics pada studi ini, kenapa recall lebih diprioritaskan dibanding precision?",
+    opts: [
+      "Karena recall lebih mudah dihitung",
+      "Karena precision tidak berlaku untuk transaksi TRANSFER",
+      "Karena auditor ingin memastikan sebanyak mungkin risiko fraud teridentifikasi untuk ditindaklanjuti",
+      "Karena precision hanya relevan di sistem real-time"
+    ],
+    correct: 2
+  },
+  {
+    q: "Kenapa TRANSFER dan CASH_OUT menjadi satu-satunya jalur fraud dalam dataset ini?",
+    opts: [
+      "Karena keduanya memiliki volume transaksi paling kecil",
+      "Karena keduanya memungkinkan dana berpindah dan dicairkan sehingga jejaknya sulit ditelusuri",
+      "Karena keduanya hanya digunakan oleh nasabah baru",
+      "Karena keduanya diatur khusus oleh OJK"
+    ],
+    correct: 1
+  },
+  {
+    q: "Kenapa nama akun (nameOrig, nameDest) sengaja dieksklusi dari feature selection?",
+    opts: [
+      "Karena datanya tidak lengkap",
+      "Karena akan membuat model overfitting pada identitas, bukan belajar pola perilaku fraud",
+      "Karena nama akun tidak tersedia dalam dataset",
+      "Karena nama akun melanggar SA 520"
+    ],
+    correct: 1
+  },
+  {
+    q: "Apa peran auditor setelah model menghasilkan risk score?",
+    opts: [
+      "Menerima skor sebagai kesimpulan akhir tanpa perlu diperiksa lagi",
+      "Mengganti model dengan sistem berbasis aturan",
+      "Menginterpretasikan skor dengan konteks bisnis menjadi profil risiko dan tindakan audit",
+      "Menghapus transaksi dengan skor tinggi secara otomatis"
+    ],
+    correct: 2
+  }
+];
+var quizContainer=document.getElementById('quizContainer');
+var score=0;var answered=0;
+quizData.forEach(function(item,qi){
+  var card=document.createElement('div');
+  card.className='qcard';
+  var optsHtml='';
+  item.opts.forEach(function(opt,oi){
+    optsHtml+='<button class="qopt" data-q="'+qi+'" data-o="'+oi+'">'+opt+'</button>';
+  });
+  card.innerHTML='<div class="qtext">'+(qi+1)+'. '+item.q+'</div><div class="qopts">'+optsHtml+'</div><div class="qfeedback"></div>';
+  quizContainer.appendChild(card);
+});
+quizContainer.addEventListener('click',function(e){
+  if(!e.target.classList.contains('qopt'))return;
+  var btn=e.target;
+  var card=btn.closest('.qcard');
+  if(card.dataset.done)return;
+  card.dataset.done='1';
+  var qi=parseInt(btn.dataset.q);
+  var oi=parseInt(btn.dataset.o);
+  var correctIdx=quizData[qi].correct;
+  var allOpts=card.querySelectorAll('.qopt');
+  allOpts.forEach(function(o){o.setAttribute('disabled','true');});
+  allOpts[correctIdx].classList.add('correct');
+  if(oi!==correctIdx){btn.classList.add('wrong');}
+  else{score++;}
+  answered++;
+  var fb=card.querySelector('.qfeedback');
+  fb.style.display='block';
+  fb.textContent=(oi===correctIdx)?'Benar. Jawaban ini konsisten dengan insight di modul.':'Kurang tepat. Jawaban yang benar sudah ditandai hijau.';
+  if(answered===quizData.length){
+    var scoreBox=document.getElementById('quizScore');
+    scoreBox.style.display='block';
+    scoreBox.textContent='Skor kamu: '+score+' / '+quizData.length;
+  }
+});
+</script>
+</body>
+</html>
