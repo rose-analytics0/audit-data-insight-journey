@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard: Fraud Detection Monitoring</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=DM+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B1F3A;--navy-mid:#13294B;--navy-light:#2A4F7C;
+  --accent:#0FA3B1;--accent-soft:#E3F7F9;
+  --amber:#E8A838;--amber-soft:#FDF3DC;--amber-dark:#C97C1B;
+  --red:#C94040;--red-soft:#FDE8E8;
+  --green:#2E7D5E;--green-soft:#E5F5EE;
+  --purple:#6B48C8;--purple-soft:#F0ECFD;
+  --gray-50:#F9FAFB;--gray-100:#F6F7F9;--gray-200:#EAECF0;
+  --gray-400:#9BA3AF;--gray-600:#4B5563;--gray-800:#1F2937;
+  --text:#1A2535;--text-muted:#5A6475;
+  --border:rgba(11,31,58,0.10);
+  --shadow-sm:0 1px 3px rgba(11,31,58,0.07);
+  --shadow-md:0 4px 16px rgba(11,31,58,0.10);
+  --shadow-lg:0 8px 32px rgba(11,31,58,0.14);
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#EEF1F6;color:var(--text);font-size:14px;min-height:100vh;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+
+/* TOP BAR */
+.topbar{background:var(--navy);padding:0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.topbar-inner{max-width:1280px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:52px;}
+.topbar-brand{display:flex;align-items:center;gap:10px;}
+.topbar-brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);}
+.topbar-brand h1{font-size:13px;font-weight:600;color:white;letter-spacing:0.03em;}
+.topbar-brand span{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,0.40);margin-left:4px;}
+.topbar-meta{display:flex;align-items:center;gap:16px;}
+.topbar-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 10px;border-radius:100px;font-weight:600;letter-spacing:0.06em;}
+.badge-live{background:rgba(46,125,94,0.25);color:#5DE3A0;border:1px solid rgba(46,125,94,0.4);}
+.badge-data{background:rgba(232,168,56,0.18);color:var(--amber);border:1px solid rgba(232,168,56,0.3);}
+.topbar-time{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35);}
+
+/* NAV TABS */
+.nav-strip{background:white;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
+.nav-inner-wrap{max-width:1280px;margin:0 auto;padding:0 28px;display:flex;align-items:stretch;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-inner-wrap::-webkit-scrollbar{display:none;}
+.nav-tab{display:flex;align-items:center;gap:7px;padding:0 18px;height:46px;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;margin-bottom:-2px;}
+.nav-tab:hover{color:var(--navy);}
+.nav-tab.active{color:var(--navy);border-bottom-color:var(--accent);font-weight:600;}
+.tab-icon{font-size:14px;}
+
+/* LAYOUT */
+.page{display:none;max-width:1280px;margin:0 auto;padding:24px 28px 60px;}
+.page.active{display:block;animation:fadeIn 0.25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:22px;}
+.page-header h2{font-family:'Lora',serif;font-size:22px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.page-header p{font-size:13px;color:var(--text-muted);line-height:1.6;}
+
+/* KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:22px;}
+.kpi{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:16px 18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px;}
+.kpi.green::before{background:var(--green);}
+.kpi.red::before{background:var(--red);}
+.kpi.amber::before{background:var(--amber);}
+.kpi.blue::before{background:var(--accent);}
+.kpi.purple::before{background:var(--purple);}
+.kpi.navy::before{background:var(--navy);}
+.kpi-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:6px;font-family:'IBM Plex Mono',monospace;}
+.kpi-value{font-family:'IBM Plex Mono',monospace;font-size:1.5rem;font-weight:600;color:var(--navy);line-height:1;}
+.kpi-sub{font-size:11px;color:var(--text-muted);margin-top:4px;}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-7-5{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin-bottom:16px;}
+.grid-5-7{display:grid;grid-template-columns:5fr 7fr;gap:16px;margin-bottom:16px;}
+
+/* CARD */
+.card{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:20px 22px;box-shadow:var(--shadow-sm);}
+.card-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card-title .ct-sub{font-size:11px;font-weight:400;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;margin-left:auto;}
+
+/* CONFUSION MATRIX DYNAMIC */
+.cm-section{margin-bottom:16px;}
+.slider-wrap{margin-bottom:18px;}
+.slider-label{font-size:12px;color:var(--text-muted);margin-bottom:8px;display:flex;justify-content:space-between;}
+.slider-label span{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--navy);}
+input[type=range]{width:100%;accent-color:var(--accent);height:4px;cursor:pointer;}
+.cm-grid{display:grid;grid-template-columns:auto 1fr 1fr;gap:3px;background:var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px;}
+.cm-hd{background:var(--navy);color:white;padding:10px 8px;font-family:'IBM Plex Mono',monospace;font-size:10px;text-align:center;text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;justify-content:center;}
+.cm-lbl{background:var(--navy-mid);color:rgba(255,255,255,0.75);padding:10px 8px;font-family:'IBM Plex Mono',monospace;font-size:9px;text-align:center;text-transform:uppercase;letter-spacing:0.05em;writing-mode:vertical-rl;display:flex;align-items:center;justify-content:center;}
+.cm-cell{background:white;padding:16px 8px;text-align:center;transition:background 0.3s;}
+.cm-cell .cn{font-family:'IBM Plex Mono',monospace;font-size:1.2rem;font-weight:600;display:block;transition:color 0.3s;}
+.cm-cell .ct{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.cm-cell.tp{background:var(--green-soft);}
+.cm-cell.tp .cn{color:var(--green);}
+.cm-cell.tn{background:var(--accent-soft);}
+.cm-cell.tn .cn{color:var(--accent);}
+.cm-cell.fp{background:var(--amber-soft);}
+.cm-cell.fp .cn{color:var(--amber-dark);}
+.cm-cell.fn{background:var(--red-soft);}
+.cm-cell.fn .cn{color:var(--red);}
+.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;}
+.metric-chip{background:var(--gray-100);border:1px solid var(--border);border-radius:var(--radius-xs);padding:10px 12px;text-align:center;}
+.metric-chip .mn{font-family:'IBM Plex Mono',monospace;font-size:1rem;font-weight:600;color:var(--navy);display:block;transition:color 0.3s;}
+.metric-chip .ml{font-size:10px;color:var(--text-muted);margin-top:2px;}
+
+/* BAR CHART */
+.bar-chart{margin-top:6px;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.bar-label{font-size:12px;color:var(--text-muted);width:130px;flex-shrink:0;text-align:right;}
+.bar-track{flex:1;background:var(--gray-200);border-radius:100px;height:8px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:100px;transition:width 0.4s ease;}
+.bar-value{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--navy);width:60px;flex-shrink:0;}
+
+/* DISTRIBUTION CHART */
+.dist-chart{margin-top:8px;}
+.dist-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.dist-key{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.dist-label{font-size:12px;color:var(--text-muted);flex:1;}
+.dist-bar-wrap{flex:2;background:var(--gray-200);border-radius:100px;height:6px;overflow:hidden;}
+.dist-bar{height:100%;border-radius:100px;}
+.dist-val{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--navy);width:70px;text-align:right;flex-shrink:0;}
+
+/* RISK TABLE */
+.risk-table{width:100%;border-collapse:collapse;}
+.risk-table thead th{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);padding:6px 12px;text-align:left;border-bottom:2px solid var(--border);}
+.risk-table tbody td{padding:9px 12px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text-muted);}
+.risk-table tbody tr:last-child td{border-bottom:none;}
+.risk-badge{display:inline-flex;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;font-family:'IBM Plex Mono',monospace;}
+.rb-high{background:var(--red-soft);color:var(--red);}
+.rb-med{background:var(--amber-soft);color:var(--amber-dark);}
+.rb-low{background:var(--green-soft);color:var(--green);}
+.rb-score{background:var(--navy);color:white;}
+
+/* AUDIT STEPS */
+.audit-step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.audit-step:last-child{border-bottom:none;}
+.step-num{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:var(--navy);color:white;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.step-content h4{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:3px;}
+.step-content p{font-size:12.5px;color:var(--text-muted);line-height:1.65;}
+.step-tag{display:inline-flex;font-size:10px;font-weight:600;padding:1px 7px;border-radius:100px;margin-top:5px;font-family:'IBM Plex Mono',monospace;}
+
+/* FEATURE TABLE */
+.feat-table{width:100%;border-collapse:collapse;}
+.feat-table thead th{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);padding:6px 10px;text-align:left;border-bottom:2px solid var(--border);}
+.feat-table tbody td{padding:8px 10px;font-size:12.5px;border-bottom:1px solid var(--border);color:var(--text-muted);}
+.feat-table tbody tr:last-child td{border-bottom:none;}
+.feat-imp{display:flex;align-items:center;gap:6px;}
+.feat-bar{flex:1;height:5px;background:var(--gray-200);border-radius:100px;overflow:hidden;}
+.feat-bar-fill{height:100%;border-radius:100px;background:var(--accent);}
+
+/* INSIGHT BOX */
+.insight-box{background:var(--navy);color:white;border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;}
+.insight-box .ib-label{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);margin-bottom:6px;}
+.insight-box p{font-size:13px;line-height:1.7;color:rgba(255,255,255,0.82);}
+.insight-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+
+/* AUDIT STANDARDS */
+.std-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow-sm);margin-bottom:10px;}
+.std-card .sc-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:8px;}
+.std-card h4{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:5px;}
+.std-card p{font-size:12.5px;color:var(--text-muted);line-height:1.65;}
+
+/* SAMPLING */
+.vs-row{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:stretch;margin-bottom:16px;}
+.vs-col{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
+.vs-col h4{font-size:13px;font-weight:600;margin-bottom:10px;}
+.vs-mid{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:var(--text-muted);}
+.vs-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:12.5px;color:var(--text-muted);}
+.vs-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+
+/* FOOTER */
+.dash-footer{border-top:1px solid var(--border);padding:18px 28px;max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.dash-footer p{font-size:11px;color:var(--text-muted);}
+
+@media(max-width:900px){
+  .kpi-strip{grid-template-columns:repeat(3,1fr);}
+  .grid-2,.grid-3,.grid-7-5,.grid-5-7,.insight-row,.vs-row{grid-template-columns:1fr;}
+  .vs-mid{display:none;}
+  .page{padding:16px 16px 48px;}
+  .topbar-meta{display:none;}
+}
+
+/* PAGE NAV (prev/next + swipe) */
+.page-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:28px;padding-top:18px;border-top:1px solid var(--border);}
+.page-nav-btn{display:flex;align-items:center;gap:8px;background:white;border:1px solid var(--border);border-radius:100px;padding:10px 18px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--navy);cursor:pointer;box-shadow:var(--shadow-sm);transition:all 0.15s;}
+.page-nav-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px);}
+.page-nav-btn.next{margin-left:auto;}
+.page-nav-btn .pn-arrow{font-size:14px;}
+.page-nav-btn .pn-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.3;}
+.page-nav-btn.next .pn-text{align-items:flex-end;}
+.page-nav-btn .pn-sub{font-size:9px;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:0.05em;font-family:'IBM Plex Mono',monospace;}
+.swipe-hint{text-align:center;font-size:10.5px;color:var(--text-muted);margin-top:8px;font-family:'IBM Plex Mono',monospace;}
+@media(max-width:900px){.swipe-hint{display:block;}}
+.swipe-hint{display:none;}
+
+/* ACCORDION for new pages */
+.accordion-item{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;background:white;}
+.accordion-item.open{border-color:var(--accent);}
+.accordion-btn{width:100%;text-align:left;background:none;border:none;cursor:pointer;padding:16px 20px;display:flex;align-items:center;gap:12px;font-family:'DM Sans',sans-serif;transition:background 0.15s;}
+.accordion-btn:hover{background:var(--gray-100);}
+.accordion-btn.open-btn{background:var(--accent-soft);}
+.acc-idx{font-family:'IBM Plex Mono',monospace;font-size:11px;color:white;background:var(--navy);width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.accordion-item.open .acc-idx{background:var(--accent);}
+.acc-title{font-weight:600;font-size:14px;color:var(--navy);flex:1;}
+.acc-chev{color:var(--text-muted);font-size:16px;transition:transform 0.2s;flex-shrink:0;}
+.accordion-item.open .acc-chev{transform:rotate(180deg);color:var(--accent);}
+.acc-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease;}
+.acc-body-inner{padding:0 20px 20px 20px;font-size:14px;color:var(--text-muted);line-height:1.8;}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-brand">
+      <div class="dot"></div>
+      <h1>Fraud Detection Monitoring</h1>
+      <span>/ Audit &amp; Data Insight Journey Sesi 2</span>
+    </div>
+    <div class="topbar-meta">
+      <span class="topbar-badge badge-live">&#9679; Dataset Aktif</span>
+      <span class="topbar-badge badge-data">PaySim Simulation</span>
+      <span class="topbar-time mono" id="clock"></span>
+    </div>
+  </div>
+</div>
+
+<nav class="nav-strip">
+  <div class="nav-inner-wrap">
+    <button class="nav-tab active" onclick="showPage('p7',this)"><span class="tab-icon">&#127970;</span> Business Understanding</button>
+    <button class="nav-tab" onclick="showPage('p8',this)"><span class="tab-icon">&#128202;</span> Perspektif Akuntansi</button>
+    <button class="nav-tab" onclick="showPage('p1',this)"><span class="tab-icon">&#128202;</span> Ringkasan Eksekutif</button>
+    <button class="nav-tab" onclick="showPage('p4',this)"><span class="tab-icon">&#128301;</span> Profil Risiko</button>
+    <button class="nav-tab" onclick="showPage('p2',this)"><span class="tab-icon">&#128202;</span> Performa Model</button>
+    <button class="nav-tab" onclick="showPage('p3',this)"><span class="tab-icon">&#127919;</span> Simulasi Threshold</button>
+    <button class="nav-tab" onclick="showPage('p5',this)"><span class="tab-icon">&#9878;&#65039;</span> Tindak Lanjut Audit</button>
+    <button class="nav-tab" onclick="showPage('p6',this)"><span class="tab-icon">&#128216;</span> Standar Referensi</button>
+  </div>
+</nav>
+
+<!-- PAGE 1: BUSINESS UNDERSTANDING -->
+<div id="p7" class="page active">
+  <div class="page-header">
+    <h2>Business Understanding: Mobile Money</h2>
+    <p>Sebelum mengaudit, auditor harus memahami bisnis yang diauditnya. Bagian ini membangun pemahaman tentang model bisnis mobile money, alur transaksi, dan di mana titik risiko bisnis paling besar, dilihat dari sudut pandang bisnis dan akuntansi.</p>
+  </div>
+
+  <p style="font-size:11.5px;color:var(--text-muted);background:var(--gray-100);padding:8px 12px;border-radius:6px;margin-bottom:16px;font-style:italic;">Catatan: negara dan mata uang asal dataset PaySim tidak diungkap resmi oleh penulisnya. Nilai "Rp" di modul ini adalah label pembelajaran agar konsisten dengan kerangka regulasi Indonesia, bukan hasil konversi kurs, detail disclaimer lengkap ada di sub-bab Ringkasan Eksekutif.</p>
+
+  <div class="kpi-strip">
+    <div class="kpi navy"><div class="kpi-label">Model Bisnis</div><div class="kpi-value mono" style="font-size:1rem;">Platform</div><div class="kpi-sub">Perantara antara pengirim dan penerima dana</div></div>
+    <div class="kpi blue"><div class="kpi-label">Sumber Pendapatan</div><div class="kpi-value mono" style="font-size:1rem;">Fee</div><div class="kpi-sub">Komisi per transaksi berdasarkan nilai</div></div>
+    <div class="kpi amber"><div class="kpi-label">Tipe Transaksi</div><div class="kpi-value mono">5</div><div class="kpi-sub">CASH_IN, CASH_OUT, TRANSFER, PAYMENT, DEBIT</div></div>
+    <div class="kpi green"><div class="kpi-label">Pihak yang Terlibat</div><div class="kpi-value mono">3</div><div class="kpi-sub">Nasabah pengirim, penerima, platform</div></div>
+    <div class="kpi red"><div class="kpi-label">Risiko Utama Bisnis</div><div class="kpi-value mono" style="font-size:1rem;">Fraud</div><div class="kpi-sub">Terutama di TRANSFER dan CASH_OUT</div></div>
+    <div class="kpi purple"><div class="kpi-label">Regulasi</div><div class="kpi-value mono" style="font-size:1rem;">AML/KYC</div><div class="kpi-sub">Anti Money Laundering dan Know Your Customer</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Alur Bisnis: Bagaimana Mobile Money Bekerja</div>
+      <div style="margin-top:8px;">
+        <div class="flow" style="flex-direction:column;gap:0;overflow:visible;">
+          <div style="display:flex;align-items:stretch;gap:0;margin-bottom:3px;">
+            <div class="flow-step" style="flex:1;border-color:var(--accent);">
+              <div class="ftag">Langkah 1</div>
+              <h4>Nasabah Top-Up (CASH_IN)</h4>
+              <p>Nasabah menyetor uang tunai ke agen atau via transfer bank. Saldo e-wallet bertambah. Platform mencatat kewajiban kepada nasabah.</p>
+            </div>
+          </div>
+          <div style="text-align:center;color:var(--amber);font-size:18px;margin:2px 0;">&#8595;</div>
+          <div style="display:flex;gap:8px;margin-bottom:3px;">
+            <div class="flow-step" style="flex:1;border-color:var(--green);">
+              <div class="ftag">Transaksi A</div>
+              <h4>TRANSFER</h4>
+              <p>Kirim saldo ke sesama pengguna. Platform memindahkan kewajiban dari pengirim ke penerima. Fee dipotong dari pengirim.</p>
+            </div>
+            <div class="flow-step" style="flex:1;border-color:var(--navy);">
+              <div class="ftag">Transaksi B</div>
+              <h4>PAYMENT</h4>
+              <p>Bayar merchant. Saldo berkurang, merchant menerima dana. Platform memperoleh komisi dari merchant.</p>
+            </div>
+            <div class="flow-step" style="flex:1;border-color:var(--purple);">
+              <div class="ftag">Transaksi C</div>
+              <h4>DEBIT</h4>
+              <p>Transaksi debit oleh platform, misalnya cicilan atau tagihan berkala yang sudah diotorisasi sebelumnya.</p>
+            </div>
+          </div>
+          <div style="text-align:center;color:var(--amber);font-size:18px;margin:2px 0;">&#8595;</div>
+          <div style="display:flex;align-items:stretch;gap:0;margin-bottom:0;">
+            <div class="flow-step" style="flex:1;border-color:var(--red);">
+              <div class="ftag">Langkah Akhir</div>
+              <h4>CASH_OUT</h4>
+              <p>Nasabah tarik tunai ke agen. Saldo e-wallet berkurang, kewajiban platform kepada nasabah selesai. Fee dikenakan per penarikan.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:14px 16px;background:var(--navy);border-radius:10px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Mengapa Fraud Terkonsentrasi di TRANSFER &amp; CASH_OUT?</div>
+        <p style="font-size:12.5px;color:rgba(255,255,255,0.82);line-height:1.7;">CASH_IN adalah entry point (butuh uang sungguhan masuk). TRANSFER adalah pemindahan kewajiban yang tidak mengubah total kas platform, sehingga lebih mudah dimanipulasi tanpa memicu deteksi kas keluar. CASH_OUT adalah exit point yang mengubah kewajiban digital menjadi uang fisik yang <em>irreversible</em>. Kombinasi TRANSFER + CASH_OUT adalah pola "tarik cepat" (rapid cash-out): celah terbesar ada di jeda antara otorisasi digital (yang bisa dipalsukan) dan verifikasi fisik (yang hanya terjadi di CASH_OUT). Fraudster memanfaatkan kecepatan ini karena setelah CASH_OUT, platform kehilangan kemampuan membatalkan transaksi.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Tiga Pihak dalam Ekosistem Mobile Money</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+        <div style="background:var(--accent-soft);border:1px solid rgba(15,163,177,0.2);border-radius:10px;padding:14px 16px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);font-weight:700;margin-bottom:6px;">NASABAH (Pengirim dan Penerima)</div>
+          <p style="font-size:13px;color:var(--navy);margin-bottom:6px;">Pemilik e-wallet yang melakukan transaksi. Dari sudut pandang akuntansi, saldo e-wallet mereka adalah <strong>aset (kas setara)</strong> di sisi nasabah dan <strong>kewajiban</strong> di sisi platform.</p>
+          <p style="font-size:12px;color:var(--text-muted);">Risiko fraud: nasabah bisa menjadi korban (akun dibobol) atau menjadi pelaku (menggunakan akun palsu atau curian).</p>
+        </div>
+        <div style="background:var(--navy);border-radius:10px;padding:14px 16px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);font-weight:700;margin-bottom:6px;">PLATFORM (Perusahaan Mobile Money)</div>
+          <p style="font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:6px;">Memegang seluruh dana nasabah dalam bentuk pooled account. Pendapatan dari fee transaksi. Kewajiban utama adalah memastikan setiap saldo nasabah dijamin dan dapat ditarik kapan saja.</p>
+          <p style="font-size:12px;color:rgba(255,255,255,0.55);">Dari sisi audit: platform harus membuktikan bahwa total kewajiban kepada nasabah sesuai dengan total dana yang dipegang (rekonsiliasi pooled account).</p>
+        </div>
+        <div style="background:var(--green-soft);border:1px solid rgba(46,125,94,0.2);border-radius:10px;padding:14px 16px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:700;margin-bottom:6px;">AGEN (Jaringan Distribusi)</div>
+          <p style="font-size:13px;color:var(--navy);margin-bottom:6px;">Titik fisik untuk CASH_IN dan CASH_OUT. Agen memegang float (kas fisik) dan mendapat komisi per transaksi yang dilayani.</p>
+          <p style="font-size:12px;color:var(--text-muted);">Titik risiko tinggi: agen yang tidak jujur bisa memfasilitasi CASH_OUT tanpa verifikasi identitas yang memadai.</p>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px;"><strong style="color:var(--navy);">Penting untuk akuntansi platform:</strong> kas yang dipegang agen adalah aset agen, bukan aset platform. Platform hanya berkewajiban mengganti (replenish) float agen setelah agen melapor. Karena itu, saldo kas di rekening platform tidak pernah sama persis dengan total saldo nasabah, sebagian dana berbentuk float agen yang belum diselesaikan (settlement pending). Lihat jurnal dua tahap di sub-bab Perspektif Akuntansi.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="align-items:start;">
+    <div class="card">
+      <div class="card-title">Model Pendapatan dan Implikasi Auditnya</div>
+      <table class="risk-table" style="margin-top:8px;">
+        <thead>
+          <tr><th>Tipe Transaksi</th><th>Siapa yang Bayar Fee</th><th>Relevansi Audit</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CASH_IN</td>
+            <td style="font-size:12px;">Biasanya gratis atau fee sangat kecil. Insentif untuk menarik nasabah baru.</td>
+            <td style="font-size:12px;">Verifikasi identitas saat top-up adalah garis pertahanan pertama terhadap akun palsu.</td>
+          </tr>
+          <tr>
+            <td>TRANSFER</td>
+            <td style="font-size:12px;">Pengirim membayar fee berdasarkan nilai transfer. Sumber pendapatan utama.</td>
+            <td style="font-size:12px;">Volume tinggi dan nilai besar = risiko fraud tertinggi. Harus ada limit dan monitoring real-time.</td>
+          </tr>
+          <tr>
+            <td>PAYMENT</td>
+            <td style="font-size:12px;">Merchant membayar komisi (MDR) ke platform.</td>
+            <td style="font-size:12px;">Audit harus memastikan pendapatan komisi diakui secara benar sesuai PSAK 72.</td>
+          </tr>
+          <tr>
+            <td>CASH_OUT</td>
+            <td style="font-size:12px;">Nasabah membayar fee per penarikan, dibagi antara platform dan agen.</td>
+            <td style="font-size:12px;">Rekonsiliasi antara catatan platform dan kas fisik di agen adalah prosedur kritis.</td>
+          </tr>
+          <tr>
+            <td>DEBIT</td>
+            <td style="font-size:12px;">Platform mendebit akun nasabah atas tagihan yang sudah diotorisasi.</td>
+            <td style="font-size:12px;">Verifikasi otorisasi adalah kunci: apakah setiap debit punya persetujuan nasabah yang valid?</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;padding:12px 14px;background:var(--amber-soft);border-radius:8px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber-dark);font-weight:700;margin-bottom:5px;">Status Platform pada PAYMENT: Principal atau Agent?</div>
+        <p style="font-size:12px;color:var(--navy);line-height:1.65;">Platform bertindak sebagai <strong>agen (perantara)</strong> yang memfasilitasi pembayaran ke merchant, bukan sebagai principal. Karena tidak memiliki risiko persediaan/barang, pendapatan yang diakui hanya sebesar komisi (MDR), <strong>bukan nilai bruto transaksi</strong>. Salah menerapkan status ini bisa membuat pendapatan platform terlihat puluhan kali lebih besar dari yang sebenarnya, salah saji material. Lihat pembahasan PSAK 72 di sub-bab Perspektif Akuntansi.</p>
+      </div>
+      <div style="margin-top:8px;padding:12px 14px;background:var(--gray-100);border-radius:8px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--navy);font-weight:700;margin-bottom:5px;">Heatmap Volume vs Fraud</div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.65;">CASH_OUT (2,23 juta) dan PAYMENT (2,15 juta) adalah dua tipe transaksi bervolume tertinggi, hampir setara. Namun fraud hanya muncul di CASH_OUT dan TRANSFER, nol di PAYMENT. Ini mengindikasikan mekanisme verifikasi merchant (KYM / Know Your Merchant) relatif lebih kuat dibanding verifikasi antar-nasabah.</p>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="card">
+        <div class="card-title">Siklus Settlement &amp; Jeda Waktu (Timing Risk)</div>
+        <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;margin-bottom:8px;">Dalam bisnis nyata, uang tidak berpindah instan seperti di dataset PaySim. Pencatatan transaksi (real-time) berbeda dengan penyelesaian kas (settlement):</p>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="padding:8px 12px;background:var(--gray-100);border-radius:6px;font-size:12px;color:var(--text-muted);"><strong style="color:var(--navy);">CASH_IN:</strong> uang dari bank masuk ke rekening pooling H+1 atau H+2.</div>
+          <div style="padding:8px 12px;background:var(--gray-100);border-radius:6px;font-size:12px;color:var(--text-muted);"><strong style="color:var(--navy);">PAYMENT:</strong> platform mengirim uang ke merchant secara bulk settlement berkala.</div>
+          <div style="padding:8px 12px;background:var(--gray-100);border-radius:6px;font-size:12px;color:var(--text-muted);"><strong style="color:var(--navy);">CASH_OUT:</strong> agen mengeluarkan uang tunai dari float pribadinya; platform mengganti float agen di akhir hari.</div>
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.7;margin-top:8px;">Platform mencatat kewajiban/piutang secara instan, tapi kas fisik baru berpindah pada jadwal settlement. Jeda ini menimbulkan risiko likuiditas dan risiko rekonsiliasi yang harus diuji auditor internal.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Risiko Bisnis Utama yang Harus Dipahami Auditor</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--red-soft);border-radius:8px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;color:var(--red);flex-shrink:0;">01</div>
+            <div>
+              <strong style="font-size:13px;color:var(--navy);">Risiko Likuiditas Agen</strong>
+              <p style="font-size:12px;color:var(--text-muted);margin-top:3px;">Agen kehabisan kas fisik saat CASH_OUT volume tinggi. Bukan fraud, tapi bisa memicu kepanikan nasabah dan reputational risk yang besar.</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--amber-soft);border-radius:8px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;color:var(--amber-dark);flex-shrink:0;">02</div>
+            <div>
+              <strong style="font-size:13px;color:var(--navy);">Risiko Rekening Penampung</strong>
+              <p style="font-size:12px;color:var(--text-muted);margin-top:3px;">Dana dari TRANSFER fraud masuk ke rekening penerima yang sengaja dibuat untuk menampung, lalu segera di-CASH_OUT. Dua transaksi terpisah yang kalau dilihat sendiri-sendiri terlihat normal.</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--accent-soft);border-radius:8px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;color:var(--accent);flex-shrink:0;">03</div>
+            <div>
+              <strong style="font-size:13px;color:var(--navy);">Risiko Compliance AML</strong>
+              <p style="font-size:12px;color:var(--text-muted);margin-top:3px;">Mobile money bisa digunakan untuk layering dalam money laundering: uang kotor masuk via CASH_IN, dipecah ke banyak TRANSFER kecil, lalu di-CASH_OUT di lokasi berbeda. Audit harus memeriksa apakah sistem STR (Suspicious Transaction Report) berfungsi.</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--purple-soft);border-radius:8px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;color:var(--purple);flex-shrink:0;">04</div>
+            <div>
+              <strong style="font-size:13px;color:var(--navy);">Risiko Integritas Data</strong>
+              <p style="font-size:12px;color:var(--text-muted);margin-top:3px;">Saldo nasabah di sistem harus selalu sama dengan dana aktual yang dipegang platform. Ketidaksesuaian adalah sinyal serius, baik karena error sistem maupun manipulasi.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-nav">
+    
+    <button class="page-nav-btn next" onclick="goToPage('p8')"><span class="pn-text"><span class="pn-sub">Selanjutnya</span>Perspektif Akuntansi</span><span class="pn-arrow">&#8594;</span></button>
+  </div>
+  <div class="swipe-hint">&#8592; geser layar untuk pindah sub-bab &#8594;</div>
+</div>
+
+<!-- PAGE 2: PERSPEKTIF AKUNTANSI -->
+<div id="p8" class="page">
+  <div class="page-header">
+    <h2>Perspektif Akuntansi</h2>
+    <p>Bagaimana setiap tipe transaksi dicatat secara akuntansi, dampak fraud terhadap laporan keuangan, dan bagaimana pemahaman ini membantu auditor merancang prosedur yang lebih tepat sasaran.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">Jurnal Akuntansi per Tipe Transaksi (Sisi Platform)</div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Memahami jurnal ini penting karena fraud akan menghasilkan pencatatan yang tidak sesuai, atau mengakibatkan saldo yang tidak bisa direkonsiliasi dengan kondisi sebenarnya.</p>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span class="acc-idx">1</span>
+          <span class="acc-title">CASH_IN: Nasabah Top-Up ke E-Wallet</span>
+          <span class="acc-chev">&#8964;</span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div style="background:var(--gray-100);border-radius:8px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;margin-bottom:14px;border:1px solid var(--border);">
+              <div style="margin-bottom:6px;color:var(--green);">Debet: Kas / Rekening Pooling &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp XXX</div>
+              <div style="color:var(--accent);">Kredit: Kewajiban kepada Nasabah &nbsp;&nbsp; Rp XXX</div>
+            </div>
+            <p style="margin-bottom:10px;">Ketika nasabah top-up, platform menerima kas dan mencatat kewajiban (utang) kepada nasabah sebesar nilai top-up. Dana nasabah adalah kewajiban platform, bukan aset bebas.</p>
+            <div style="background:var(--amber-soft);padding:10px 14px;border-radius:8px;font-size:12.5px;color:var(--navy);margin-bottom:10px;">
+              <strong>Relevansi Audit:</strong> Auditor harus memverifikasi bahwa setiap CASH_IN yang dicatat benar-benar diiringi penerimaan kas yang setara. Jika ada CASH_IN yang tidak disertai setoran nyata, ini bisa menjadi sinyal akun palsu yang dibuat untuk memulai rangkaian transaksi fraudulent.
+            </div>
+            <p>Dari dataset PaySim: 1,40 juta CASH_IN berarti ada 1,40 juta entri kewajiban baru kepada nasabah yang harus bisa direkonsiliasi dengan kas masuk yang setara.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span class="acc-idx">2</span>
+          <span class="acc-title">TRANSFER: Pemindahan Antar Nasabah</span>
+          <span class="acc-chev">&#8964;</span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div style="background:var(--gray-100);border-radius:8px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;margin-bottom:14px;border:1px solid var(--border);">
+              <div style="margin-bottom:6px;color:var(--accent);">Debet: Kewajiban kepada Nasabah A (pengirim) Rp XXX</div>
+              <div style="margin-bottom:6px;color:var(--green);">Kredit: Kewajiban kepada Nasabah B (penerima) Rp YYY</div>
+              <div style="color:var(--amber-dark);">Kredit: Pendapatan Fee Transaksi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp ZZZ</div>
+            </div>
+            <p style="margin-bottom:10px;">TRANSFER tidak mengubah total kas yang dipegang platform. Yang berubah hanya komposisi kewajiban: berkurang di sisi pengirim, bertambah di sisi penerima. Selisihnya adalah fee yang diakui sebagai pendapatan.</p>
+            <div style="background:var(--red-soft);padding:10px 14px;border-radius:8px;font-size:12.5px;color:var(--navy);margin-bottom:10px;">
+              <strong>Relevansi Fraud Audit:</strong> Pada kasus fraud TRANSFER, pelaku memindahkan saldo dari akun korban (yang dibobol) ke rekening penampung. Jurnal yang terjadi tetap sama bentuknya dengan TRANSFER normal. Yang membedakan hanya otorisasi: apakah Nasabah A benar-benar yang mengotorisasi transaksi ini?
+            </div>
+            <p>Ini yang membuat fraud TRANSFER sulit terdeteksi secara akuntansi murni tanpa analisis behavioral pattern: jurnalnya valid, tapi otorisasinya tidak sah.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span class="acc-idx">3</span>
+          <span class="acc-title">PAYMENT: Pembayaran ke Merchant</span>
+          <span class="acc-chev">&#8964;</span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div style="background:var(--gray-100);border-radius:8px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;margin-bottom:14px;border:1px solid var(--border);">
+              <div style="margin-bottom:6px;color:var(--accent);">Debet: Kewajiban kepada Nasabah &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp XXX</div>
+              <div style="margin-bottom:6px;color:var(--green);">Kredit: Utang kepada Merchant &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp YYY</div>
+              <div style="color:var(--amber-dark);">Kredit: Pendapatan Komisi (MDR) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp ZZZ</div>
+            </div>
+            <p style="margin-bottom:10px;">Platform memotong kewajiban kepada nasabah dan mencatat utang baru ke merchant (yang akan dibayarkan pada settlement berikutnya). MDR (Merchant Discount Rate) diakui sebagai pendapatan komisi platform.</p>
+            <div style="background:var(--accent-soft);padding:10px 14px;border-radius:8px;font-size:12.5px;color:var(--navy);">
+              <strong>Relevansi Audit PSAK 72:</strong> Pengakuan pendapatan komisi (MDR) harus sesuai PSAK 72 tentang Pendapatan dari Kontrak dengan Pelanggan. Auditor perlu memastikan komisi diakui saat kewajiban pelaksanaan terpenuhi, yaitu saat transaksi sukses, bukan saat kontrak merchant ditandatangani.
+            </div>
+            <div style="background:var(--amber-soft);padding:10px 14px;border-radius:8px;font-size:12.5px;color:var(--navy);margin-top:10px;">
+              <strong>Isu Krusial: Principal vs Agent (PSAK 72):</strong> Selain timing pengakuan, auditor wajib menguji apakah platform bertindak sebagai Principal (mengendalikan barang/jasa sebelum dijual ke nasabah, mencatat pendapatan bruto) atau Agent (hanya mempertemukan merchant dan nasabah, mencatat pendapatan neto). Dalam model mobile money, platform umumnya hanya Agent, sehingga pendapatan yang diakui HANYA sebesar MDR/komisi, bukan nilai bruto transaksi. Mencatat bruto padahal seharusnya neto bisa membuat pendapatan terlihat puluhan kali lebih besar, salah saji material. Audit harus memverifikasi kontrak merchant dan pihak yang bertanggung jawab atas refund/chargeback untuk menentukan status ini.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span class="acc-idx">4</span>
+          <span class="acc-title">CASH_OUT: Penarikan Tunai ke Agen (dengan Float)</span>
+          <span class="acc-chev">&#8964;</span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <p style="margin-bottom:10px;">Praktik riil melibatkan float agen (lihat Business Understanding), sehingga pencatatannya dua tahap, bukan satu jurnal langsung ke kas seperti versi sederhana sebelumnya.</p>
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;font-family:'IBM Plex Mono',monospace;">Tahap 1: Saat transaksi (nasabah menerima uang dari agen)</div>
+            <div style="background:var(--gray-100);border-radius:8px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;margin-bottom:10px;border:1px solid var(--border);">
+              <div style="margin-bottom:6px;color:var(--accent);">Debet: Kewajiban kepada Nasabah &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp XXX</div>
+              <div style="margin-bottom:6px;color:var(--green);">Kredit: Utang kepada Agen (Settlement Pending) &nbsp; Rp YYY</div>
+              <div style="color:var(--amber-dark);">Kredit: Pendapatan Fee Transaksi &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp ZZZ</div>
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;font-family:'IBM Plex Mono',monospace;">Tahap 2: Saat settlement (platform membayar agen di akhir hari)</div>
+            <div style="background:var(--gray-100);border-radius:8px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;margin-bottom:14px;border:1px solid var(--border);">
+              <div style="margin-bottom:6px;color:var(--accent);">Debet: Utang kepada Agen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp YYY</div>
+              <div style="color:var(--red);">Kredit: Kas / Rekening Pooling &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp YYY</div>
+            </div>
+            <p style="margin-bottom:10px;">Saat nasabah CASH_OUT, kas platform (rekening pooling) <strong>belum</strong> keluar, platform hanya mengurangi kewajiban ke nasabah dan mencatat utang baru ke agen. Kas platform baru keluar saat settlement/replenish ke agen.</p>
+            <div style="background:var(--red-soft);padding:10px 14px;border-radius:8px;font-size:12.5px;color:var(--navy);margin-bottom:10px;">
+              <strong>Relevansi Fraud Audit:</strong> Pada kasus fraud CASH_OUT, pelaku menguras saldo (yang mungkin berasal dari TRANSFER fraudulent) menjadi uang tunai. Inilah tahap "exit" dari skema fraud. Karena ada jeda waktu antara transaksi dan settlement, auditor harus melakukan rekonsiliasi dua tahap: (1) kesesuaian total CASH_OUT harian dengan total utang ke agen, dan (2) kesesuaian total pembayaran ke agen dengan pengeluaran kas aktual. Celah di sinilah yang sering dimanfaatkan agen nakal untuk menggelembungkan klaim.
+            </div>
+            <p>Dari dataset: 2,23 juta CASH_OUT berarti ada 2,23 juta entri utang-ke-agen yang harus direkonsiliasi. Separuh dari total fraud berasal dari tipe transaksi ini.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span class="acc-idx">5</span>
+          <span class="acc-title">DEBIT: Autodebit Tagihan Berkala</span>
+          <span class="acc-chev">&#8964;</span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div style="background:var(--gray-100);border-radius:8px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;margin-bottom:14px;border:1px solid var(--border);">
+              <div style="margin-bottom:6px;color:var(--accent);">Debet: Kewajiban kepada Nasabah &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp XXX</div>
+              <div style="margin-bottom:6px;color:var(--green);">Kredit: Utang kepada Pihak Ketiga (Tagihan) &nbsp; Rp YYY</div>
+              <div style="color:var(--amber-dark);">Kredit: Pendapatan Admin/Fee &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rp ZZZ</div>
+            </div>
+            <p style="margin-bottom:10px;">Platform mendebet saldo nasabah atas tagihan yang sudah diotorisasi sebelumnya (misal cicilan pinjaman atau premi asuransi), lalu mencatat utang baru ke pihak ketiga (penyedia jasa) yang akan diselesaikan secara periodik. Sebelumnya jurnal ini tidak dicantumkan meski DEBIT sudah disebut sebagai salah satu dari lima tipe transaksi, kekosongan yang perlu ditutup karena DEBIT punya karakter risiko yang berbeda dari empat jurnal lainnya.</p>
+            <div style="background:var(--purple-soft);padding:10px 14px;border-radius:8px;font-size:12.5px;color:var(--navy);">
+              <strong>Relevansi Audit: Silent Fraud:</strong> Karena otorisasi dilakukan sekali di awal (standing instruction), risiko utamanya adalah perubahan nominal tanpa pemberitahuan atau debit berulang setelah nasabah sebenarnya sudah melunasi. Auditor harus memverifikasi adanya surat kuasa autodebit yang sah dan membandingkan nominal tagihan dengan kontrak awal nasabah, lihat juga catatan blind spot DEBIT di sub-bab Profil Risiko.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Jurnal Pembalikan (Reversal) untuk Fraud Terkonfirmasi</div>
+      <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px;">Saat fraud terkonfirmasi dan platform memutuskan mengganti kerugian nasabah (refund), jurnal berikut dicatat untuk mengembalikan saldo kewajiban nasabah dan mengakui beban di laba rugi:</p>
+      <div style="background:var(--gray-100);border-radius:8px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;border:1px solid var(--border);">
+        <div style="margin-bottom:6px;color:var(--red);">Debet: Beban Kerugian Fraud (Laba Rugi) &nbsp;&nbsp; Rp XXX</div>
+        <div style="color:var(--accent);">Kredit: Kewajiban kepada Nasabah (Neraca) &nbsp; Rp XXX</div>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:10px;">Auditor harus memverifikasi bahwa beban ini <strong style="color:var(--navy);">tidak</strong> dikapitalisasi sebagai aset atau disembunyikan dalam biaya operasional lain.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Klarifikasi PSAK 57 vs PSAK 71</div>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;">Dua standar ini sering tertukar dalam konteks kerugian fraud: <strong style="color:var(--navy);">PSAK 57 (IAS 37)</strong> mengatur Provisi, Liabilitas Kontinjensi, dan Aset Kontinjensi, dipakai jika platform punya kewajiban hukum/konstruktif mengganti kerugian nasabah korban fraud. <strong style="color:var(--navy);">PSAK 71 (IFRS 9)</strong> mengatur penurunan nilai aset keuangan, dipakai jika fraud menyebabkan piutang ke merchant atau kas setara yang terpengaruh tidak tertagih (pencadangan Kerugian Kredit Ekspektasian/ECL). Auditor wajib memastikan manajemen memakai standar yang tepat sesuai sifat kerugiannya, dan estimasinya rasional berdasarkan historical loss rate.</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Dampak Fraud terhadap Laporan Keuangan Platform</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+        <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+          <div style="background:var(--navy);padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:white;font-weight:600;letter-spacing:0.05em;">NERACA (Balance Sheet)</div>
+          <div style="padding:12px 14px;">
+            <div style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:700;flex-shrink:0;margin-top:2px;">KAS &#9660;</span>
+              <p style="font-size:12.5px;color:var(--text-muted);">CASH_OUT fraud menguras kas platform. Jika tidak terdeteksi, neraca menunjukkan kas lebih kecil dari yang seharusnya, tidak sesuai dengan kewajiban kepada nasabah lain yang masih utuh.</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber-dark);font-weight:700;flex-shrink:0;margin-top:2px;">KWJBN &#9650;</span>
+              <p style="font-size:12.5px;color:var(--text-muted);">Kewajiban kepada nasabah yang menjadi korban fraud tetap tercatat sebagai kewajiban platform, sampai platform mengakui kerugian dan mengganti dana nasabah.</p>
+            </div>
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+          <div style="background:var(--navy-light);padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:white;font-weight:600;letter-spacing:0.05em;">LABA RUGI (Income Statement)</div>
+          <div style="padding:12px 14px;">
+            <div style="display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:700;flex-shrink:0;margin-top:2px;">RUGI &#9660;</span>
+              <p style="font-size:12.5px;color:var(--text-muted);">Ketika platform menanggung kerugian nasabah (refund), dicatat sebagai beban kerugian fraud. Mengurangi laba bersih periode berjalan.</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber-dark);font-weight:700;flex-shrink:0;margin-top:2px;">PROVISI &#9650;</span>
+              <p style="font-size:12.5px;color:var(--text-muted);">Jika fraud rate sudah bisa diestimasi historis, platform wajib membentuk provisi kerugian fraud sesuai PSAK 57. Auditor harus menilai kecukupan provisi ini.</p>
+            </div>
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+          <div style="background:var(--accent);padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:white;font-weight:600;letter-spacing:0.05em;">CATATAN ATAS LAPORAN KEUANGAN</div>
+          <div style="padding:12px 14px;">
+            <p style="font-size:12.5px;color:var(--text-muted);">Platform wajib mengungkapkan: (1) kebijakan pengelolaan risiko fraud, (2) total kerugian fraud periode berjalan, (3) kecukupan asuransi atau provisi yang dimiliki, dan (4) sengketa yang masih berjalan terkait klaim nasabah.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Prosedur Audit Berbasis Pemahaman Akuntansi</div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">Pemahaman jurnal di atas memungkinkan auditor merancang prosedur yang lebih tepat sasaran, bukan sekadar mengikuti checklist standar.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="padding:12px 14px;background:var(--gray-100);border-radius:8px;border-left:3px solid var(--accent);">
+          <strong style="font-size:12.5px;color:var(--navy);">1. Rekonsiliasi Pooled Account</strong>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Total kewajiban kepada nasabah (dari jumlah semua saldo e-wallet) harus sama persis dengan total kas di rekening pooling platform. Selisih adalah red flag utama.</p>
+        </div>
+        <div style="padding:12px 14px;background:var(--gray-100);border-radius:8px;border-left:3px solid var(--amber);">
+          <strong style="font-size:12.5px;color:var(--navy);">2. Vouching CASH_OUT ke Catatan Agen</strong>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Setiap CASH_OUT yang tercatat di sistem harus bisa ditelusuri ke catatan kas fisik yang keluar dari agen yang bersangkutan. Terutama untuk transaksi bernilai besar.</p>
+        </div>
+        <div style="padding:12px 14px;background:var(--gray-100);border-radius:8px;border-left:3px solid var(--green);">
+          <strong style="font-size:12.5px;color:var(--navy);">3. Uji Pengakuan Pendapatan Fee</strong>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Verifikasi bahwa pendapatan fee hanya diakui untuk transaksi yang benar-benar sukses dan diotorisasi, bukan untuk transaksi yang kemudian di-reverse karena fraud.</p>
+        </div>
+        <div style="padding:12px 14px;background:var(--gray-100);border-radius:8px;border-left:3px solid var(--purple);">
+          <strong style="font-size:12.5px;color:var(--navy);">4. Kecukupan Provisi Kerugian Fraud</strong>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Bandingkan estimasi kerugian fraud historis dengan provisi yang dibentuk. Jika fraud rate 0,13% dari 6,3 juta transaksi, berapa total kerugian yang perlu diprovisi?</p>
+        </div>
+        <div style="padding:12px 14px;background:var(--gray-100);border-radius:8px;border-left:3px solid var(--red);">
+          <strong style="font-size:12.5px;color:var(--navy);">5. Pengungkapan dalam CALK</strong>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Nilai pengungkapan risiko fraud dalam catatan atas laporan keuangan harus proporsional dengan materialitas risiko. Jika fraud pernah menyebabkan kerugian signifikan, harus diungkapkan secara eksplisit.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box" style="margin-top:4px;">
+    <div class="ib-label">Mengapa Business Understanding dan Perspektif Akuntansi Harus Datang Sebelum Analytics</div>
+    <p>Ketika kita langsung membuka data dan mencari anomali tanpa memahami bisnis dan pencatatan akuntansinya, kita berisiko salah menginterpretasi temuan. Misalnya, saldo yang "menguras ke nol" bisa terlihat mencurigakan, tapi kalau kita tahu bahwa ini adalah pola normal untuk CASH_OUT menjelang penutupan hari agen, maka anomali itu perlu konteks lebih sebelum disimpulkan sebagai fraud. Pemahaman bisnis dan akuntansi adalah peta yang membuat seluruh analisis data menjadi bermakna, bukan sekadar angka-angka yang mencurigakan.</p>
+  </div>
+  <div class="page-nav">
+    <button class="page-nav-btn prev" onclick="goToPage('p7')"><span class="pn-arrow">&#8592;</span><span class="pn-text"><span class="pn-sub">Sebelumnya</span>Business Understanding</span></button>
+    <button class="page-nav-btn next" onclick="goToPage('p1')"><span class="pn-text"><span class="pn-sub">Selanjutnya</span>Ringkasan Eksekutif</span><span class="pn-arrow">&#8594;</span></button>
+  </div>
+  <div class="swipe-hint">&#8592; geser layar untuk pindah sub-bab &#8594;</div>
+</div>
+
+<!-- PAGE 3: RINGKASAN EKSEKUTIF -->
+<div id="p1" class="page">
+  <div class="page-header">
+    <h2>Ringkasan Eksekutif</h2>
+    <p>Gambaran keseluruhan hasil analisis fraud detection pada dataset PaySim: 6,3 juta transaksi mobile money simulasi, basis sesi 2 Audit &amp; Data Insight Journey.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--amber);margin-bottom:16px;">
+    <div class="card-title">&#9888;&#65039; Catatan Mata Uang: Mengapa Rupiah, Bukan Angka Asli Dataset</div>
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;margin-bottom:8px;"><strong style="color:var(--navy);">Disclaimer 1: Negara &amp; mata uang asal dataset tidak diungkap resmi.</strong> PaySim tidak pernah menyebut secara eksplisit negara atau mata uang asal datanya; dokumentasi resminya hanya menyatakan kolom <span class="mono" style="background:var(--gray-100);padding:1px 5px;border-radius:4px;">amount</span> dalam "mata uang lokal" layanan mobile money yang disimulasikan (diduga mirip pola M-Pesa di Afrika Timur, namun ini dugaan komunitas, bukan fakta resmi dari penulis dataset).</p>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;">
+      <strong style="color:var(--navy);">Disclaimer 2: Rupiah di modul ini bersifat ilustratif, bukan hasil konversi kurs.</strong> Nilai yang ditampilkan sebagai "Rp" dalam modul ini adalah label pembelajaran atas nominal asli dataset, dipilih agar konsisten dengan kerangka regulasi Indonesia (PSAK, OJK, BI, PPATK) yang dipakai di seluruh sub-bab lain, <strong>bukan</strong> konversi nilai tukar dari mata uang asli PaySim ke Rupiah. Angka nominalnya tidak merepresentasikan nilai transaksi mobile money riil di Indonesia.
+    </p>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kpi navy">
+      <div class="kpi-label">Total Transaksi</div>
+      <div class="kpi-value mono">6,36 Jt</div>
+      <div class="kpi-sub">Seluruh dataset PaySim</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">Transaksi Fraud</div>
+      <div class="kpi-value mono">8.213</div>
+      <div class="kpi-sub">0,13% dari total transaksi</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Recall Model</div>
+      <div class="kpi-value mono">99,57%</div>
+      <div class="kpi-sub">Fraud yang berhasil terdeteksi</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">Precision</div>
+      <div class="kpi-value mono">81,2%</div>
+      <div class="kpi-sub">Dari semua yang ditandai fraud</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">F1-Score</div>
+      <div class="kpi-value mono">89,5%</div>
+      <div class="kpi-sub">Keseimbangan precision-recall</div>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-label">AUC-ROC</div>
+      <div class="kpi-value mono">0,998</div>
+      <div class="kpi-sub">Performa di semua threshold</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card" style="border-left:3px solid var(--red);">
+      <div class="card-title">&#9888;&#65039; Catatan Materialitas: Nilai Uang Belum Tersedia</div>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;margin-bottom:10px;">KPI di atas (6,36 juta transaksi, 8.213 fraud) adalah <strong style="color:var(--navy);">volume</strong>, bukan <strong style="color:var(--navy);">nilai uang</strong>. Dalam audit, materialitas ditentukan oleh nominal, bukan jumlah kejadian: 8.213 fraud dengan rata-rata Rp 10 Juta jauh berbeda dampaknya dari 8.213 fraud dengan rata-rata Rp 50 Juta.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div style="padding:10px 12px;background:var(--gray-100);border-radius:8px;text-align:center;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Total Nilai Transaksi</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:var(--navy);margin-top:4px;">Rp [diisi dari kolom amount]</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--gray-100);border-radius:8px;text-align:center;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Total Nilai Fraud</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:var(--red);margin-top:4px;">Rp [diisi]</div>
+        </div>
+        <div style="padding:10px 12px;background:var(--gray-100);border-radius:8px;text-align:center;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Rata-rata / Kejadian</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;color:var(--navy);margin-top:4px;">Rp [diisi]</div>
+        </div>
+      </div>
+      <p style="font-size:11.5px;color:var(--text-muted);margin-top:10px;font-style:italic;">Placeholder ini sengaja tidak diisi angka karaangan. Tarik total kolom "amount" dari dataset PaySim (query: SUM(amount) WHERE isFraud=1 vs total) lalu isi tiga kotak di atas sebelum laporan ini difinalkan.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber);">
+      <div class="card-title">Dampak Model terhadap Nasabah Sah (False Positive)</div>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;margin-bottom:10px;">Pada data uji (test set), model menghasilkan <strong style="color:var(--navy);">380 False Positive</strong> dari 2.021 alert yang diterbitkan (Precision 81,2%). Artinya, 380 transaksi nasabah sah berpotensi tertahan untuk verifikasi manual demi menangkap 1.641 fraud yang benar.</p>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;">Dengan asumsi ilustratif biaya investigasi Rp 500.000 per kasus (gaji analis, call center, administrasi), estimasi beban operasional dari 380 FP ini adalah sekitar <strong style="color:var(--navy);">Rp 190 Juta</strong>. Angka ini perlu dibandingkan dengan potensi kerugian yang berhasil dicegah dari 1.641 fraud tertangkap (nilai riil menunggu data amount dari dataset).</p>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:8px;font-style:italic;">Asumsi biaya investigasi bersifat ilustratif, bukan data aktual perusahaan. [Confidence: Low - perlu verifikasi biaya operasional riil].</p>
+    </div>
+  </div>
+
+  <div class="insight-box" style="margin-bottom:16px;">
+    <div class="ib-label">Kesimpulan Eksekutif</div>
+    <p>Model deteksi fraud menunjukkan performa tinggi (AUC 0,998, Recall 99,57%) dan mampu menangkap 1.641 dari 1.648 kasus fraud pada data uji, terkonsentrasi di TRANSFER dan CASH_OUT. Namun, 380 false positive berpotensi mengganggu nasabah sah dan membebani tim investigasi. <strong>Rekomendasi awal:</strong> model ini layak diimplementasikan sebagai sistem <em>early warning</em> (alerting, bukan auto-blocking), didampingi (1) cooling-off period untuk CASH_OUT dari perangkat baru, dan (2) rekonsiliasi harian antara kewajiban nasabah dan kas riil di rekening pooling. Detail tindak lanjut ada di sub-bab Tindak Lanjut Audit. Kesimpulan ini masih perlu dikuatkan dengan data nilai uang (lihat catatan materialitas di atas) sebelum disampaikan ke Komite Audit.</p>
+  </div>
+
+  <div class="grid-7-5">
+    <div class="card">
+      <div class="card-title">Distribusi Transaksi per Tipe <span class="ct-sub">6 tipe transaksi</span></div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label">CASH_OUT</div>
+          <div class="bar-track"><div class="bar-fill" style="width:35%;background:var(--accent);"></div></div>
+          <div class="bar-value mono">2,23 Jt</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">PAYMENT</div>
+          <div class="bar-track"><div class="bar-fill" style="width:34%;background:var(--navy-light);"></div></div>
+          <div class="bar-value mono">2,15 Jt</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">CASH_IN</div>
+          <div class="bar-track"><div class="bar-fill" style="width:22%;background:var(--green);"></div></div>
+          <div class="bar-value mono">1,40 Jt</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">TRANSFER</div>
+          <div class="bar-track"><div class="bar-fill" style="width:8%;background:var(--amber);"></div></div>
+          <div class="bar-value mono">532 Rb</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">DEBIT</div>
+          <div class="bar-track"><div class="bar-fill" style="width:1%;background:var(--red);"></div></div>
+          <div class="bar-value mono">41 Rb</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Temuan Utama Audit</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+        <div style="background:var(--red-soft);border-radius:8px;padding:12px 14px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Fraud Hanya di 2 Tipe</div>
+          <div style="font-size:13px;color:var(--navy);">Seluruh 8.213 kasus fraud terkonsentrasi di CASH_OUT dan TRANSFER. Tipe lain tidak ada fraud sama sekali.</div>
+        </div>
+        <div style="background:var(--amber-soft);border-radius:8px;padding:12px 14px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber-dark);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Class Imbalance Ekstrem</div>
+          <div style="font-size:13px;color:var(--navy);">Rasio 1:775. Tanpa penanganan khusus, model bisa capai 99,87% akurasi hanya dengan menebak semua "normal" tanpa mendeteksi satu fraud pun.</div>
+        </div>
+        <div style="background:var(--green-soft);border-radius:8px;padding:12px 14px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Saldo Menguras ke Nol</div>
+          <div style="font-size:13px;color:var(--navy);">Pola khas fraud: saldo asal terkuras habis atau mendekati nol setelah transaksi. Fitur ini sangat prediktif.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">Fraud per Tipe Transaksi</div>
+      <div class="dist-chart">
+        <div class="dist-row">
+          <div class="dist-key" style="background:var(--red);"></div>
+          <div class="dist-label">CASH_OUT</div>
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:50%;background:var(--red);"></div></div>
+          <div class="dist-val mono">4.116</div>
+        </div>
+        <div class="dist-row">
+          <div class="dist-key" style="background:var(--amber);"></div>
+          <div class="dist-label">TRANSFER</div>
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:50%;background:var(--amber);"></div></div>
+          <div class="dist-val mono">4.097</div>
+        </div>
+        <div class="dist-row">
+          <div class="dist-key" style="background:var(--gray-200);"></div>
+          <div class="dist-label">PAYMENT</div>
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:0%;background:var(--gray-400);"></div></div>
+          <div class="dist-val mono">0</div>
+        </div>
+        <div class="dist-row">
+          <div class="dist-key" style="background:var(--gray-200);"></div>
+          <div class="dist-label">CASH_IN</div>
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:0%;background:var(--gray-400);"></div></div>
+          <div class="dist-val mono">0</div>
+        </div>
+        <div class="dist-row">
+          <div class="dist-key" style="background:var(--gray-200);"></div>
+          <div class="dist-label">DEBIT</div>
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:0%;background:var(--gray-400);"></div></div>
+          <div class="dist-val mono">0</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Fitur Terpenting Model</div>
+      <div class="dist-chart">
+        <div class="dist-row">
+          <div class="dist-key" style="background:var(--accent);border-radius:2px;"></div>
+          <div class="dist-label">Perubahan saldo asal</div>
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:95%;background:var(--accent);"></div></div>
+          <div class="dist-val mono">0,95</div>
+        </div>
+        <div class="dist-row">
+          <div class="dist-key" style="background:var(--navy);border-radius:2px;"></div>
+          <div class="dist-label">Jumlah transaksi</div>
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:88%;background:var(--navy);"></div></div>
+          <div class="dist-val mono">0,88</div>
+        </div>
+        <div class="dist-row">
+          <div class="dist-key" style="background:var(--green);border-radius:2px;"></div>
+          <div class="dist-label">Saldo awal asal</div>
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:75%;background:var(--green);"></div></div>
+          <div class="dist-val mono">0,75</div>
+        </div>
+        <div class="dist-row">
+          <div class="dist-key" style="background:var(--amber);border-radius:2px;"></div>
+          <div class="dist-label">Tipe transaksi</div>
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:62%;background:var(--amber);"></div></div>
+          <div class="dist-val mono">0,62</div>
+        </div>
+        <div class="dist-row">
+          <div class="dist-key" style="background:var(--purple);border-radius:2px;"></div>
+          <div class="dist-label">Saldo awal tujuan</div>
+          <div class="dist-bar-wrap"><div class="dist-bar" style="width:48%;background:var(--purple);"></div></div>
+          <div class="dist-val mono">0,48</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Keterkaitan dengan Akuntansi (Kas vs Kewajiban)</div>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;">Secara akuntansi, 4.116 fraud CASH_OUT berarti ada pengeluaran kas (Kredit: Kas/Rekening Pooling) tanpa kewajiban nasabah yang sah sebagai pasangannya. Ini membuat saldo kas di neraca lebih rendah dari seharusnya (<em>understated</em>) dan memerlukan provisi kerugian di laba rugi. Rekonsiliasi harian antara total CASH_OUT tercatat dan settlement aktual ke agen adalah prosedur audit paling kritis untuk mendeteksi kejadian serupa, lihat detail jurnal di sub-bab <strong style="color:var(--navy);">Perspektif Akuntansi</strong>.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px;background:var(--gray-50);">
+    <div class="card-title" style="color:var(--text-muted);font-size:11.5px;">&#9888;&#65039; Catatan Keterbatasan Dataset (dibaca setelah kesimpulan di atas)</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+      <div style="font-size:12px;color:var(--text-muted);">&#9888;&#65039; <strong style="color:var(--navy);">Simulasi, bukan data nyata.</strong> PaySim adalah dataset sintetis berbasis pola transaksi mobile money Afrika Timur. Performa model di data produksi nyata bisa berbeda signifikan.</div>
+      <div style="font-size:12px;color:var(--text-muted);">&#9888;&#65039; <strong style="color:var(--navy);">Tidak ada fitur nasabah.</strong> Tidak tersedia data profil nasabah, riwayat kredit, atau pola perilaku jangka panjang yang biasanya tersedia di audit nyata.</div>
+      <div style="font-size:12px;color:var(--text-muted);">&#9888;&#65039; <strong style="color:var(--navy);">Fraud terfokus di 2 tipe.</strong> Di dunia nyata, fraud bisa muncul di berbagai tipe transaksi dengan pola yang jauh lebih beragam dan tersembunyi.</div>
+    </div>
+  </div>
+  <div class="page-nav">
+    <button class="page-nav-btn prev" onclick="goToPage('p8')"><span class="pn-arrow">&#8592;</span><span class="pn-text"><span class="pn-sub">Sebelumnya</span>Perspektif Akuntansi</span></button>
+    <button class="page-nav-btn next" onclick="goToPage('p4')"><span class="pn-text"><span class="pn-sub">Selanjutnya</span>Profil Risiko</span><span class="pn-arrow">&#8594;</span></button>
+  </div>
+  <div class="swipe-hint">&#8592; geser layar untuk pindah sub-bab &#8594;</div>
+</div>
+
+<!-- PAGE 4: PROFIL RISIKO -->
+<div id="p4" class="page">
+  <div class="page-header">
+    <h2>Profil Risiko Transaksi</h2>
+    <p>Karakteristik transaksi yang paling berisiko berdasarkan analisis dataset. Digunakan untuk merancang prosedur audit yang berbasis risiko.</p>
+  </div>
+
+  <div class="insight-box" style="margin-bottom:16px;">
+    <div class="ib-label">Ini Adalah Residual Risk, Bukan Inherent Risk</div>
+    <p>Profil risiko di bawah ini adalah <strong>residual risk</strong>: risiko yang lolos dari lapisan kontrol pertama (PIN, OTP, limit harian) dan baru terdeteksi model. Untuk menilai efektivitas kontrol secara menyeluruh, bandingkan residual risk ini dengan <strong>inherent risk</strong> (risiko sebelum kontrol). Misalnya, jika inherent risk CASH_OUT mendekati 100% dan residual risk-nya hanya 0,13%, kontrol utama (verifikasi agen) tergolong efektif. Namun jika residual risk TRANSFER tetap tinggi (0,94), kontrol otorisasi di TRANSFER perlu dievaluasi ulang.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Pola Risiko Tinggi: Perlu Dimensi Nilai Uang</div>
+      <p style="font-size:11.5px;color:var(--text-muted);background:var(--gray-100);padding:8px 10px;border-radius:6px;margin-bottom:10px;">&#9888;&#65039; Risk score di bawah adalah <strong>probabilitas</strong> fraud, bukan <strong>Risk Exposure</strong>. Risiko sesungguhnya = Probabilitas &times; Nilai Transaksi. Sebuah transaksi probabilitas 0,94 bernilai Rp 5 Juta bisa punya eksposur lebih kecil dari transaksi probabilitas 0,31 bernilai Rp 100 Juta. Kolom "Rata-rata Nilai" di bawah masih perlu diisi dari dataset agar level risiko final bisa dihitung benar.</p>
+      <table class="risk-table">
+        <thead>
+          <tr><th>Indikator</th><th>Prob. Fraud</th><th>Rata-rata Nilai</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-size:12px;">TRANSFER dengan saldo terkuras habis</td><td><span class="risk-badge rb-score">0,94</span></td><td style="font-size:11px;color:var(--text-muted);">[diisi]</td></tr>
+          <tr><td style="font-size:12px;">CASH_OUT ke rekening baru (saldo nol)</td><td><span class="risk-badge rb-score">0,91</span></td><td style="font-size:11px;color:var(--text-muted);">[diisi]</td></tr>
+          <tr><td style="font-size:12px;">Jumlah transaksi di atas rata-rata drastis</td><td><span class="risk-badge rb-score">0,87</span></td><td style="font-size:11px;color:var(--text-muted);">[diisi]</td></tr>
+          <tr style="background:var(--green-soft);"><td style="font-size:12px;">CASH_OUT di agen sama dengan CASH_IN fiktif sebelumnya</td><td><span class="risk-badge rb-score">0,89</span></td><td style="font-size:11px;color:var(--text-muted);">[diisi]</td></tr>
+          <tr style="background:var(--green-soft);"><td style="font-size:12px;">CASH_OUT di agen dengan rasio klaim replenish &gt; rata-rata 2 SD</td><td><span class="risk-badge rb-score">0,85</span></td><td style="font-size:11px;color:var(--text-muted);">[diisi]</td></tr>
+          <tr><td style="font-size:12px;">TRANSFER dengan saldo tujuan nol sebelumnya</td><td><span class="risk-badge rb-score">0,72</span></td><td style="font-size:11px;color:var(--text-muted);">[diisi]</td></tr>
+          <tr><td style="font-size:12px;">Beberapa transaksi dalam satu step</td><td><span class="risk-badge rb-score">0,65</span></td><td style="font-size:11px;color:var(--text-muted);">[diisi]</td></tr>
+          <tr><td style="font-size:12px;">PAYMENT nilai besar ke merchant baru</td><td><span class="risk-badge rb-score">0,31</span></td><td style="font-size:11px;color:var(--text-muted);">[diisi, nilai transaksi tinggi berpotensi menaikkan level meski probabilitas rendah]</td></tr>
+          <tr><td style="font-size:12px;">CASH_IN nilai tidak biasa</td><td><span class="risk-badge rb-score">0,18</span></td><td style="font-size:11px;color:var(--text-muted);">[diisi]</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px;font-style:italic;">Dua baris berwarna hijau adalah indikator risiko agen (lihat catatan di bawah), bukan hasil model, melainkan usulan indikator tambahan yang belum diukur dari data.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Empat Hipotesis Audit yang Lahir dari Data</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+        <div style="background:var(--red-soft);border:1px solid rgba(201,64,64,0.2);border-radius:10px;padding:14px 16px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:700;margin-bottom:5px;">HIPOTESIS 1</div>
+          <strong style="font-size:13px;color:var(--navy);">Fraud terkonsentrasi di TRANSFER dan CASH_OUT karena kedua tipe ini memiliki celah pengendalian yang lebih besar.</strong>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Prosedur: (1) ambil sampel 50 TRANSFER fraud + 50 TRANSFER normal nominal setara; (2) periksa log otorisasi (kecocokan PIN/OTP, percobaan gagal sebelumnya); (3) bandingkan waktu transaksi dengan pola kebiasaan nasabah; (4) jika ditemukan ketidaksesuaian, perluas sampel ke 200 transaksi.</p>
+        </div>
+        <div style="background:var(--amber-soft);border:1px solid rgba(232,168,56,0.2);border-radius:10px;padding:14px 16px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber-dark);font-weight:700;margin-bottom:5px;">HIPOTESIS 2</div>
+          <strong style="font-size:13px;color:var(--navy);">Pola "saldo terkuras habis" adalah sinyal paling kuat karena mencerminkan pengurasan sengaja, bukan transaksi normal.</strong>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Prosedur: filter semua transaksi di mana origNewBalance mendekati nol dan jumlahnya mendekati origOldBalance.</p>
+        </div>
+        <div style="background:var(--accent-soft);border:1px solid rgba(15,163,177,0.2);border-radius:10px;padding:14px 16px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);font-weight:700;margin-bottom:5px;">HIPOTESIS 3</div>
+          <strong style="font-size:13px;color:var(--navy);">Rekening tujuan dengan saldo nol sebelum menerima transfer besar adalah indikasi rekening penampung.</strong>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Prosedur: identifikasi rekening dengan destOldBalance = 0 yang menerima TRANSFER di atas rata-rata, lalu lakukan KYC verification.</p>
+        </div>
+        <div style="background:var(--green-soft);border:1px solid rgba(46,125,94,0.25);border-radius:10px;padding:14px 16px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:700;margin-bottom:5px;">HIPOTESIS 4: RISIKO AGEN</div>
+          <strong style="font-size:13px;color:var(--navy);">CASH_OUT fraud tidak mungkin terjadi tanpa partisipasi atau kelalaian agen.</strong>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:6px;">Prosedur: lakukan inspeksi mendadak (surprise audit) ke agen dengan volume CASH_OUT tertinggi untuk memverifikasi kesesuaian float fisik dengan catatan sistem. Model saat ini hanya menganalisis sisi rekening digital dan buta terhadap collusion fraud di sisi agen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--purple);">
+    <div class="card-title">Blind Spot Metodologis: DEBIT (Silent Fraud)</div>
+    <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;">Ketiadaan fraud terdeteksi di DEBIT perlu diwaspadai sebagai <em>blind spot</em> metodologis, bukan bukti keamanan. DEBIT adalah transaksi autodebit (standing instruction) yang tidak memerlukan otorisasi ulang per transaksi, sehingga fraud di sini bersifat kronis dan sulit dirasakan nasabah (perubahan nominal tagihan kecil yang bertahap). Dataset PaySim tidak memiliki fitur otorisasi kontrak, sehingga model ML tidak punya data untuk mendeteksi pola ini. Auditor internal wajib melakukan substantive test dengan membandingkan nominal DEBIT terhadap kontrak autodebit nasabah secara sampling.</p>
+  </div>
+
+  <div class="insight-row">
+    <div class="insight-box">
+      <div class="ib-label">Insight Auditor Eksternal: Fraud Triangle (SA 240)</div>
+      <p><strong>Pressure:</strong> nasabah dengan saldo menganggur besar menjadi target karena bernilai tarik tinggi. <strong>Opportunity:</strong> celah utama ada di CASH_OUT, di mana verifikasi identitas agen untuk transaksi di atas limit tertentu belum tentu memadai. <strong>Rationalization:</strong> pelaku menganggap platform "kaya" dan kerugian kecil tidak akan dikejar. Auditor harus menguji apakah kontrol atas Opportunity (verifikasi agen, device binding, limit harian) cukup untuk menekan ketiga sisi segitiga ini.</p>
+    </div>
+    <div class="insight-box">
+      <div class="ib-label">Insight Auditor Internal</div>
+      <p>Dari perspektif GIAS 2025 dan IPPF, ketiadaan fraud di tiga tipe transaksi lainnya justru perlu diverifikasi: apakah karena kontrol di sana lebih kuat, atau karena fraud di sana lebih sulit terdeteksi dengan metode yang ada?</p>
+    </div>
+  </div>
+  <div class="page-nav">
+    <button class="page-nav-btn prev" onclick="goToPage('p1')"><span class="pn-arrow">&#8592;</span><span class="pn-text"><span class="pn-sub">Sebelumnya</span>Ringkasan Eksekutif</span></button>
+    <button class="page-nav-btn next" onclick="goToPage('p2')"><span class="pn-text"><span class="pn-sub">Selanjutnya</span>Performa Model</span><span class="pn-arrow">&#8594;</span></button>
+  </div>
+  <div class="swipe-hint">&#8592; geser layar untuk pindah sub-bab &#8594;</div>
+</div>
+
+<!-- PAGE 5: PERFORMA MODEL -->
+<div id="p2" class="page">
+  <div class="page-header">
+    <h2>Performa Model</h2>
+    <p>Breakdown hasil model Random Forest pada data uji, lengkap dengan interpretasi tiap metrik dalam konteks audit.</p>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kpi green"><div class="kpi-label">True Positive</div><div class="kpi-value mono">1.641</div><div class="kpi-sub">Fraud terdeteksi dengan benar</div></div>
+    <div class="kpi blue"><div class="kpi-label">True Negative</div><div class="kpi-value mono">1.269.982</div><div class="kpi-sub">Normal, benar diklasifikasi normal</div></div>
+    <div class="kpi amber"><div class="kpi-label">False Positive</div><div class="kpi-value mono">380</div><div class="kpi-sub">Normal, salah ditandai fraud</div></div>
+    <div class="kpi red"><div class="kpi-label">False Negative</div><div class="kpi-value mono">7</div><div class="kpi-sub">Fraud lolos tanpa terdeteksi</div></div>
+    <div class="kpi green"><div class="kpi-label">Recall</div><div class="kpi-value mono">99,57%</div><div class="kpi-sub">TP / (TP + FN)</div></div>
+    <div class="kpi amber"><div class="kpi-label">Precision</div><div class="kpi-value mono">81,2%</div><div class="kpi-sub">TP / (TP + FP)</div></div>
+  </div>
+
+  <div class="grid-5-7">
+    <div class="card">
+      <div class="card-title">Confusion Matrix (Data Uji)</div>
+      <p style="font-size:11.5px;color:var(--text-muted);background:var(--gray-100);padding:8px 10px;border-radius:6px;margin-bottom:4px;">Catatan metodologi: matrix ini dihasilkan dengan <strong style="color:var(--navy);">probability threshold 0,50</strong> (default). Setiap transaksi dengan probabilitas fraud &ge; 50% diklasifikasikan fraud. Perilaku pada threshold lain dibahas di sub-bab Simulasi Threshold.</p>
+      <div class="cm-grid" style="max-width:100%;margin-top:8px;">
+        <div class="cm-hd"></div>
+        <div class="cm-hd">Prediksi: Normal</div>
+        <div class="cm-hd">Prediksi: Fraud</div>
+        <div class="cm-lbl">Aktual: Normal</div>
+        <div class="cm-cell tn"><span class="cn">1.269.982</span><span class="ct">True Negative</span></div>
+        <div class="cm-cell fp"><span class="cn">380</span><span class="ct">False Positive</span></div>
+        <div class="cm-lbl">Aktual: Fraud</div>
+        <div class="cm-cell fn"><span class="cn">7</span><span class="ct">False Negative</span></div>
+        <div class="cm-cell tp"><span class="cn">1.641</span><span class="ct">True Positive</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Interpretasi Metrik untuk Auditor</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="flex-shrink:0;width:52px;height:52px;border-radius:10px;background:var(--green-soft);border:1px solid var(--green);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--green);">99,6%</div>
+          <div><strong style="font-size:13px;color:var(--navy);">Recall sangat tinggi.</strong><p style="font-size:12.5px;color:var(--text-muted);margin-top:2px;">Hanya 7 dari 1.648 fraud yang lolos. Dari perspektif auditor: risiko fraud tidak terdeteksi sangat rendah. Model ini prioritaskan menangkap semua kasus, bahkan jika harus mengorbankan beberapa false alarm.</p></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="flex-shrink:0;width:52px;height:52px;border-radius:10px;background:var(--amber-soft);border:1px solid var(--amber);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--amber-dark);">81,2%</div>
+          <div><strong style="font-size:13px;color:var(--navy);">Precision bisa ditingkatkan.</strong><p style="font-size:12.5px;color:var(--text-muted);margin-top:2px;">Dari 2.021 yang ditandai fraud, 380 ternyata normal. Artinya tim investigasi perlu memeriksa 380 kasus tambahan yang tidak perlu. Ini trade-off yang disengaja.</p></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="flex-shrink:0;width:52px;height:52px;border-radius:10px;background:var(--accent-soft);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--accent);">0,998</div>
+          <div><strong style="font-size:13px;color:var(--navy);">AUC mendekati sempurna.</strong><p style="font-size:12.5px;color:var(--text-muted);margin-top:2px;">Di hampir semua posisi threshold, model ini membedakan fraud dari normal dengan sangat andal. AUC 0,998 menunjukkan model yang jauh dari sekadar tebakan acak.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card" style="border-left:3px solid var(--red);">
+      <div class="card-title">Analisis 7 False Negative (Fraud yang Lolos)</div>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;margin-bottom:10px;">Dalam audit, False Negative adalah risiko yang lebih serius daripada False Positive: satu fraud yang lolos bisa bernilai besar dan langsung menjadi kerugian riil. Recall 99,57% tidak otomatis berarti model "aman" dari sisi materialitas, itu tergantung karakteristik 7 kasus yang lolos ini.</p>
+      <table class="risk-table">
+        <thead><tr><th>Karakteristik</th><th>Nilai</th><th>Implikasi Audit</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:12px;">Rata-rata nominal transaksi</td><td style="font-size:12px;">[perlu ditelusuri]</td><td style="font-size:11.5px;">Jika di atas rata-rata fraud lain &rarr; red flag serius</td></tr>
+          <tr><td style="font-size:12px;">Tipe transaksi</td><td style="font-size:12px;">[perlu ditelusuri]</td><td style="font-size:11.5px;">Apakah model gagal khusus di satu tipe?</td></tr>
+          <tr><td style="font-size:12px;">Pola saldo</td><td style="font-size:12px;">[perlu ditelusuri]</td><td style="font-size:11.5px;">Dugaan: pola "pengurasan bertahap" (partial drain) tidak terdeteksi karena model bersandar pada fitur "saldo menguras habis"</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:8px;font-style:italic;">[Confidence: Low] Baris "perlu ditelusuri" harus diisi dari root cause analysis atas 7 transaksi spesifik ini sebelum laporan difinalkan, bukan diasumsikan.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Model Ini Detektif, Bukan Preventif</div>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;">Model ini bekerja sebagai <em>detective control</em>: menemukan fraud setelah transaksi terjadi, bukan mencegahnya. Untuk menilai pengendalian internal secara utuh, auditor perlu membandingkan hasil model dengan log kontrol preventif yang sudah ada (OTP, limit harian, verifikasi biometrik), berapa banyak percobaan fraud yang sebenarnya sudah dicegah <em>sebelum</em> sempat tercatat sebagai transaksi.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Perbandingan dengan Pendekatan Sampling Tradisional</div>
+    <div class="vs-row" style="margin-top:12px;">
+      <div class="vs-col" style="border-color:var(--gray-200);">
+        <h4 style="color:var(--text-muted);">&#128195; Sampling Tradisional (SA 530)</h4>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--gray-400);"></div>Menguji sampel 5-10% transaksi secara acak atau stratifikasi</div>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--gray-400);"></div>Dengan rasio fraud 0,13%, sampel 10% mungkin tidak mengandung satu pun fraud</div>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--gray-400);"></div>Efektif untuk menilai kecukupan kontrol, kurang efektif untuk menemukan kasus spesifik</div>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--gray-400);"></div>Tidak mensyaratkan keahlian data science</div>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-col" style="border-color:var(--accent);">
+        <h4 style="color:var(--accent);">&#128301; Analytics 100% Populasi</h4>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--accent);"></div>Menganalisis seluruh 6,3 juta transaksi tanpa pengecualian</div>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--accent);"></div>Semua 8.213 fraud ada dalam cakupan analisis sejak awal</div>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--accent);"></div>Menghasilkan risk score per transaksi untuk prioritisasi investigasi</div>
+        <div class="vs-item"><div class="vs-dot" style="background:var(--accent);"></div>Membutuhkan data bersih dan keahlian analytics</div>
+      </div>
+    </div>
+    <p style="font-size:11.5px;color:var(--text-muted);margin-top:10px;">Koreksi rujukan standar: audit sampling diatur oleh <strong style="color:var(--navy);">SA 530</strong> (bukan SA 520, yang mengatur Prosedur Analitis). Pendekatan 100% populasi di atas memperluas semangat prosedur analitis (SA 520) melampaui sekadar perbandingan agregat, sekaligus menghilangkan risiko sampling error yang melekat pada SA 530.</p>
+  </div>
+  <div class="page-nav">
+    <button class="page-nav-btn prev" onclick="goToPage('p4')"><span class="pn-arrow">&#8592;</span><span class="pn-text"><span class="pn-sub">Sebelumnya</span>Profil Risiko</span></button>
+    <button class="page-nav-btn next" onclick="goToPage('p3')"><span class="pn-text"><span class="pn-sub">Selanjutnya</span>Simulasi Threshold</span><span class="pn-arrow">&#8594;</span></button>
+  </div>
+  <div class="swipe-hint">&#8592; geser layar untuk pindah sub-bab &#8594;</div>
+</div>
+
+<!-- PAGE 6: SIMULASI THRESHOLD -->
+<div id="p3" class="page">
+  <div class="page-header">
+    <h2>Simulasi Threshold Interaktif</h2>
+    <p>Geser slider untuk mengubah threshold klasifikasi. Lihat bagaimana confusion matrix dan metrik berubah secara real-time, dan pahami trade-off yang harus diputuskan oleh manajemen audit.</p>
+  </div>
+
+  <div class="grid-5-7">
+    <div class="card">
+      <div class="card-title">Kontrol Threshold</div>
+      <div class="slider-wrap" style="margin-top:8px;">
+        <div class="slider-label">
+          <span>Threshold saat ini: <span id="thresholdValue" style="color:var(--accent);">0.50</span></span>
+          <span id="thresholdMode" style="color:var(--amber-dark);">Seimbang</span>
+        </div>
+        <input type="range" id="thresholdSlider" min="1" max="99" value="50" oninput="updateThreshold(this.value)">
+        <div style="display:flex;justify-content:space-between;margin-top:4px;">
+          <span style="font-size:10px;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;">0.01<br>Agresif</span>
+          <span style="font-size:10px;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;text-align:right;">0.99<br>Konservatif</span>
+        </div>
+      </div>
+      <div class="cm-grid" id="dynCM" style="margin-top:12px;">
+        <div class="cm-hd"></div>
+        <div class="cm-hd">Pred: Normal</div>
+        <div class="cm-hd">Pred: Fraud</div>
+        <div class="cm-lbl">Aktual: Normal</div>
+        <div class="cm-cell tn"><span class="cn" id="tnVal">1,269,982</span><span class="ct">True Negative</span></div>
+        <div class="cm-cell fp"><span class="cn" id="fpVal">380</span><span class="ct">False Positive</span></div>
+        <div class="cm-lbl">Aktual: Fraud</div>
+        <div class="cm-cell fn"><span class="cn" id="fnVal">7</span><span class="ct">False Negative</span></div>
+        <div class="cm-cell tp"><span class="cn" id="tpVal">1,641</span><span class="ct">True Positive</span></div>
+      </div>
+      <div class="metric-row" id="dynMetrics">
+        <div class="metric-chip"><span class="mn" id="mRecall">99.6%</span><span class="ml">Recall</span></div>
+        <div class="metric-chip"><span class="mn" id="mPrecision">81.2%</span><span class="ml">Precision</span></div>
+        <div class="metric-chip"><span class="mn" id="mF1">89.5%</span><span class="ml">F1-Score</span></div>
+        <div class="metric-chip"><span class="mn" id="mFP">380</span><span class="ml">False Alarm</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Interpretasi Posisi Threshold</div>
+      <div id="thresholdExplain" style="margin-top:8px;">
+        <div style="background:var(--amber-soft);border-radius:10px;padding:16px;margin-bottom:12px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber-dark);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;" id="modeLabel">MODE: SEIMBANG</div>
+          <p style="font-size:13px;color:var(--navy);line-height:1.7;" id="modeDesc">Threshold di kisaran 0.45-0.55 mencoba menyeimbangkan antara menangkap fraud dan menghindari false alarm. Model bawaan dari training biasanya menggunakan threshold ini sebagai titik awal.</p>
+        </div>
+        <div style="background:var(--navy);border-radius:10px;padding:16px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">PERTANYAAN UNTUK MANAJEMEN AUDIT</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.82);line-height:1.7;" id="mgmtQuestion">Berapa biaya yang bisa diterima per fraud yang lolos (FN)? Dan berapa biaya investigasi yang bisa dialokasikan per false alarm (FP)? Jawaban dari dua pertanyaan ini yang menentukan posisi threshold yang tepat, bukan semata-mata angka teknis.</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:10px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;">Panduan Cepat Threshold</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--red-soft);border-radius:8px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--red);width:60px;">0.01-0.30</span>
+            <span style="font-size:12px;color:var(--navy);">Agresif: hampir semua fraud tertangkap, tapi banyak false alarm. Cocok jika biaya fraud sangat tinggi.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--amber-soft);border-radius:8px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--amber-dark);width:60px;">0.30-0.70</span>
+            <span style="font-size:12px;color:var(--navy);">Seimbang: titik kompromi antara dua jenis kesalahan. Titik awal yang wajar untuk didiskusikan.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--green-soft);border-radius:8px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--green);width:60px;">0.70-0.99</span>
+            <span style="font-size:12px;color:var(--navy);">Konservatif: hanya menandai yang sangat yakin. Investigasi lebih hemat, tapi beberapa fraud lolos.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Simulasi 3 Skenario Threshold (karena slider di atas tidak tergantikan tabel tetap)</div>
+    <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px;">Slider di atas bersifat interaktif untuk dashboard hidup. Sebagai referensi tetap (misal saat dicetak), berikut tiga skenario yang mewakili pilihan strategis manajemen audit, memakai formula <span class="mono" style="background:var(--gray-100);padding:1px 5px;border-radius:4px;">Total Biaya = (FN &times; Biaya Kerugian Fraud) + (FP &times; Biaya Investigasi)</span>.</p>
+    <table class="risk-table">
+      <thead><tr><th>Metrik</th><th>0,20 (Agresif)</th><th>0,50 (Seimbang)</th><th>0,80 (Konservatif)</th></tr></thead>
+      <tbody>
+        <tr><td>True Positive</td><td class="mono" style="font-size:12px;">&asymp;1.648</td><td class="mono" style="font-size:12px;">1.641</td><td class="mono" style="font-size:12px;">&asymp;1.550</td></tr>
+        <tr><td>False Negative</td><td class="mono" style="font-size:12px;">&asymp;0</td><td class="mono" style="font-size:12px;">7</td><td class="mono" style="font-size:12px;">&asymp;98</td></tr>
+        <tr><td>False Positive</td><td class="mono" style="font-size:12px;">&asymp;1.200</td><td class="mono" style="font-size:12px;">380</td><td class="mono" style="font-size:12px;">&asymp;80</td></tr>
+        <tr><td>Recall</td><td class="mono" style="font-size:12px;">&asymp;100%</td><td class="mono" style="font-size:12px;">99,57%</td><td class="mono" style="font-size:12px;">&asymp;94%</td></tr>
+        <tr><td>Precision</td><td class="mono" style="font-size:12px;">&asymp;58%</td><td class="mono" style="font-size:12px;">81,2%</td><td class="mono" style="font-size:12px;">&asymp;95%</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:8px;font-style:italic;">[Confidence: Low] Kolom 0,20 dan 0,80 adalah proyeksi ilustratif dari kurva precision-recall, bukan hasil re-training aktual pada threshold tersebut, perlu divalidasi dengan menjalankan ulang model pada threshold itu sebelum dipakai untuk keputusan final.</p>
+    <div style="margin-top:14px;padding:14px 16px;background:var(--gray-100);border-radius:10px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--navy);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Batasan Regulasi (OJK/BI)</div>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;">Simulasi biaya di atas murni ekonomi operasional. Dalam praktik, regulator (OJK untuk e-wallet, BI untuk sistem pembayaran) bisa menetapkan batas minimum kinerja deteksi transaksi mencurigakan sesuai ketentuan APU-PPT. Jika batas minimum Recall yang dipersyaratkan lebih tinggi dari yang dihasilkan sebuah threshold, threshold itu tidak sah dipilih meski lebih murah secara biaya, auditor wajib memeriksa ketentuan ini sebelum merekomendasikan threshold final.</p>
+    </div>
+    <div style="margin-top:10px;padding:14px 16px;background:var(--navy);border-radius:10px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Alerting, Bukan Auto-Blocking</div>
+      <p style="font-size:12.5px;color:rgba(255,255,255,0.82);line-height:1.7;">Threshold di atas dimaksudkan untuk sistem <em>alerting</em>: transaksi di atas threshold ditahan sementara untuk verifikasi manual, bukan langsung ditolak. Dengan pendekatan ini, 380 false positive pada threshold 0,50 berarti penundaan verifikasi, bukan kehilangan transaksi bagi nasabah sah. Jika platform ingin menerapkan auto-blocking, threshold perlu dinaikkan signifikan (misal &gt; 0,90) untuk menekan risiko customer churn.</p>
+    </div>
+    <div style="margin-top:10px;padding:14px 16px;background:var(--red-soft);border-radius:10px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Kaitan dengan 7 False Negative</div>
+      <p style="font-size:12.5px;color:var(--navy);line-height:1.7;">Sub-bab Performa Model menemukan 7 fraud lolos pada threshold 0,50. Jika probabilitas ketujuh kasus itu ternyata berada tepat di bawah 0,50, menurunkan threshold ke sekitar 0,40 berpotensi menangkap semuanya, dengan konsekuensi False Positive naik dari 380 menjadi kisaran 700-800. Keputusan ini sebaiknya mempertimbangkan nilai nominal ketujuh transaksi tersebut (lihat analisis root cause di sub-bab Performa Model) sebelum threshold digeser.</p>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="page-nav-btn prev" onclick="goToPage('p2')"><span class="pn-arrow">&#8592;</span><span class="pn-text"><span class="pn-sub">Sebelumnya</span>Performa Model</span></button>
+    <button class="page-nav-btn next" onclick="goToPage('p5')"><span class="pn-text"><span class="pn-sub">Selanjutnya</span>Tindak Lanjut Audit</span><span class="pn-arrow">&#8594;</span></button>
+  </div>
+  <div class="swipe-hint">&#8592; geser layar untuk pindah sub-bab &#8594;</div>
+</div>
+
+<!-- PAGE 7: TINDAK LANJUT AUDIT -->
+<div id="p5" class="page">
+  <div class="page-header">
+    <h2>Tindak Lanjut Audit</h2>
+    <p>Dari output model ke keputusan audit: bagaimana risk score diterjemahkan menjadi langkah investigasi yang terstruktur dan terdokumentasi.</p>
+  </div>
+
+  <div class="grid-7-5">
+    <div class="card">
+      <div class="card-title">Alur: Dari Risk Score ke Keputusan Audit</div>
+      <div style="display:flex;flex-direction:column;gap:0;margin-top:8px;">
+        <div class="audit-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Model menghasilkan risk score per transaksi</h4>
+            <p>Setiap transaksi mendapat probabilitas fraud antara 0 dan 1. Ini bukan keputusan, ini adalah sinyal awal yang perlu dievaluasi lebih lanjut.</p>
+            <span class="step-tag" style="background:var(--accent-soft);color:var(--accent);">OUTPUT MODEL</span>
+          </div>
+        </div>
+        <div class="audit-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Terapkan threshold berdasarkan keputusan manajemen</h4>
+            <p>Transaksi dengan risk score di atas threshold masuk ke daftar "perlu ditinjau". Threshold ditentukan bukan oleh model, tapi oleh toleransi risiko organisasi.</p>
+            <span class="step-tag" style="background:var(--amber-soft);color:var(--amber-dark);">KEPUTUSAN BISNIS</span>
+          </div>
+        </div>
+        <div class="audit-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Prioritisasi berdasarkan risk score dan nilai transaksi</h4>
+            <p>Bukan semua yang di atas threshold langsung diinvestigasi penuh. Urutkan dari risk score tertinggi dan nilai terbesar untuk efisiensi alokasi waktu tim.</p>
+            <span class="step-tag" style="background:var(--accent-soft);color:var(--accent);">ANALYTICS</span>
+          </div>
+        </div>
+        <div class="audit-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Investigasi lanjutan: verifikasi manual oleh auditor</h4>
+            <p>Cek dokumen pendukung, konfirmasi pihak ketiga, wawancara jika diperlukan. Ini tahap di mana judgement auditor tidak bisa digantikan mesin. Selain verifikasi dokumen transaksi, auditor juga memeriksa: adanya laporan whistleblower terkait agen/nasabah bersangkutan, dan pola di mana agen yang sama memproses CASH_OUT besar dari nasabah baru terdaftar, sinyal potensi fraud oleh orang dalam (insider) yang tidak terlihat dari pola transaksi semata. Jika ditemukan indikasi kuat keterlibatan internal, kasus di-escalate ke Komite Audit dan dilaporkan ke OJK/PPATK sesuai ketentuan APU-PPT.</p>
+            <span class="step-tag" style="background:var(--green-soft);color:var(--green);">HUMAN JUDGMENT</span>
+          </div>
+        </div>
+        <div class="audit-step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h4>Dokumentasikan setiap langkah sebagai audit trail</h4>
+            <p>Bagaimana model bekerja, teknik apa yang digunakan, anomali apa yang ditemukan, dan keputusan apa yang diambil, semuanya harus terdokumentasi.</p>
+            <span class="step-tag" style="background:var(--purple-soft);color:var(--purple);">AUDIT TRAIL</span>
+          </div>
+        </div>
+        <div class="audit-step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <h4>Laporkan temuan dan rekomendasikan tindakan</h4>
+            <p>Bukan sekadar "ada fraud atau tidak", tapi bagaimana celah yang memungkinkan fraud terjadi bisa ditutup melalui perbaikan pengendalian internal.</p>
+            <span class="step-tag" style="background:var(--navy);color:white;">REPORTING</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Prioritas Investigasi Berdasarkan Risk Score</div>
+      <table class="risk-table" style="margin-top:8px;">
+        <thead>
+          <tr><th>Risk Score</th><th>Tindakan</th><th>Timeline</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="risk-badge rb-score">0,90-1,00</span></td>
+            <td style="font-size:12px;">Investigasi penuh segera. Pertimbangkan pemblokiran sementara sambil verifikasi.</td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">24 jam</td>
+          </tr>
+          <tr>
+            <td><span class="risk-badge rb-score">0,70-0,90</span></td>
+            <td style="font-size:12px;">Tinjauan mendalam: cek dokumen, konfirmasi pihak terkait, analisis pola historis.</td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">3-5 hari</td>
+          </tr>
+          <tr>
+            <td><span class="risk-badge rb-score">0,50-0,70</span></td>
+            <td style="font-size:12px;">Monitor dan verifikasi ringan. Tandai untuk pengawasan lebih lanjut dalam 30 hari.</td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">2 minggu</td>
+          </tr>
+          <tr>
+            <td><span class="risk-badge rb-score">&lt; 0,50</span></td>
+            <td style="font-size:12px;">Catat dalam log. Tinjau dalam audit reguler berikutnya tanpa prioritas khusus.</td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">Rutin</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:16px;padding:14px 16px;background:var(--navy);border-radius:10px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Catatan Penting</div>
+        <p style="font-size:12.5px;color:rgba(255,255,255,0.80);line-height:1.7;">Risk score tinggi bukan berarti fraud sudah terbukti. Ini hanya memprioritaskan mana yang perlu diperiksa lebih dulu. Keputusan akhir tetap di tangan auditor berdasarkan bukti yang dikumpulkan melalui investigasi.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Format Rekomendasi Tindak Lanjut (Management Action Plan)</div>
+    <table class="risk-table">
+      <thead><tr><th>Temuan Audit</th><th>Rekomendasi</th><th>Penanggung Jawab</th><th>Target</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-size:12px;">4.116 fraud CASH_OUT tanpa verifikasi agen memadai</td>
+          <td style="font-size:12px;">Wajibkan verifikasi KYC (foto KTP) untuk CASH_OUT &gt; Rp 5 Juta</td>
+          <td style="font-size:11.5px;">Kepala Operasional</td>
+          <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">[diisi]</td>
+          <td><span class="risk-badge rb-med">Open</span></td>
+        </tr>
+        <tr>
+          <td style="font-size:12px;">4.097 fraud TRANSFER dari perangkat baru tanpa cooling-off</td>
+          <td style="font-size:12px;">Terapkan cooling-off 2 jam untuk transfer pertama dari perangkat baru</td>
+          <td style="font-size:11.5px;">Kepala IT &amp; Keamanan</td>
+          <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">[diisi]</td>
+          <td><span class="risk-badge rb-med">Open</span></td>
+        </tr>
+        <tr>
+          <td style="font-size:12px;">7 False Negative lolos, diduga pola "partial drain"</td>
+          <td style="font-size:12px;">Tambahkan fitur deteksi perubahan saldo gradual (slope analysis) ke model</td>
+          <td style="font-size:11.5px;">Tim Data Science</td>
+          <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;">[diisi]</td>
+          <td><span class="risk-badge rb-med">Open</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:11.5px;color:var(--text-muted);margin-top:8px;">Setiap rekomendasi ditindaklanjuti dalam jangka waktu yang disepakati manajemen. Auditor internal melakukan follow-up audit setelah tanggal target untuk memverifikasi implementasi.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card" style="border-left:3px solid var(--red);">
+      <div class="card-title">Penanganan Kasus Spesifik: 7 False Negative</div>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;margin-bottom:8px;">Ketujuh transaksi fraud yang lolos deteksi mendapat perlakuan khusus, terpisah dari alur risk-score biasa:</p>
+      <ol style="font-size:12.5px;color:var(--text-muted);line-height:1.9;padding-left:18px;">
+        <li><strong style="color:var(--navy);">Re-investigasi manual</strong>, tim forensik menelusuri ulang ketujuh transaksi untuk memahami modus yang tidak terdeteksi model.</li>
+        <li><strong style="color:var(--navy);">Klaim nasabah</strong>, jika transaksi terbukti tidak sah, platform mengganti saldo nasabah (jurnal: Debet Beban Kerugian Fraud / Kredit Kewajiban Nasabah) dan membentuk provisi untuk kasus serupa.</li>
+        <li><strong style="color:var(--navy);">Model retraining</strong>, gunakan ketujuh kasus sebagai data latih tambahan (feedback loop) agar model tidak mengulangi kesalahan yang sama.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <div class="card-title">Analisis Kapasitas Tim Investigasi</div>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;">Pada threshold 0,50, sistem menghasilkan 2.021 alert (test set). Dengan asumsi ilustratif tim beranggotakan 5 auditor dan rata-rata 2 jam kerja per investigasi:</p>
+      <div style="background:var(--gray-100);border-radius:8px;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--navy);margin:8px 0;line-height:1.8;">
+        Total jam kerja = 2.021 &times; 2 jam = 4.042 jam<br>
+        Kapasitas tim = 5 &times; 40 jam/minggu = 200 jam/minggu<br>
+        Waktu penyelesaian &asymp; 4.042 / 200 &asymp; 20 minggu
+      </div>
+      <p style="font-size:12.5px;color:var(--text-muted);line-height:1.7;">20 minggu untuk menuntaskan seluruh alert tidak realistis untuk data operasional harian. Opsi: naikkan threshold untuk mengurangi volume alert, atau tambah kapasitas tim investigasi (termasuk outsource sementara).</p>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px;font-style:italic;">[Confidence: Low] Angka 5 auditor dan 2 jam/kasus adalah asumsi ilustratif untuk mendemonstrasikan metode perhitungan, bukan kapasitas tim aktual.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Format Minimum Audit Trail per Kasus yang Diinvestigasi</div>
+    <div style="background:var(--gray-100);border-radius:8px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--navy);line-height:2;">
+      ID Transaksi: [unique ID dari dataset]<br>
+      Risk Score &amp; Threshold: [contoh: 0,87 / Threshold 0,50]<br>
+      Alasan Prioritas: [contoh: risk score tinggi + nilai transaksi besar]<br>
+      Langkah Verifikasi: [contoh: cek log IP, verifikasi OTP, konfirmasi via telepon]<br>
+      Temuan Auditor: [contoh: OTP cocok, IP address beda kota &rarr; indikasi device takeover]<br>
+      Keputusan Akhir: [Fraud Terkonfirmasi / Tidak Terbukti]<br>
+      Tindak Lanjut: [contoh: blokir akun, laporkan ke tim keamanan siber]<br>
+      Auditor: [nama &amp; tanggal]
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <div class="ib-label">Kesimpulan Akhir dan Rekomendasi Strategis</div>
+    <p>Berdasarkan analisis menyeluruh terhadap data uji, model deteksi fraud berbasis Random Forest terbukti efektif dengan Recall 99,57% dan AUC 0,998. Fraud terkonsentrasi di TRANSFER dan CASH_OUT dengan pola khas "saldo menguras ke nol". Rekomendasi strategis kepada Direksi: (1) implementasikan model ini sebagai sistem <em>early warning</em> dengan threshold awal 0,50, dievaluasi ulang berkala; (2) tingkatkan kontrol preventif pada CASH_OUT dengan verifikasi memadai untuk transaksi bernilai besar; (3) terapkan cooling-off period untuk TRANSFER pertama dari perangkat baru; (4) bentuk provisi kerugian fraud sesuai PSAK 57 berdasarkan historical loss rate; (5) lakukan follow-up audit untuk mengukur efektivitas perbaikan. Nilai rupiah pada rekomendasi ini masih perlu dilengkapi dari dataset amount sebelum disampaikan sebagai keputusan final.</p>
+  </div>
+
+  <div class="page-nav">
+    <button class="page-nav-btn prev" onclick="goToPage('p3')"><span class="pn-arrow">&#8592;</span><span class="pn-text"><span class="pn-sub">Sebelumnya</span>Simulasi Threshold</span></button>
+    <button class="page-nav-btn next" onclick="goToPage('p6')"><span class="pn-text"><span class="pn-sub">Selanjutnya</span>Standar Referensi</span><span class="pn-arrow">&#8594;</span></button>
+  </div>
+  <div class="swipe-hint">&#8592; geser layar untuk pindah sub-bab &#8594;</div>
+</div>
+
+<!-- PAGE 8: STANDAR REFERENSI -->
+<div id="p6" class="page">
+  <div class="page-header">
+    <h2>Standar Referensi</h2>
+    <p>Landasan standar audit yang relevan untuk memahami konteks analisis sesi 2 ini, dari perspektif auditor internal maupun eksternal.</p>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="font-family:'Lora',serif;font-size:16px;color:var(--navy);margin-bottom:14px;">Standar Audit Internal</h3>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--accent-soft);color:var(--accent);">GIAS 2025</span>
+        <h4>Global Internal Audit Standards</h4>
+        <p>Standar IIA terbaru yang menggantikan IPPF. Menekankan audit berbasis risiko dan penggunaan data analytics sebagai bagian dari prosedur audit modern. Relevan langsung dengan pendekatan yang digunakan dalam sesi ini.</p>
+      </div>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--purple-soft);color:var(--purple);">IPPF</span>
+        <h4>International Professional Practices Framework</h4>
+        <p>Kerangka praktik profesional IIA yang masih menjadi referensi banyak organisasi. Mengatur independensi, objektivitas, kompetensi, dan cara kerja auditor internal.</p>
+      </div>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--green-soft);color:var(--green);">COSO ERM</span>
+        <h4>Enterprise Risk Management Framework</h4>
+        <p>Kerangka manajemen risiko yang menjadi dasar penilaian apakah kontrol deteksi fraud sudah memadai untuk tingkat risiko yang dihadapi organisasi.</p>
+      </div>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--navy);color:white;">COSO IC (2013)</span>
+        <h4>Internal Control: Integrated Framework</h4>
+        <p>Lebih langsung relevan untuk pengujian kontrol fraud dibanding ERM. Tiga komponen kunci: <strong>Control Activities</strong> (apakah otorisasi PIN/OTP sudah efektif?), <strong>Risk Assessment</strong> (apakah manajemen sudah mengidentifikasi risiko fraud di TRANSFER &amp; CASH_OUT?), dan <strong>Monitoring</strong> (apakah tim audit internal rutin memantau pola transaksi mencurigakan?).</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-family:'Lora',serif;font-size:16px;color:var(--navy);margin-bottom:14px;">Standar Audit Eksternal</h3>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--red-soft);color:var(--red);">SA 240</span>
+        <h4>Tanggung Jawab Auditor terkait Fraud</h4>
+        <p>Standar internasional yang mengatur kewajiban auditor eksternal dalam menilai dan merespons risiko fraud dalam audit laporan keuangan. Mendefinisikan fraud dan menetapkan prosedur minimum yang harus dilakukan. Kerangka Fraud Triangle (Pressure-Opportunity-Rationalization) di bawah SA 240 dibahas lebih lanjut di sub-bab Profil Risiko.</p>
+      </div>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--amber-soft);color:var(--amber-dark);">SA 520</span>
+        <h4>Prosedur Analitis</h4>
+        <p>Mengharuskan auditor membandingkan tren data (misal rata-rata bulanan CASH_OUT vs CASH_IN). Pendekatan data analytics di sesi ini memperluas prosedur analitis dari sekadar perbandingan agregat menjadi analisis transaksi individual untuk mendeteksi anomali risiko spesifik.</p>
+      </div>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--navy);color:white;">SA 530</span>
+        <h4>Sampling Audit</h4>
+        <p>Dalam sampling tradisional, auditor hanya memeriksa sebagian populasi (5-10%). Pendekatan 100% populasi yang digunakan sesi ini sejalan dengan semangat SA 530 namun memperkecil risiko sampling error hingga mendekati nol karena mencakup seluruh 6,3 juta transaksi.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:4px;">
+    <div>
+      <h3 style="font-family:'Lora',serif;font-size:16px;color:var(--navy);margin-bottom:14px;">Standar Akuntansi Keuangan (SAK/IFRS)</h3>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--accent-soft);color:var(--accent);">PSAK 72 (IFRS 15)</span>
+        <h4>Pendapatan dari Kontrak dengan Pelanggan</h4>
+        <p>Menentukan pendapatan MDR/komisi diakui saat transaksi sukses, bukan saat kontrak merchant ditandatangani. Juga mengatur status Principal vs Agent (bruto vs neto) yang krusial dalam transaksi PAYMENT, dibahas di sub-bab Business Understanding dan Perspektif Akuntansi.</p>
+      </div>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--purple-soft);color:var(--purple);">PSAK 71 (IFRS 9)</span>
+        <h4>Instrumen Keuangan</h4>
+        <p>Mengatur pencadangan kerugian kredit ekspektasian (ECL). Relevan jika fraud menyebabkan piutang ke merchant atau kas setara tidak tertagih.</p>
+      </div>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--red-soft);color:var(--red);">PSAK 57 (IAS 37)</span>
+        <h4>Provisi, Liabilitas Kontinjensi, Aset Kontinjensi</h4>
+        <p>Dasar pembentukan provisi kerugian fraud jika platform memiliki kewajiban hukum/konstruktif mengganti dana nasabah korban fraud. Untuk kasus fraud, PSAK 57 lebih dominan dipakai karena sifatnya liabilitas (kewajiban refund); PSAK 71 dipakai untuk penurunan nilai aset keuangan.</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-family:'Lora',serif;font-size:16px;color:var(--navy);margin-bottom:14px;">Regulasi Industri &amp; Kepatuhan (APU-PPT)</h3>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--green-soft);color:var(--green);">OJK</span>
+        <h4>POJK tentang Uang Elektronik</h4>
+        <p>Mengatur kewajiban platform mengelola dana nasabah (dipisahkan dari aset operasional / segregated account). Relevan dengan rekonsiliasi pooled account vs kewajiban yang dibahas di sub-bab Perspektif Akuntansi.</p>
+      </div>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--amber-soft);color:var(--amber-dark);">BI</span>
+        <h4>PBI Sistem Pembayaran &amp; Uang Elektronik</h4>
+        <p>Mengatur standar operasional, limit transaksi, dan verifikasi identitas (KYC) untuk e-wallet. Relevan dengan kontrol atas CASH_OUT dan TRANSFER, serta batas minimum Recall yang dibahas di sub-bab Simulasi Threshold.</p>
+      </div>
+      <div class="std-card">
+        <span class="sc-tag" style="background:var(--navy);color:white;">PPATK</span>
+        <h4>Kewajiban Pelaporan (UU TPPU)</h4>
+        <p>Mewajibkan platform melaporkan transaksi mencurigakan (STR) di atas batas tertentu. Jika fraud terdeteksi dan mengindikasikan pencucian uang, platform wajib melaporkannya, relevan dengan langkah eskalasi di sub-bab Tindak Lanjut Audit.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title">Peta Penerapan Standar dalam Analisis Sesi 2</div>
+    <table class="risk-table">
+      <thead><tr><th>Standar</th><th>Digunakan di Sub-Bab</th><th>Penerapan Spesifik</th></tr></thead>
+      <tbody>
+        <tr><td style="font-size:12px;">SA 240</td><td style="font-size:12px;">Profil Risiko &amp; Performa Model</td><td style="font-size:11.5px;">Mendefinisikan fraud, mendokumentasikan Significant Risk dari pola "saldo menguras ke nol"</td></tr>
+        <tr><td style="font-size:12px;">PSAK 72</td><td style="font-size:12px;">Perspektif Akuntansi (PAYMENT)</td><td style="font-size:11.5px;">Menentukan pengakuan pendapatan MDR saat transaksi sukses, status platform sebagai Agent (pendapatan neto)</td></tr>
+        <tr><td style="font-size:12px;">PSAK 57</td><td style="font-size:12px;">Perspektif Akuntansi (Dampak Fraud)</td><td style="font-size:11.5px;">Dasar pembentukan provisi kerugian fraud (beban) jika platform wajib refund nasabah</td></tr>
+        <tr><td style="font-size:12px;">SA 530</td><td style="font-size:12px;">Performa Model (Perbandingan)</td><td style="font-size:11.5px;">Kontras: pendekatan 100% populasi vs sampling tradisional</td></tr>
+        <tr><td style="font-size:12px;">GIAS 2025 / IPPF</td><td style="font-size:12px;">Tindak Lanjut Audit</td><td style="font-size:11.5px;">Menjamin rekomendasi audit objektif, terdokumentasi (audit trail), dan berorientasi perbaikan kontrol</td></tr>
+        <tr><td style="font-size:12px;">POJK Uang Elektronik</td><td style="font-size:12px;">Business Understanding &amp; Rekonsiliasi</td><td style="font-size:11.5px;">Memastikan dana nasabah dipisahkan (segregated) dan direkonsiliasi harian</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title">Mengapa Kedua Perspektif Digunakan dalam Sesi 2?</div>
+    <p style="font-size:13.5px;color:var(--text-muted);line-height:1.8;margin-bottom:14px;">Sesi 2 Audit &amp; Data Insight Journey sengaja melihat kasus fraud detection ini dari dua sisi sekaligus. Dari sisi auditor eksternal, pertanyaannya adalah: apakah pola fraud yang terdeteksi model ini mencerminkan potensi salah saji material yang perlu dipertimbangkan dalam opini audit? Dari sisi auditor internal, pertanyaannya adalah: apakah pengendalian yang ada sudah memadai untuk mencegah dan mendeteksi fraud tipe ini, dan apa yang perlu diperbaiki?</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div style="background:var(--accent-soft);border-radius:10px;padding:14px 16px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);font-weight:700;margin-bottom:6px;">AUDITOR EKSTERNAL BERTANYA</div>
+        <p style="font-size:13px;color:var(--navy);line-height:1.65;">Apakah pengendalian internal klien sudah memadai untuk mendeteksi dan mencegah fraud di TRANSFER dan CASH_OUT? Apakah manajemen sudah melakukan risk assessment atas risiko ini?</p>
+      </div>
+      <div style="background:var(--amber-soft);border-radius:10px;padding:14px 16px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber-dark);font-weight:700;margin-bottom:6px;">AUDITOR INTERNAL BERTANYA</div>
+        <p style="font-size:13px;color:var(--navy);line-height:1.65;">Mengapa fraud hanya terkonsentrasi di dua tipe transaksi ini? Apakah ada celah pengendalian spesifik yang belum tertangani? Apa rekomendasi perbaikan yang bisa diberikan?</p>
+      </div>
+    </div>
+  </div>
+  <div class="page-nav">
+    <button class="page-nav-btn prev" onclick="goToPage('p5')"><span class="pn-arrow">&#8592;</span><span class="pn-text"><span class="pn-sub">Sebelumnya</span>Tindak Lanjut Audit</span></button>
+    
+  </div>
+  <div class="swipe-hint">&#8592; geser layar untuk pindah sub-bab &#8594;</div>
+</div>
+
+<footer class="dash-footer">
+  <p><strong>Disusun oleh:</strong> Rosliana Dwi Astuti, S.Ak &nbsp;&middot;&nbsp; Audit &amp; Data Insight Journey Sesi 2 &nbsp;&middot;&nbsp; Dataset: PaySim (Lopez-Rojas et al.)</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <span class="topbar-badge badge-data">GIAS 2025</span>
+    <span class="topbar-badge badge-data">SA 240</span>
+    <span class="topbar-badge badge-data">SA 530</span>
+    <span class="topbar-badge badge-data">PSAK 72</span>
+    <span class="topbar-badge badge-data">PaySim</span>
+  </div>
+</footer>
+
+
+<script>
+
+function toggleAcc(btn){
+  var item=btn.closest('.accordion-item');
+  var body=item.querySelector('.acc-body');
+  var isOpen=item.classList.contains('open');
+  if(isOpen){
+    item.classList.remove('open');
+    btn.classList.remove('open-btn');
+    body.style.maxHeight=null;
+  } else {
+    item.classList.add('open');
+    btn.classList.add('open-btn');
+    body.style.maxHeight=body.scrollHeight+'px';
+  }
+}
+
+// Clock
+function updateClock(){
+  var now=new Date();
+  var h=String(now.getHours()).padStart(2,'0');
+  var m=String(now.getMinutes()).padStart(2,'0');
+  var s=String(now.getSeconds()).padStart(2,'0');
+  var el=document.getElementById('clock');
+  if(el)el.textContent=h+':'+m+':'+s;
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// Tab navigation
+var PAGE_ORDER=['p7','p8','p1','p4','p2','p3','p5','p6'];
+
+function showPage(id,tab){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  tab.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Programmatic navigation (used by Prev/Next buttons and swipe gestures)
+function goToPage(id){
+  var idx=PAGE_ORDER.indexOf(id);
+  if(idx===-1)return;
+  var tabs=document.querySelectorAll('.nav-tab');
+  showPage(id, tabs[idx]);
+}
+
+function goToRelativePage(delta){
+  var current=document.querySelector('.page.active');
+  if(!current)return;
+  var idx=PAGE_ORDER.indexOf(current.id);
+  var next=idx+delta;
+  if(next<0||next>=PAGE_ORDER.length)return;
+  goToPage(PAGE_ORDER[next]);
+}
+
+// Swipe gesture: swipe left -> next page, swipe right -> previous page
+(function(){
+  var touchStartX=0, touchStartY=0, touchEndX=0, touchEndY=0;
+  var SWIPE_THRESHOLD=60; // minimum horizontal px to count as a swipe
+  document.addEventListener('touchstart', function(e){
+    touchStartX=e.changedTouches[0].screenX;
+    touchStartY=e.changedTouches[0].screenY;
+  }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    touchEndX=e.changedTouches[0].screenX;
+    touchEndY=e.changedTouches[0].screenY;
+    var dx=touchEndX-touchStartX;
+    var dy=touchEndY-touchStartY;
+    if(Math.abs(dx)>SWIPE_THRESHOLD && Math.abs(dx)>Math.abs(dy)*1.5){
+      if(dx<0){ goToRelativePage(1); } else { goToRelativePage(-1); }
+    }
+  }, {passive:true});
+})();
+
+// Keyboard arrow-key navigation (desktop convenience)
+document.addEventListener('keydown', function(e){
+  if(e.key==='ArrowRight')goToRelativePage(1);
+  if(e.key==='ArrowLeft')goToRelativePage(-1);
+});
+
+// Threshold simulator
+var TOTAL_FRAUD=1648;
+var TOTAL_NORMAL=1270362;
+
+function updateThreshold(val){
+  var t=val/100;
+  document.getElementById('thresholdValue').textContent=t.toFixed(2);
+
+  // Simulate realistic behavior: as threshold increases, we flag fewer as fraud
+  // Recall decreases, Precision increases
+  var recall, precision;
+  if(t<=0.1){
+    recall=1.0; precision=0.30;
+  } else if(t<=0.3){
+    recall=0.998; precision=0.55 + (t-0.1)*0.75;
+  } else if(t<=0.5){
+    recall=0.996; precision=0.70 + (t-0.3)*0.55;
+  } else if(t<=0.7){
+    recall=0.97 - (t-0.5)*0.15; precision=0.85 + (t-0.5)*0.35;
+  } else if(t<=0.9){
+    recall=0.92 - (t-0.7)*0.35; precision=0.92 + (t-0.7)*0.25;
+  } else {
+    recall=0.82 - (t-0.9)*1.2; precision=0.97;
+  }
+  recall=Math.max(0,Math.min(1,recall));
+  precision=Math.max(0,Math.min(1,precision));
+
+  var tp=Math.round(TOTAL_FRAUD*recall);
+  var fn=TOTAL_FRAUD-tp;
+  var fp=Math.round(tp*(1-precision)/precision);
+  var tn=TOTAL_NORMAL-fp;
+  var f1=precision+recall>0?(2*precision*recall)/(precision+recall):0;
+
+  document.getElementById('tpVal').textContent=tp.toLocaleString('id-ID');
+  document.getElementById('fnVal').textContent=fn.toLocaleString('id-ID');
+  document.getElementById('fpVal').textContent=fp.toLocaleString('id-ID');
+  document.getElementById('tnVal').textContent=tn.toLocaleString('id-ID');
+  document.getElementById('mRecall').textContent=(recall*100).toFixed(1)+'%';
+  document.getElementById('mPrecision').textContent=(precision*100).toFixed(1)+'%';
+  document.getElementById('mF1').textContent=(f1*100).toFixed(1)+'%';
+  document.getElementById('mFP').textContent=fp.toLocaleString('id-ID');
+
+  // Color coding
+  document.getElementById('mRecall').style.color=recall>0.95?'var(--green)':recall>0.8?'var(--amber-dark)':'var(--red)';
+  document.getElementById('mPrecision').style.color=precision>0.85?'var(--green)':precision>0.7?'var(--amber-dark)':'var(--red)';
+
+  // Mode label and description
+  var mode, modeColor, desc, mgmt;
+  if(t<0.3){
+    mode='MODE: AGRESIF'; modeColor='var(--red)';
+    desc='Threshold rendah menandai hampir semua transaksi yang punya indikasi sekecil apapun sebagai fraud. Recall sangat tinggi tapi false alarm banyak. Tim investigasi akan sangat sibuk.';
+    mgmt='Apakah tim investigasi memiliki kapasitas untuk menindaklanjuti '+fp.toLocaleString('id-ID')+' false alarm? Kalau tidak, bottleneck operasional bisa lebih merugikan dari fraud itu sendiri.';
+  } else if(t<0.7){
+    mode='MODE: SEIMBANG'; modeColor='var(--amber-dark)';
+    desc='Threshold di kisaran ini mencoba menyeimbangkan antara menangkap fraud dan efisiensi investigasi. Titik yang sering digunakan sebagai titik awal diskusi dengan manajemen.';
+    mgmt='Berapa biaya per FN (fraud yang lolos) vs biaya investigasi per FP (false alarm)? Jawaban dari perbandingan ini yang menentukan apakah threshold perlu digeser ke kiri atau kanan.';
+  } else {
+    mode='MODE: KONSERVATIF'; modeColor='var(--green)';
+    desc='Threshold tinggi hanya menandai transaksi yang model sangat yakin sebagai fraud. False alarm minimal, tapi beberapa fraud lolos. Cocok jika kapasitas investigasi terbatas.';
+    mgmt='Dengan '+fn+' fraud yang lolos per periode ini, apakah tingkat kerugian tersebut masih dalam batas toleransi risiko organisasi yang sudah ditetapkan dalam Risk Appetite Statement?';
+  }
+  document.getElementById('modeLabel').textContent=mode;
+  document.getElementById('modeLabel').style.color=modeColor;
+  document.getElementById('modeDesc').textContent=desc;
+  document.getElementById('mgmtQuestion').textContent=mgmt;
+  var modes=['AGRESIF','SEIMBANG','KONSERVATIF'];
+  document.getElementById('thresholdMode').textContent=t<0.3?'Agresif':t<0.7?'Seimbang':'Konservatif';
+  document.getElementById('thresholdMode').style.color=t<0.3?'var(--red)':t<0.7?'var(--amber-dark)':'var(--green)';
+}
+</script>
+</body>
+</html>
