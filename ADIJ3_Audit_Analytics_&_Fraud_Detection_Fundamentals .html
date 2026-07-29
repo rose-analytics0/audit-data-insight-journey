@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul: Audit & Data Insight Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B1F3A;--navy-light:#2A4F7C;--accent:#0FA3B1;--accent-soft:#E3F7F9;--amber:#E8A838;--amber-soft:#FDF3DC;--red:#C94040;--red-soft:#FDE8E8;--green:#2E7D5E;--green-soft:#E5F5EE;--purple:#6B48C8;--purple-soft:#F0ECFD;--gray-100:#F6F7F9;--gray-200:#EAECF0;--gray-400:#9BA3AF;--gray-600:#4B5563;--text:#1A2535;--text-muted:#5A6475;--border:rgba(11,31,58,0.12);--shadow-sm:0 1px 3px rgba(11,31,58,0.08);--shadow-md:0 4px 16px rgba(11,31,58,0.10);--radius:12px;--radius-sm:8px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--text);line-height:1.75;font-size:15px;}
+.hero{background:var(--navy);color:white;position:relative;overflow:hidden;}
+.hero-inner{max-width:940px;margin:0 auto;padding:60px 40px 52px;position:relative;z-index:2;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:420px;height:420px;border-radius:50%;border:60px solid rgba(15,163,177,0.09);}
+.hero::after{content:'';position:absolute;bottom:-60px;left:38%;width:260px;height:260px;border-radius:50%;border:40px solid rgba(15,163,177,0.05);}
+.badge-event{display:inline-flex;align-items:center;gap:8px;background:rgba(15,163,177,0.18);color:#7FD9E2;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;border:1px solid rgba(15,163,177,0.3);margin-bottom:20px;}
+.badge-event span{width:6px;height:6px;border-radius:50%;background:#0FA3B1;display:inline-block;}
+.hero h1{font-family:'Lora',serif;font-size:36px;font-weight:600;line-height:1.22;color:white;margin-bottom:14px;max-width:680px;}
+.hero-sub{color:rgba(255,255,255,0.62);font-size:15px;max-width:580px;margin-bottom:32px;line-height:1.7;}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;}
+.meta-item{font-size:13px;color:rgba(255,255,255,0.50);}
+.meta-item strong{color:rgba(255,255,255,0.85);font-weight:500;}
+.meta-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.28);display:inline-block;margin:0 4px;vertical-align:middle;}
+.nav-strip{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
+.nav-wrap{max-width:940px;margin:0 auto;padding:0 28px;display:flex;align-items:stretch;}
+.nav-inner{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;}
+.nav-inner::-webkit-scrollbar{display:none;}
+.nav-tab{display:flex;align-items:center;gap:6px;padding:13px 14px;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+.nav-tab:hover{color:var(--navy);}
+.nav-tab.active{color:var(--navy);border-bottom-color:var(--accent);}
+.nav-num{width:19px;height:19px;border-radius:50%;background:var(--gray-200);color:var(--gray-600);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-tab.active .nav-num{background:var(--accent);color:white;}
+.nav-arrow{flex-shrink:0;width:32px;background:white;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;transition:color 0.15s;border-bottom:2px solid transparent;padding:0;}
+.nav-arrow:hover{color:var(--navy);}
+.nav-arrow.hidden{opacity:0;pointer-events:none;}
+.main{max-width:940px;margin:0 auto;padding:44px 40px 90px;}
+.section{display:none;}
+.section.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.section-header{margin-bottom:34px;}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+.section-header h2{font-family:'Lora',serif;font-size:28px;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:12px;}
+.section-header p{color:var(--text-muted);font-size:15px;line-height:1.75;max-width:700px;}
+.card{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:26px 30px;margin-bottom:22px;box-shadow:var(--shadow-sm);}
+.card-title{font-weight:600;font-size:15px;color:var(--navy);margin-bottom:12px;}
+.card p,.card li{color:var(--text-muted);font-size:14px;line-height:1.8;}
+.accent-card{border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;border-left:4px solid;}
+.accent-card.blue{background:#EEF6FC;border-color:var(--accent);}
+.accent-card.amber{background:var(--amber-soft);border-color:var(--amber);}
+.accent-card.red{background:var(--red-soft);border-color:var(--red);}
+.accent-card.green{background:var(--green-soft);border-color:var(--green);}
+.accent-card.purple{background:var(--purple-soft);border-color:var(--purple);}
+.accent-card .ac-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:7px;}
+.accent-card.blue .ac-label{color:#0B7E8A;}
+.accent-card.amber .ac-label{color:#8B5E0A;}
+.accent-card.red .ac-label{color:#8B2020;}
+.accent-card.green .ac-label{color:#1B5C3D;}
+.accent-card.purple .ac-label{color:#4B2EA0;}
+.accent-card p{font-size:14px;color:var(--text);line-height:1.75;}
+.accent-card strong{font-weight:600;}
+.blockquote{border-left:3px solid var(--accent);padding:18px 22px 18px 26px;background:var(--accent-soft);border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:22px 0;font-family:'Lora',serif;font-style:italic;font-size:15px;color:#0B3D47;line-height:1.7;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:22px;}
+.type-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow-sm);}
+.type-card h4{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:8px;}
+.type-card p{font-size:13.5px;color:var(--text-muted);line-height:1.7;}
+.table-wrap{overflow-x:auto;margin-bottom:22px;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--border);}
+thead th{background:var(--navy);color:white;padding:12px 16px;text-align:left;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;}
+tbody tr:nth-child(even) td{background:var(--gray-100);}
+td{padding:12px 16px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+td:first-child{font-weight:500;color:var(--navy);}
+.flow-wrap{display:flex;align-items:stretch;gap:0;margin-bottom:22px;overflow-x:auto;padding-bottom:6px;}
+.flow-step{flex-shrink:0;border-radius:var(--radius-sm);padding:14px 18px;text-align:center;min-width:130px;display:flex;flex-direction:column;justify-content:center;}
+.flow-step .fs-num{font-size:10px;font-weight:700;opacity:0.7;margin-bottom:4px;letter-spacing:0.07em;text-transform:uppercase;}
+.flow-step .fs-title{font-size:13px;font-weight:600;line-height:1.35;}
+.flow-step .fs-sub{font-size:11px;opacity:0.75;margin-top:4px;line-height:1.4;}
+.flow-arrow{flex-shrink:0;font-size:22px;color:var(--accent);padding:0 4px;display:flex;align-items:center;}
+.accordion{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:white;margin-bottom:22px;box-shadow:var(--shadow-sm);}
+.accordion-item{border-bottom:1px solid var(--border);}
+.accordion-item:last-child{border-bottom:none;}
+.accordion-btn{width:100%;text-align:left;padding:17px 22px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--navy);background:none;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;transition:background 0.15s;}
+.accordion-btn:hover{background:var(--gray-100);}
+.accordion-btn.open{background:var(--accent-soft);color:#0B7E8A;}
+.accordion-chevron{font-size:16px;transition:transform 0.2s;flex-shrink:0;}
+.accordion-btn.open .accordion-chevron{transform:rotate(180deg);}
+.accordion-body{display:none;padding:6px 22px 20px;font-size:14px;color:var(--text-muted);line-height:1.8;}
+.accordion-body.open{display:block;}
+.step-list{list-style:none;margin-bottom:22px;}
+.step-item{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--border);}
+.step-item:last-child{border-bottom:none;}
+.step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--navy);color:white;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.step-content h4{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:5px;}
+.step-content p{font-size:14px;color:var(--text-muted);line-height:1.75;}
+.cm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;}
+.cm-card{border-radius:var(--radius);padding:20px 22px;border:1px solid var(--border);box-shadow:var(--shadow-sm);}
+.cm-card h4{font-size:15px;font-weight:700;margin-bottom:8px;}
+.cm-card p{font-size:13.5px;line-height:1.7;}
+.cm-card .example{font-size:12.5px;margin-top:10px;padding:10px 14px;border-radius:8px;line-height:1.65;font-style:italic;}
+.compare-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:22px;}
+.compare-row{display:grid;grid-template-columns:180px 1fr 1fr;gap:0;border-bottom:1px solid var(--border);font-size:13.5px;background:white;}
+.compare-row:last-child{border-bottom:none;}
+.compare-label{padding:12px 14px;font-weight:500;color:var(--text-muted);background:var(--gray-100);border-right:1px solid var(--border);}
+.compare-a{padding:12px 14px;color:var(--text);line-height:1.55;}
+.compare-b{padding:12px 14px;color:var(--text);line-height:1.55;border-left:1px solid var(--border);background:#F0FBF9;}
+.compare-head-label{padding:10px 14px;background:var(--gray-200);border-right:1px solid var(--border);}
+.compare-head-a{padding:10px 14px;background:#E8F4FB;font-weight:600;color:var(--navy);font-size:13px;}
+.compare-head-b{padding:10px 14px;background:#D1F0EA;font-weight:600;color:#0D5944;font-size:13px;border-left:1px solid var(--border);}
+.checklist{list-style:none;}
+.checklist li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-200);font-size:14px;color:var(--text);line-height:1.65;}
+.checklist li:last-child{border-bottom:none;}
+.check-icon{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:2px;font-size:11px;font-weight:700;}
+.divider{height:1px;background:var(--border);margin:30px 0;}
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;white-space:nowrap;}
+.badge-navy{background:var(--navy);color:white;}
+.badge-gray{background:var(--gray-200);color:var(--gray-600);}
+.badge-green{background:var(--green-soft);color:var(--green);}
+.badge-amber{background:var(--amber-soft);color:#8B5E0A;}
+.badge-blue{background:var(--accent-soft);color:#0B7E8A;}
+.badge-red{background:var(--red-soft);color:var(--red);}
+.quiz-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow-sm);margin-bottom:22px;}
+.quiz-q{font-family:'Lora',serif;font-size:17px;font-weight:600;color:var(--navy);margin-bottom:22px;line-height:1.45;}
+.quiz-options{display:flex;flex-direction:column;gap:10px;}
+.quiz-opt{padding:13px 18px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;transition:all 0.15s;color:var(--text);background:white;text-align:left;font-family:'DM Sans',sans-serif;line-height:1.55;width:100%;}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);color:#0B7E8A;}
+.quiz-opt.correct{background:var(--green-soft);border-color:var(--green);color:var(--green);font-weight:500;}
+.quiz-opt.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.quiz-opt:disabled{cursor:default;}
+.quiz-feedback{margin-top:16px;padding:14px 18px;border-radius:var(--radius-sm);font-size:14px;line-height:1.7;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.ok{background:var(--green-soft);color:#1B5C3D;}
+.quiz-feedback.nok{background:var(--red-soft);color:#8B2020;}
+.quiz-nav{margin-top:22px;display:flex;gap:10px;align-items:center;}
+.btn-primary{background:var(--navy);color:white;border:none;padding:11px 24px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.15s;}
+.btn-primary:hover{background:var(--navy-light);}
+.btn-primary:disabled{background:var(--gray-400);cursor:default;}
+.quiz-score-text{font-size:13px;color:var(--text-muted);}
+.progress-wrap{background:var(--gray-200);border-radius:100px;height:6px;margin-bottom:6px;overflow:hidden;}
+.progress-bar{height:100%;border-radius:100px;background:var(--accent);transition:width 0.4s ease;}
+.glossary-search{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);margin-bottom:18px;outline:none;transition:border-color 0.15s;background:white;}
+.glossary-search:focus{border-color:var(--accent);}
+.glossary-list{list-style:none;}
+.glossary-item{padding:14px 0;border-bottom:1px solid var(--gray-200);}
+.glossary-item:last-child{border-bottom:none;}
+.glossary-term{font-weight:600;font-size:14px;color:var(--navy);margin-bottom:4px;}
+.glossary-def{font-size:14px;color:var(--text-muted);line-height:1.7;}
+.module-footer{max-width:940px;margin:0 auto;padding:28px 40px 52px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.footer-info{font-size:12px;color:var(--text-muted);line-height:1.7;}
+.footer-info strong{color:var(--text);font-weight:500;}
+.sr-only{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+@media(max-width:700px){
+  .hero-inner{padding:40px 20px 38px;}.hero h1{font-size:26px;}
+  .nav-wrap{padding:0 8px;}.main{padding:28px 20px 64px;}
+  .grid-2,.grid-3,.cm-grid{grid-template-columns:1fr;}
+  .compare-row{grid-template-columns:120px 1fr 1fr;}
+  .module-footer{padding:20px 20px 44px;}
+}
+</style>
+</head>
+<body>
+<h1 class="sr-only">Modul Interaktif: Audit dan Data Insight Journey Sesi 1</h1>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge-event"><span></span> Audit &amp; Data Insight Journey, Sesi 1</div>
+    <h1>Audit, Data Analytics,<br>dan Fraud Detection</h1>
+    <p class="hero-sub">Dari cara kerja model fraud detection, metrik yang sering disalahpahami, hingga bagaimana seorang auditor menggunakan data untuk menemukan bukti yang sesungguhnya.</p>
+    <div class="hero-meta">
+      <span class="meta-item"><strong>6 Topik</strong></span>
+      <span class="meta-dot"></span>
+      <span class="meta-item"><strong>18 Postingan</strong></span>
+      <span class="meta-dot"></span>
+      <span class="meta-item"><strong>Analogi Nyata</strong></span>
+      <span class="meta-dot"></span>
+      <span class="meta-item"><strong>Uji Pemahaman</strong></span>
+    </div>
+  </div>
+</div>
+
+<nav class="nav-strip">
+  <div class="nav-wrap">
+    <button class="nav-arrow hidden" id="nav-left" onclick="scrollNav(-1)">&#8249;</button>
+    <div class="nav-inner" id="nav-inner">
+      <button class="nav-tab active" onclick="showSection('s1',this)"><span class="nav-num">1</span> Mengapa Data?</button>
+      <button class="nav-tab" onclick="showSection('s2',this)"><span class="nav-num">2</span> Fraud Detection</button>
+      <button class="nav-tab" onclick="showSection('s3',this)"><span class="nav-num">3</span> Mengukur Model</button>
+      <button class="nav-tab" onclick="showSection('s4',this)"><span class="nav-num">4</span> Metrik Lanjutan</button>
+      <button class="nav-tab" onclick="showSection('s5',this)"><span class="nav-num">5</span> Auditor vs Analyst</button>
+      <button class="nav-tab" onclick="showSection('s6',this)"><span class="nav-num">6</span> Anomali ke Bukti</button>
+      <button class="nav-tab" onclick="showSection('s7',this)"><span class="nav-num">7</span> Uji Pemahaman</button>
+      <button class="nav-tab" onclick="showSection('s8',this)"><span class="nav-num">8</span> Glosarium</button>
+    </div>
+    <button class="nav-arrow" id="nav-right" onclick="scrollNav(1)">&#8250;</button>
+  </div>
+</nav>
+<main class="main">
+
+<!-- S1: MENGAPA DATA -->
+<section id="s1" class="section active">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 1</div>
+    <h2>Mengapa Data Analytics Penting dalam Audit?</h2>
+    <p>Audit selalu tentang judgement, tapi judgement yang baik butuh informasi yang tepat. Di sinilah data analytics masuk sebagai mitra, bukan pengganti, dari seorang auditor.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Bayangkan 1 Juta Transaksi di Depanmu</div>
+    <p style="margin-bottom:14px;">Seorang auditor diminta memeriksa transaksi keuangan sebuah perusahaan e-commerce selama satu tahun. Total transaksinya: 1 juta baris data. Kalau diperiksa satu per satu, dengan kecepatan 1 transaksi per menit tanpa henti, dibutuhkan waktu hampir dua tahun hanya untuk membaca datanya saja, belum sampai menganalisisnya.</p>
+    <p>Di sinilah data analytics berperan sebagai <strong>penyaring awal</strong>. Dari 1 juta transaksi, model bisa mempersempit fokus ke ratusan transaksi yang paling mencurigakan. Auditor kemudian bekerja pada daftar yang sudah dipersempit itu, dengan pertanyaan yang lebih tajam dan waktu yang jauh lebih efisien.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tiga Peran yang Berbeda tapi Saling Melengkapi</div>
+    <p style="margin-bottom:18px;">Sering kali ketiganya disebut dalam satu napas seolah sama. Padahal masing-masing punya peran yang berbeda.</p>
+    <div class="flow-wrap">
+      <div class="flow-step" style="background:var(--accent);color:white;">
+        <div class="fs-num">Lapisan 1</div>
+        <div class="fs-title">Data Analytics</div>
+        <div class="fs-sub">Menyaring data besar, menemukan pola</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--amber);color:var(--navy);">
+        <div class="fs-num">Lapisan 2</div>
+        <div class="fs-title">Fraud Detection</div>
+        <div class="fs-sub">Menandai transaksi yang mencurigakan</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--navy);color:white;">
+        <div class="fs-num">Lapisan 3</div>
+        <div class="fs-title">Audit</div>
+        <div class="fs-sub">Menilai, memverifikasi, memutuskan</div>
+      </div>
+    </div>
+    <p>Mesin hanya membantu mengidentifikasi pola. Keputusan akhir tetap di tangan auditor, karena audit bukan sekadar soal angka, tapi soal judgement. Data tidak menggantikan auditor, data memperkuat cara auditor bekerja.</p>
+  </div>
+
+  <div class="accent-card blue">
+    <div class="ac-label">Satu Kalimat yang Perlu Diingat</div>
+    <p><strong>Data mempersempit area yang perlu diperiksa. Auditor memutuskan apa artinya.</strong> Tanpa data, auditor bekerja seperti mencari jarum di tumpukan jerami. Dengan data, setidaknya tumpukan jeraminya sudah jauh lebih kecil.</p>
+  </div>
+</section>
+
+<!-- S2: FRAUD DETECTION -->
+<section id="s2" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 2</div>
+    <h2>Apa yang Membuat Fraud Detection Berbeda?</h2>
+    <p>Deteksi fraud dan klasifikasi biasa mungkin terlihat serupa dari luar, tapi keduanya bermain di medan yang sangat berbeda. Perbedaannya ada di dua hal: tujuan dan risiko dari setiap kesalahan.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mesin Sortir di Pabrik: Analogi yang Tepat</div>
+    <p style="margin-bottom:14px;">Di lini produksi sebuah pabrik makanan, ada mesin yang memutuskan dalam sepersekian detik: produk ini lolos atau tidak, hanya berdasarkan data sensor seperti berat, warna, dan dimensi. Mesin tidak bisa membuka produknya untuk memastikan. Keputusan harus dibuat saat itu juga.</p>
+    <p style="margin-bottom:14px;">Dilema yang muncul persis seperti fraud detection. Kalau threshold-nya terlalu ketat, produk yang sebenarnya bagus ikut tersingkir dan menjadi rugi di biaya produksi. Kalau terlalu longgar, produk bermasalah lolos ke tangan pelanggan dan merusak reputasi.</p>
+    <p>Dan yang menarik: yang menentukan di mana threshold itu diset bukan hanya engineer-nya, tapi manajemen bisnis juga, karena merekalah yang memutuskan seberapa besar kerugian yang masih bisa ditoleransi.</p>
+    <div class="accent-card amber" style="margin-top:16px;">
+      <div class="ac-label">Perbedaan dengan Klasifikasi Biasa</div>
+      <p>Klasifikasi biasa tujuannya fleksibel: mengelompokkan bunga berdasarkan jenis, warna, atau habitat, semuanya valid. Fraud detection hanya punya satu arah: apakah ini normal atau mencurigakan? Dan setiap kesalahan punya harga yang berbeda.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Dua Jenis Kesalahan yang Sama-sama Berbahaya</div>
+    <p style="margin-bottom:18px;">Model fraud detection bisa membuat dua jenis kesalahan. Keduanya berbahaya, tapi dengan cara yang berbeda. Bayangkan satpam di pintu masuk pusat perbelanjaan.</p>
+    <div class="cm-grid">
+      <div class="cm-card" style="background:var(--red-soft);border-color:var(--red);">
+        <h4 style="color:var(--red);">False Negative: Fraud Lolos</h4>
+        <p style="color:#5A1E1E;">Model bilang "transaksi normal," padahal aslinya fraud. Seperti satpam yang melewatkan penjahat karena penampilannya rapi.</p>
+        <div class="example" style="background:rgba(201,64,64,0.1);color:#5A1E1E;">Contoh nyata: Transaksi kartu kredit senilai Rp 4.800.000 lolos karena nilainya tepat di bawah batas kewaspadaan sistem. Pelaku tahu batas itu dan sengaja bertransaksi di bawahnya.</div>
+      </div>
+      <div class="cm-card" style="background:var(--amber-soft);border-color:var(--amber);">
+        <h4 style="color:#8B5E0A;">False Positive: Orang Baik Jadi Tersangka</h4>
+        <p style="color:#5A3A00;">Model bilang "ini fraud," padahal aslinya transaksi normal. Seperti satpam menahan tamu undangan hanya karena bajunya mirip penjahat kemarin.</p>
+        <div class="example" style="background:rgba(232,168,56,0.15);color:#5A3A00;">Contoh nyata: Nasabah yang biasa berbelanja di Jakarta tiba-tiba bertransaksi di Bali saat liburan. Sistem memblokir kartunya di kasir hotel karena pola yang tidak biasa.</div>
+      </div>
+    </div>
+    <div class="accent-card blue">
+      <div class="ac-label">Mana yang Lebih Berbahaya?</div>
+      <p>Jawabannya tergantung konteks. Dari sisi bisnis, False Negative biasanya lebih mahal secara finansial karena uangnya hilang. Tapi dari sisi pengalaman pengguna, False Positive yang paling terasa: kartu diblokir di kasir itu memalukan dan frustrasinya langsung. Bisnis harus menyeimbangkan keduanya, dan tidak ada yang benar-benar mudah.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Kartu Kredit vs KPR: Harga Kesalahan yang Berbeda</div>
+    <p style="margin-bottom:18px;">Dua produk keuangan yang sama-sama butuh fraud detection, tapi toleransinya sangat berbeda.</p>
+    <div class="compare-wrap">
+      <div class="compare-row">
+        <div class="compare-head-label"></div>
+        <div class="compare-head-a">Kartu Kredit</div>
+        <div class="compare-head-b">KPR (Kredit Pemilikan Rumah)</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Volume transaksi</div>
+        <div class="compare-a">Jutaan per hari, keputusan dalam detik.</div>
+        <div class="compare-b">Ratusan per hari, proses bisa berhari-hari.</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Jika fraud lolos</div>
+        <div class="compare-a">Per transaksi kecil, tapi akumulasinya bisa miliaran per bulan.</div>
+        <div class="compare-b">Satu kasus langsung ratusan juta. Uangnya hampir tidak mungkin kembali.</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Jika salah tuduh</div>
+        <div class="compare-a">Nasabah telepon bank, 10 menit beres, transaksi dilanjutkan.</div>
+        <div class="compare-b">Calon debitur yang sudah 6 bulan kumpulkan dokumen dituduh fraud. Kepercayaan yang hilang bisa permanen.</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Pendekatan</div>
+        <div class="compare-a">Lebih agresif mendeteksi karena kerugian salah tuduh ringan dan cepat diperbaiki.</div>
+        <div class="compare-b">Lebih hati-hati karena kesalahan di kedua arah sama-sama berat dan sulit dibalik.</div>
+      </div>
+    </div>
+    <p>Kesimpulannya: tidak ada satu setting yang cocok untuk semua. Yang tepat adalah model yang disesuaikan dengan toleransi risiko bisnis itu sendiri.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tombol Volume: Cara Memahami Trade-off</div>
+    <p style="margin-bottom:14px;">Trade-off dalam fraud detection bekerja seperti tombol volume yang bisa diputar antara dua ekstrem.</p>
+    <div class="flow-wrap">
+      <div class="flow-step" style="background:var(--green);color:white;min-width:160px;">
+        <div class="fs-num">Putar Kiri</div>
+        <div class="fs-title">Model Santai</div>
+        <div class="fs-sub">Jarang salah tuduh. Tapi beberapa fraud ikut lolos.</div>
+      </div>
+      <div class="flow-arrow">&#8596;</div>
+      <div class="flow-step" style="background:var(--gray-200);color:var(--navy);min-width:160px;">
+        <div class="fs-num">Tengah</div>
+        <div class="fs-title">Seimbang</div>
+        <div class="fs-sub">Titik yang ditentukan oleh toleransi risiko bisnis.</div>
+      </div>
+      <div class="flow-arrow">&#8596;</div>
+      <div class="flow-step" style="background:var(--red);color:white;min-width:160px;">
+        <div class="fs-num">Putar Kanan</div>
+        <div class="fs-title">Model Ketat</div>
+        <div class="fs-sub">Hampir semua fraud tertangkap. Tapi beberapa orang baik ikut kena blokir.</div>
+      </div>
+    </div>
+    <p>Kamu tidak bisa memutar tombol ke kanan dan kiri sekaligus. Harus pilih salah satu arah. Dan posisi yang tepat berbeda-beda tergantung jenis bisnisnya.</p>
+  </div>
+</section>
+
+<!-- S3: MENGUKUR MODEL -->
+<section id="s3" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 3</div>
+    <h2>Mengukur Model: Kenapa Akurasi Menipu?</h2>
+    <p>Instinct pertama kita saat menilai sesuatu adalah bertanya "berapa persen yang benar?" Tapi di fraud detection, pertanyaan itu bisa menyesatkan lebih dari yang kita kira.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Model 99% Akurasi yang Sama Sekali Tidak Berguna</div>
+    <p style="margin-bottom:14px;">Bayangkan dari 1.000 transaksi hari ini, hanya 10 yang benar-benar fraud. Selebihnya, 990 transaksi, adalah normal.</p>
+    <p style="margin-bottom:14px;">Sekarang bayangkan sebuah model yang sangat "malas": untuk setiap transaksi yang masuk, model ini selalu menjawab "normal." Tanpa pernah mendeteksi satu fraud pun.</p>
+    <p style="margin-bottom:16px;">Berapa akurasinya? <strong>990 dari 1.000 = 99%.</strong> Kelihatannya luar biasa di atas kertas. Padahal model ini sama sekali tidak berguna karena tidak mendeteksi satu fraud pun.</p>
+    <div class="accent-card red">
+      <div class="ac-label">Mengapa Ini Bisa Terjadi?</div>
+      <p>Di dataset fraud yang nyata, jumlah transaksi normal jauh lebih banyak daripada transaksi fraud. Ketidakseimbangan ini disebut <strong>class imbalance</strong>. Model yang hanya menebak "normal" terus-menerus akan tetap punya akurasi tinggi, tapi gagal total di tugas yang sebenarnya penting.</p>
+    </div>
+    <div class="accent-card blue">
+      <div class="ac-label">Pertanyaan yang Lebih Jujur</div>
+      <p>Daripada bertanya "berapa persen yang benar secara keseluruhan," ada dua pertanyaan yang jauh lebih relevan:<br><br>
+      <strong>Pertanyaan 1:</strong> Dari semua fraud yang benar-benar ada, berapa persen yang berhasil kita tangkap?<br>
+      <strong>Pertanyaan 2:</strong> Dari semua yang kita tuduh fraud, berapa persen yang benar-benar fraud?<br><br>
+      Dua pertanyaan itu terdengar mirip, tapi jawabannya bisa sangat berbeda. Dan perbedaan itulah yang akan kita pelajari melalui Confusion Matrix.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Confusion Matrix: Sumber Kebenaran Semua Metrik</div>
+    <p style="margin-bottom:16px;">Confusion Matrix adalah tabel sederhana yang merangkum semua yang terjadi dalam satu hari kerja satpam kita. Hari ini ada 1.000 pengunjung, 50 di antaranya copet. Ini hasilnya:</p>
+    <div class="cm-grid">
+      <div class="cm-card" style="background:var(--green-soft);border:2px solid var(--green);">
+        <h4 style="color:var(--green);">True Positive (TP)</h4>
+        <p style="color:#1A3D2B;">Model mendeteksi fraud, dan memang benar fraud.</p>
+        <div class="example" style="background:rgba(46,125,94,0.1);color:#1A3D2B;">40 copet berhasil tertangkap. Satpam benar mengenali ancaman.</div>
+      </div>
+      <div class="cm-card" style="background:var(--red-soft);border:2px solid var(--red);">
+        <h4 style="color:var(--red);">False Negative (FN)</h4>
+        <p style="color:#5A1E1E;">Model bilang normal, padahal aslinya fraud. Kesalahan yang paling mahal.</p>
+        <div class="example" style="background:rgba(201,64,64,0.1);color:#5A1E1E;">10 copet lolos tanpa terdeteksi. Penampilan mereka terlalu "rapi" untuk dicurigai.</div>
+      </div>
+      <div class="cm-card" style="background:var(--amber-soft);border:2px solid var(--amber);">
+        <h4 style="color:#8B5E0A;">False Positive (FP)</h4>
+        <p style="color:#5A3A00;">Model bilang fraud, padahal aslinya normal. Menyebabkan gangguan dan ketidakpercayaan.</p>
+        <div class="example" style="background:rgba(232,168,56,0.15);color:#5A3A00;">50 pengunjung baik-baik salah ditahan. Bajunya mirip copet kemarin.</div>
+      </div>
+      <div class="cm-card" style="background:var(--accent-soft);border:2px solid var(--accent);">
+        <h4 style="color:#0B7E8A;">True Negative (TN)</h4>
+        <p style="color:#0B3D47;">Model bilang normal, dan memang benar normal. Hasil yang paling banyak.</p>
+        <div class="example" style="background:rgba(15,163,177,0.1);color:#0B3D47;">900 pengunjung aman dibiarkan lewat. Tidak ada masalah di sini.</div>
+      </div>
+    </div>
+    <div class="accent-card amber">
+      <div class="ac-label">Mengapa Confusion Matrix Penting</div>
+      <p>Tanpa Confusion Matrix, kita hanya melihat satu angka akurasi yang bisa menipu. Dengan Confusion Matrix, kita melihat gambaran lengkap: tidak hanya berapa yang benar, tapi <strong>di mana tepatnya model kita gagal</strong> dan seberapa besar kegagalan itu. Semua metrik setelahnya lahir dari empat kotak ini.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Precision dan Recall: Dua Cara Menilai yang Berbeda</div>
+    <p style="margin-bottom:18px;">Dari Confusion Matrix, lahirlah dua metrik yang menjawab pertanyaan berbeda tentang kinerja model.</p>
+    <div class="grid-2">
+      <div class="type-card" style="border-top:3px solid var(--accent);">
+        <h4>Precision: Seberapa Tepat Tuduhanmu?</h4>
+        <p style="margin-bottom:10px;">Dari semua yang ditangkap satpam, berapa persen yang benar-benar copet?</p>
+        <div style="background:var(--accent-soft);padding:10px 14px;border-radius:8px;font-size:13px;color:#0B3D47;">
+          <strong>Rumus:</strong> TP &divide; (TP + FP)<br>
+          Contoh: 40 &divide; (40 + 50) = <strong>44%</strong><br>
+          Artinya: dari 10 orang yang ditahan, hanya 4 yang benar copet.
+        </div>
+      </div>
+      <div class="type-card" style="border-top:3px solid var(--green);">
+        <h4>Recall: Seberapa Lengkap Tangkapanmu?</h4>
+        <p style="margin-bottom:10px;">Dari semua copet yang ada, berapa persen yang berhasil tertangkap?</p>
+        <div style="background:var(--green-soft);padding:10px 14px;border-radius:8px;font-size:13px;color:#1A3D2B;">
+          <strong>Rumus:</strong> TP &divide; (TP + FN)<br>
+          Contoh: 40 &divide; (40 + 10) = <strong>80%</strong><br>
+          Artinya: dari 50 copet, 40 berhasil tertangkap, 10 lolos.
+        </div>
+      </div>
+    </div>
+    <div class="accent-card blue">
+      <div class="ac-label">Trade-off yang Tidak Bisa Dihindari</div>
+      <p>Kalau satpam ingin <strong>Recall tinggi</strong> (tidak mau ada copet yang lolos), dia harus lebih agresif mencurigai semua orang. Akibatnya makin banyak orang baik yang tertahan. Precision turun.<br><br>
+      Kalau satpam ingin <strong>Precision tinggi</strong> (hanya menangkap kalau sudah sangat yakin), dia jadi lebih selektif. Akibatnya beberapa copet yang kurang mencurigakan bisa lolos. Recall turun.<br><br>
+      Itulah kenapa Precision dan Recall harus selalu dibaca bersama, bukan sendiri-sendiri.</p>
+    </div>
+  </div>
+</section>
+
+<!-- S4: METRIK LANJUTAN -->
+<section id="s4" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 4</div>
+    <h2>Metrik yang Lebih Jujur</h2>
+    <p>Precision dan Recall sudah lebih jujur dari akurasi. Tapi masih ada pertanyaan yang belum terjawab: bagaimana menggabungkan keduanya menjadi satu penilaian? Dan bagaimana kalau kita butuh tahu performa model di semua kondisi sekaligus?</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">F1-Score: Satu Angka yang Tidak Pilih Kasih</div>
+    <p style="margin-bottom:16px;">Kembali ke satpam kita. Di akhir hari kita punya dua angka: Precision 44% dan Recall 80%. Bagaimana cara memutuskan apakah model ini cukup baik?</p>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>Mengapa tidak cukup rata-rata biasa?</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Rata-rata biasa: (44% + 80%) &divide; 2 = 62%. Kelihatan lumayan. Tapi rata-rata biasa memperlakukan kedua angka itu setara, seolah Precision yang rendah tidak menjadi masalah karena Recall-nya tinggi. Padahal 6 dari 10 orang yang ditahan tidak bersalah itu bukan hal kecil. Ada kerugian reputasi, ada kompensasi, ada kepercayaan yang hilang.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>Bagaimana F1-Score bekerja?</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          F1-Score menggunakan rata-rata harmonik, bukan rata-rata biasa. Efeknya: kalau salah satu dari Precision atau Recall rendah, F1-Score akan menarik angka akhirnya jauh ke bawah sebagai peringatan. Hasilnya bukan 62% melainkan <strong>57%</strong>. Selisihnya terlihat kecil, tapi pesannya jelas: ada ketidakseimbangan yang tidak boleh diabaikan.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>Kapan F1-Score tepat digunakan?</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          F1-Score paling berguna ketika kita perlu satu angka ringkasan dan dataset tidak seimbang antara kelas positif dan negatif, persis seperti fraud detection. Tapi F1-Score menilai model hanya di <em>satu posisi threshold</em>. Bagaimana kalau kita ingin tahu performa di semua posisi sekaligus? Di situlah AUC-ROC masuk.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">AUC-ROC: Rekam Jejak Performa di Semua Kondisi</div>
+    <p style="margin-bottom:16px;">Masih ingat tombol volume kita? Bayangkan kita menguji satpam sebanyak 10 kali, setiap kali tombolnya diputar ke posisi berbeda dari paling santai sampai paling ketat. Setiap kali dicatat dua hal: berapa copet tertangkap dan berapa orang baik yang salah ditahan. Semua hasilnya digambarkan jadi sebuah kurva.</p>
+    <div class="grid-2">
+      <div class="type-card" style="border-top:3px solid var(--green);">
+        <h4>Kurva Melengkung Tinggi ke Kiri Atas</h4>
+        <p>Artinya satpam hebat di hampir semua posisi tombol. Dia bisa menangkap banyak copet tanpa terlalu banyak salah menahan orang baik. <strong>AUC mendekati 1.</strong></p>
+      </div>
+      <div class="type-card" style="border-top:3px solid var(--red);">
+        <h4>Kurva Lurus Diagonal</h4>
+        <p>Artinya satpam tidak lebih baik dari tebakan koin. Di setiap posisi tombol, peluang menangkap copet sama dengan peluang salah menahan orang baik. <strong>AUC = 0.5.</strong></p>
+      </div>
+    </div>
+    <div class="accent-card blue">
+      <div class="ac-label">Cara Membaca AUC</div>
+      <p><strong>AUC 0.5:</strong> Model tidak lebih baik dari melempar koin. Tidak ada gunanya.<br>
+      <strong>AUC 0.7:</strong> Model cukup andal, tapi masih ada ruang perbaikan.<br>
+      <strong>AUC 0.9:</strong> Model sangat andal membedakan fraud dari yang normal di hampir semua kondisi.<br><br>
+      Kalau F1-Score adalah nilai rapor di satu ujian, <strong>AUC-ROC adalah rekam jejak performa di sepanjang semester.</strong></p>
+    </div>
+    <p>Kamu bisa eksplorasi visualisasi interaktifnya di sini: <a href="https://rose-analytics0.github.io/audit-data-insight-journey/auc_roc_interaktif.html" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:500;">Buka Visualisasi AUC-ROC &#8594;</a></p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Cost-Sensitive Evaluation: Bicara dalam Bahasa Rupiah</div>
+    <p style="margin-bottom:16px;">Semua metrik sebelumnya, Precision, Recall, F1-Score, AUC-ROC, semuanya berbicara dalam bahasa persentase. Tapi pemimpin bisnis dan auditor punya pertanyaan yang lebih langsung: <strong>berapa kerugian nyata yang ditimbulkan oleh kesalahan model ini?</strong></p>
+    <div class="accent-card amber">
+      <div class="ac-label">Kembali ke Satpam di Mal</div>
+      <p>Dalam sebulan, satpam kita melewatkan 10 copet dan salah menahan 50 orang baik. Mari hitung kerugian nyatanya, bukan dalam persen:</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Jenis Kesalahan</th><th>Rincian Kerugian</th><th>Estimasi Biaya</th></tr></thead>
+        <tbody>
+          <tr><td>1 copet lolos (FN)</td><td>Kehilangan barang, biaya investigasi, laporan polisi, reputasi mal tercoreng</td><td>Bisa puluhan juta per kejadian</td></tr>
+          <tr><td>1 orang baik salah ditahan (FP)</td><td>Waktu staf, kompensasi, jika viral di media sosial bisa menyebar ke ratusan calon pelanggan</td><td>Tidak bisa dianggap kecil</td></tr>
+          <tr><td>Total dalam sebulan</td><td>10 FN + 50 FP = 60 kesalahan per bulan</td><td>Di balik "Precision 44%, Recall 80%" bisa tersembunyi kerugian ratusan juta per bulan</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Itulah yang membuat Cost-Sensitive Evaluation berbeda dari semua metrik sebelumnya: dia tidak bicara dalam persentase. Dia bicara dalam bahasa yang paling dimengerti semua orang, yaitu <strong>rupiah</strong>.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Rangkuman: Setiap Metrik Menjawab Pertanyaan Berbeda</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Metrik</th><th>Pertanyaan yang Dijawab</th><th>Keterbatasan</th></tr></thead>
+        <tbody>
+          <tr><td>Akurasi</td><td>Berapa persen yang ditebak benar secara keseluruhan?</td><td>Menipu di dataset tidak seimbang. Model "malas" bisa dapat 99%.</td></tr>
+          <tr><td>Precision</td><td>Dari semua yang dituduh fraud, berapa yang benar fraud?</td><td>Tidak bicara tentang berapa fraud yang terlewat.</td></tr>
+          <tr><td>Recall</td><td>Dari semua fraud yang ada, berapa yang berhasil ditangkap?</td><td>Tidak bicara tentang berapa orang baik yang ikut kena.</td></tr>
+          <tr><td>F1-Score</td><td>Seberapa seimbang Precision dan Recall?</td><td>Hanya menilai di satu posisi threshold.</td></tr>
+          <tr><td>AUC-ROC</td><td>Seberapa andal model di semua posisi threshold?</td><td>Tidak bicara dalam satuan kerugian bisnis nyata.</td></tr>
+          <tr><td>Cost-Sensitive</td><td>Berapa kerugian rupiah nyata dari kesalahan model?</td><td>Butuh data biaya yang akurat untuk dihitung dengan benar.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="accent-card green">
+      <div class="ac-label">Pelajaran Utama dari Bagian Ini</div>
+      <p>Metrik bukan tujuan. Ia hanyalah jembatan untuk mencari jawaban. Dan jawaban dari metrik pun tidak langsung ditelan begitu saja karena masih butuh judgement di baliknya. Angka yang sama bisa bermakna berbeda tergantung konteks bisnisnya.</p>
+    </div>
+  </div>
+</section>
+
+<!-- S5: AUDITOR VS ANALYST -->
+<section id="s5" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 5</div>
+    <h2>Auditor vs Data Analyst: Dua Cara Berpikir</h2>
+    <p>Keduanya bisa duduk di depan dataset yang sama, menggunakan tools yang sama, bahkan menemukan anomali yang sama. Tapi tujuan akhirnya sangat berbeda, dan perbedaan itulah yang menentukan segalanya.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Dua Orang, Satu Dataset</div>
+    <p style="margin-bottom:16px;">Bayangkan dua orang sedang menganalisis data transaksi e-commerce yang sama. Satu data analyst, satu auditor. Dari luar, cara kerjanya terlihat mirip: keduanya eksplorasi data, keduanya mencari pola, keduanya bisa menemukan hal yang tidak terduga.</p>
+    <div class="compare-wrap">
+      <div class="compare-row">
+        <div class="compare-head-label"></div>
+        <div class="compare-head-a">Data Analyst</div>
+        <div class="compare-head-b">Auditor</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Tujuan akhir</div>
+        <div class="compare-a">Mencari insight. Apapun yang menarik, bernilai, dan bisa membantu bisnis mengambil keputusan lebih baik.</div>
+        <div class="compare-b">Mencari bukti. Spesifik, terkait risiko yang sudah dipetakan, dan harus bisa dipertanggungjawabkan.</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Ketika menemukan anomali</div>
+        <div class="compare-a">"Ini menarik. Ada pola aneh di sini, tapi saya belum tahu kenapa." Bisa berhenti di sini dan melaporkannya sebagai temuan awal.</div>
+        <div class="compare-b">Tidak bisa berhenti di sana. Harus menjawab: apakah ini terkait risiko yang sedang diperiksa? Jika iya, bukti apa yang dibutuhkan selanjutnya?</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Standar pertanggung jawaban</div>
+        <div class="compare-a">Insight yang disampaikan perlu bisa direplikasi dan relevan secara bisnis.</div>
+        <div class="compare-b">Setiap langkah analisis harus bisa ditelusuri kembali, didokumentasikan, dan dipertahankan jika dipertanyakan secara hukum atau regulasi.</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Titik awal analisis</div>
+        <div class="compare-a">Bisa dimulai dari data itu sendiri. Eksplorasi bebas untuk menemukan sesuatu yang menarik.</div>
+        <div class="compare-b">Dimulai dari peta risiko, bukan dari data. Data digunakan untuk menguji hipotesis yang sudah terbentuk sebelumnya.</div>
+      </div>
+    </div>
+    <div class="accent-card blue">
+      <div class="ac-label">Yang Benar-benar Membedakan Keduanya</div>
+      <p>Bukan soal siapa yang lebih eksploratif atau siapa yang lebih terstruktur. Keduanya bisa melakukan keduanya. Yang membedakan adalah satu hal: <strong>ke mana semua analisis itu harus bermuara.</strong> Data analyst bermuara pada insight. Auditor bermuara pada bukti yang bisa dipertanggungjawabkan.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Auditor Mulai dari Risiko, Bukan dari Data</div>
+    <p style="margin-bottom:16px;">Sebelum membuka satu baris pun data, auditor sudah membawa pertanyaan yang ingin dijawab. Pertanyaan itu tidak lahir dari data, tapi dari pemahaman proses bisnis. Inilah yang disebut <strong>Fraud Risk Assessment</strong>.</p>
+    <div class="flow-wrap">
+      <div class="flow-step" style="background:var(--navy);color:white;">
+        <div class="fs-num">Langkah 1</div>
+        <div class="fs-title">Pahami Proses Bisnis</div>
+        <div class="fs-sub">Bagaimana uang mengalir? Di mana keputusan dibuat?</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--amber);color:var(--navy);">
+        <div class="fs-num">Langkah 2</div>
+        <div class="fs-title">Fraud Risk Assessment</div>
+        <div class="fs-sub">Di mana kecurangan paling mungkin terjadi?</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--accent);color:white;">
+        <div class="fs-num">Langkah 3</div>
+        <div class="fs-title">Hipotesis Berbasis Risiko</div>
+        <div class="fs-sub">Dugaan spesifik yang ingin diuji lewat data</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--green);color:white;">
+        <div class="fs-num">Langkah 4</div>
+        <div class="fs-title">Data Analytics</div>
+        <div class="fs-sub">Baru membuka data untuk menguji hipotesis</div>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>Contoh: Risiko Vendor Fiktif</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Auditor memetakan bahwa salah satu risiko di divisi pengadaan adalah pembayaran ke vendor yang tidak nyata. Hipotesisnya: ada vendor yang terdaftar di sistem tapi tidak bisa diverifikasi keberadaannya secara fisik. Baru dari sini data digunakan untuk menguji: cari vendor yang tidak punya NPWP valid, alamat yang sama dengan karyawan, atau baru aktif tepat sebelum pembayaran besar. Analisis ini punya arah yang jelas sejak awal karena berakar dari risiko, bukan dari eksplorasi bebas.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>Contoh: Risiko Pembayaran Ganda</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Auditor menduga ada invoice yang dibayar lebih dari sekali, baik karena kesalahan maupun disengaja. Hipotesisnya diuji dengan Duplicate Detection: cari invoice dengan nomor, jumlah, dan vendor yang sama yang muncul lebih dari sekali dalam periode tertentu. Temuan dari sini bukan langsung disimpulkan sebagai fraud, melainkan dijadikan daftar untuk investigasi lanjutan.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>Contoh: Risiko Manipulasi Jurnal di Akhir Periode</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Auditor tahu bahwa manipulasi laporan keuangan sering terjadi menjelang tutup buku. Hipotesisnya: ada jurnal yang dibuat di luar jam kerja normal atau oleh akun yang tidak biasanya melakukan jurnal besar. Data analytics digunakan untuk Journal Entry Testing: filter semua jurnal yang dibuat setelah jam 22.00 atau di hari libur, lalu periksa siapa yang membuatnya dan apa alasannya.
+        </div>
+      </div>
+    </div>
+    <div class="accent-card amber">
+      <div class="ac-label">Mengapa Ini Penting</div>
+      <p>Data itu luas, tapi perhatian auditor terbatas. Tanpa peta risiko, mudah sekali terjebak dalam analisis yang menarik tapi tidak relevan. Setiap analisis dalam audit idealnya bisa ditelusuri kembali ke satu titik awal yang sama: <strong>risiko yang ingin diuji.</strong></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Setiap Teknik Analytics Menjawab Satu Pertanyaan Audit Spesifik</div>
+    <p style="margin-bottom:16px;">Auditor tidak memilih teknik karena canggih atau populer secara statistik. Mereka memilih teknik karena teknik itu menjawab pertanyaan yang spesifik dan cocok dengan karakteristik data yang ada.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Teknik Analytics</th><th>Pertanyaan yang Dijawab</th><th>Kapan Digunakan</th></tr></thead>
+        <tbody>
+          <tr><td>Duplicate Detection</td><td>Apakah ada pembayaran yang diproses lebih dari sekali?</td><td>Audit atas proses pembayaran, penggajian, atau klaim asuransi.</td></tr>
+          <tr><td>Journal Entry Testing</td><td>Apakah ada catatan keuangan yang dibuat di luar pola normal?</td><td>Audit laporan keuangan menjelang tutup buku atau periode kritis.</td></tr>
+          <tr><td>Vendor Analysis</td><td>Apakah ada vendor dengan ciri-ciri yang mencurigakan?</td><td>Audit pengadaan barang dan jasa, terutama untuk kontrak bernilai besar.</td></tr>
+          <tr><td>Benford's Law</td><td>Apakah pola angka pertama dalam transaksi mengikuti distribusi alami?</td><td>Cocok untuk data transaksi besar yang terbentuk secara organik. Tidak cocok untuk data harga eceran atau nomor ID.</td></tr>
+          <tr><td>Cohort Analysis</td><td>Apakah ada pola perilaku yang berubah secara signifikan di kelompok tertentu?</td><td>Audit program loyalitas, penggunaan promo, atau perilaku nasabah baru.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="accent-card green">
+      <div class="ac-label">Pertanyaan yang Selalu Bisa Dijawab Auditor</div>
+      <p>"Kenapa analisis ini dilakukan?" Dan jawabannya selalu bisa ditelusuri ke satu titik yang sama: risiko yang sudah dipetakan sebelumnya. Teknik analytics bukan sekadar kumpulan tools, melainkan alat yang dipilih dengan sengaja untuk menjawab pertanyaan yang memang penting.</p>
+    </div>
+  </div>
+</section>
+
+<!-- S6: ANOMALI KE BUKTI -->
+<section id="s6" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 6</div>
+    <h2>Dari Anomali ke Bukti</h2>
+    <p>Menemukan anomali itu baru awal. Yang membedakan auditor dari orang yang sekadar melihat data adalah apa yang dilakukan setelah anomali ditemukan, dan bagaimana setiap langkahnya bisa dipertanggungjawabkan.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Anomali Bukan Bukti Fraud</div>
+    <p style="margin-bottom:16px;">Ini adalah hal yang wajar sekali membingungkan ketika pertama kali belajar audit: mengira bahwa temuan dari data analytics sudah cukup untuk menyimpulkan ada kecurangan. Padahal belum.</p>
+    <div class="flow-wrap">
+      <div class="flow-step" style="background:var(--navy);color:white;">
+        <div class="fs-num">Mulai dari</div>
+        <div class="fs-title">Risiko</div>
+        <div class="fs-sub">Yang dipetakan sebelum data dibuka</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--accent);color:white;">
+        <div class="fs-num">Bentuk</div>
+        <div class="fs-title">Hipotesis</div>
+        <div class="fs-sub">Dugaan yang ingin diuji</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--amber);color:var(--navy);">
+        <div class="fs-num">Jalankan</div>
+        <div class="fs-title">Prosedur Audit</div>
+        <div class="fs-sub">Teknik analytics yang dipilih</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--purple);color:white;">
+        <div class="fs-num">Hasilkan</div>
+        <div class="fs-title">Anomali</div>
+        <div class="fs-sub">Sinyal, bukan kesimpulan</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--red);color:white;">
+        <div class="fs-num">Lakukan</div>
+        <div class="fs-title">Investigasi</div>
+        <div class="fs-sub">Wawancara, dokumen, konfirmasi</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--green);color:white;">
+        <div class="fs-num">Kumpulkan</div>
+        <div class="fs-title">Bukti</div>
+        <div class="fs-sub">Baru bisa ditarik kesimpulan</div>
+      </div>
+    </div>
+    <div class="accent-card amber">
+      <div class="ac-label">Anomali adalah Sinyal, Bukan Kesimpulan</div>
+      <p>Ketika analisis data menghasilkan sesuatu yang mencurigakan, misalnya pembayaran yang terdeteksi dobel, atau pola angka yang tidak wajar, itu bukan berarti kecurangan sudah terbukti. Itu baru sinyal yang perlu diperiksa lebih dalam.</p>
+    </div>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>Contoh: Transaksi di Luar Jam Kerja</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Data menunjukkan transaksi senilai Rp 850 juta diproses pukul 02.15 dini hari oleh akun yang biasanya aktif jam kantor. Ini anomali yang mencurigakan. Tapi sebelum disimpulkan sebagai fraud, auditor harus memeriksa: apakah ada sistem batch processing yang memang berjalan dini hari? Apakah ada kebutuhan operasional mendesak yang didokumentasikan? Apakah ada otorisasi yang memadai? Jawabannya bisa mengubah kesimpulan sepenuhnya.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>Contoh: Pembayaran Dobel yang Ternyata Bukan Fraud</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Analisis Duplicate Detection menemukan dua invoice dengan nomor, jumlah, dan vendor yang sama. Terlihat jelas seperti pembayaran ganda. Tapi setelah diperiksa lebih lanjut, ternyata kontraknya memang mencantumkan pembayaran cicilan dua tahap dengan nilai yang sama, dan keduanya memiliki otorisasi yang sah. Anomali ada, tapi penjelasannya masuk akal. Bukan fraud.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>Contoh: Anomali yang Memang Berujung pada Temuan Fraud</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Vendor Analysis menemukan lima vendor berbeda yang alamatnya sama persis dengan satu karyawan di bagian pengadaan. Setelah investigasi lanjutan melalui wawancara dan pengecekan dokumen legal, ditemukan bahwa vendor-vendor tersebut tidak memiliki kegiatan usaha nyata dan semua kontraknya disetujui oleh karyawan yang sama tanpa melalui proses tender. Ini baru bisa disimpulkan sebagai indikasi kuat fraud setelah bukti terkumpul.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Data Harus Bersih Sebelum Dipercaya</div>
+    <p style="margin-bottom:16px;">Ada satu hal yang lebih mendasar dari menemukan anomali: memastikan datanya sendiri bisa dipercaya. Kalau data sudah bermasalah sebelum dianalisis, hasilnya bisa menyesatkan.</p>
+    <div class="grid-3">
+      <div class="type-card" style="border-top:3px solid var(--red);">
+        <h4>Masalah Format</h4>
+        <p>Kolom tanggal yang berisi campuran format berbeda, misalnya 01/06/2026 dan 2026-06-01, membuat analisis tren menjadi tidak akurat. Anomali yang muncul bisa jadi hanya artefak dari format yang tidak konsisten.</p>
+      </div>
+      <div class="type-card" style="border-top:3px solid var(--amber);">
+        <h4>Masalah Duplikasi Nama</h4>
+        <p>Vendor yang sama tapi namanya ditulis berbeda-beda: "PT Maju Jaya", "PT. Maju Jaya", "Maju Jaya". Kalau tidak diseragamkan dulu, analisis vendor akan mengira ketiganya adalah entitas berbeda.</p>
+      </div>
+      <div class="type-card" style="border-top:3px solid var(--purple);">
+        <h4>Masalah Nilai Kosong</h4>
+        <p>Kolom yang seharusnya berisi nilai otorisasi ternyata sebagian besar kosong. Apakah itu berarti tidak ada otorisasi, atau datanya tidak dicatat? Keduanya punya implikasi yang sangat berbeda.</p>
+      </div>
+    </div>
+    <div class="accent-card red">
+      <div class="ac-label">Pertanyaan Sebelum Analisis Dimulai</div>
+      <p>Sebelum buru-buru mencari anomali, pertanyaan yang lebih penting adalah: <strong>"Apakah datanya sudah cukup bersih untuk dipercaya?"</strong> Dalam audit, kesimpulan yang kuat hanya bisa lahir dari data yang bersih dan bukti yang valid.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Dokumentasi dan Audit Trail: Wajib, Bukan Opsional</div>
+    <p style="margin-bottom:16px;">Setelah data dibersihkan, anomali ditemukan, dan investigasi dilakukan, muncul satu pertanyaan penting: bagaimana kita membuktikan bahwa semua ini benar-benar terjadi dan prosesnya sudah benar?</p>
+    <ul class="checklist">
+      <li><div class="check-icon" style="background:var(--green-soft);color:var(--green);">1</div><div><strong>Dokumentasikan bagaimana data dibersihkan.</strong> Perubahan apa yang dilakukan, mengapa, dan siapa yang memutuskan. Tanpa ini, orang lain tidak bisa memverifikasi apakah proses cleaning-nya sudah tepat.</div></li>
+      <li><div class="check-icon" style="background:var(--green-soft);color:var(--green);">2</div><div><strong>Catat teknik analytics yang digunakan.</strong> Mengapa teknik itu dipilih, parameter apa yang diset, dan apa dasar pemilihannya. Ini yang membuat analisis bisa direplikasi.</div></li>
+      <li><div class="check-icon" style="background:var(--green-soft);color:var(--green);">3</div><div><strong>Dokumentasikan setiap anomali yang ditemukan.</strong> Bukan hanya yang akhirnya terbukti bermasalah, tapi juga yang sudah dijelaskan dan dinyatakan wajar. Keduanya sama pentingnya.</div></li>
+      <li><div class="check-icon" style="background:var(--green-soft);color:var(--green);">4</div><div><strong>Catat proses investigasi lanjutan.</strong> Siapa yang diwawancarai, dokumen apa yang diperiksa, konfirmasi apa yang diterima. Ini membentuk rantai bukti yang tidak bisa diputus.</div></li>
+      <li><div class="check-icon" style="background:var(--green-soft);color:var(--green);">5</div><div><strong>Pastikan setiap langkah bisa ditelusuri kembali.</strong> Itulah yang disebut audit trail. Tanpanya, proses tidak bisa diverifikasi, tidak bisa dipercaya, dan sulit dipertahankan jika dipertanyakan.</div></li>
+    </ul>
+    <div class="blockquote">
+      "Dalam audit, bukan hanya hasil yang penting, tapi juga bagaimana kita sampai ke hasil tersebut. Auditor tidak hanya berpikir apa temuannya, tapi juga apakah prosesnya bisa ditelusuri dan dibuktikan."
+    </div>
+    <div class="accent-card blue">
+      <div class="ac-label">Perbedaan yang Paling Mendasar</div>
+      <p>Data analyst bisa menyampaikan temuan tanpa harus mempertahankannya di hadapan regulator atau pengadilan. Auditor tidak punya kemewahan itu. Setiap langkah harus bisa dipertanggungjawabkan, setiap kesimpulan harus bisa didukung oleh jejak bukti yang jelas dan lengkap.</p>
+    </div>
+  </div>
+</section>
+
+<!-- S7: KUIS -->
+<section id="s7" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 7</div>
+    <h2>Uji Pemahaman</h2>
+    <p>Sepuluh pertanyaan yang mencakup seluruh materi sesi 1 ini. Klik jawaban yang menurutmu paling tepat, lalu baca penjelasannya.</p>
+  </div>
+  <div class="quiz-card" id="quiz-container">
+    <div id="quiz-body"></div>
+    <div class="quiz-nav">
+      <button class="btn-primary" id="quiz-next-btn" onclick="nextQuestion()" disabled>Pertanyaan Berikutnya</button>
+      <span class="quiz-score-text" id="quiz-score-text"></span>
+    </div>
+  </div>
+  <div id="quiz-result" style="display:none;">
+    <div class="card" style="text-align:center;padding:44px 30px;">
+      <div style="font-size:44px;margin-bottom:14px;" id="result-icon">&#127881;</div>
+      <div style="font-family:'Lora',serif;font-size:24px;font-weight:600;color:var(--navy);margin-bottom:10px;" id="result-title">Selesai!</div>
+      <div style="font-size:15px;color:var(--text-muted);margin-bottom:22px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7;" id="result-desc"></div>
+      <div style="margin-bottom:22px;">
+        <div class="progress-wrap" style="max-width:320px;margin:0 auto 8px;"><div class="progress-bar" id="result-bar"></div></div>
+        <div style="font-size:13px;color:var(--text-muted);" id="result-fraction"></div>
+      </div>
+      <button class="btn-primary" onclick="restartQuiz()">Ulangi Kuis</button>
+    </div>
+  </div>
+</section>
+
+<!-- S8: GLOSARIUM -->
+<section id="s8" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Referensi</div>
+    <h2>Glosarium Istilah</h2>
+    <p>Seluruh istilah teknis yang muncul dalam modul ini, dijelaskan dalam bahasa yang mudah dipahami.</p>
+  </div>
+  <div class="card">
+    <input type="search" class="glossary-search" placeholder="Cari istilah, misalnya: precision, AUC, audit trail..." id="glossary-input" oninput="filterGlossary()">
+    <ul class="glossary-list" id="glossary-list"></ul>
+  </div>
+</section>
+</main>
+
+<footer class="module-footer">
+  <div class="footer-info">
+    <strong>Disusun oleh:</strong> Rosliana Dwi Astuti, S.Ak<br>
+    <strong>Seri:</strong> Audit &amp; Data Insight Journey, Sesi 1 dari 18 Postingan.
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <span class="badge badge-navy">Fraud Detection</span>
+    <span class="badge badge-gray">Confusion Matrix</span>
+    <span class="badge badge-gray">AUC-ROC</span>
+    <span class="badge badge-gray">Audit Trail</span>
+  </div>
+</footer>
+
+<script>
+function showSection(id,tab){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  tab.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleAcc(btn){
+  var body=btn.nextElementSibling;
+  var isOpen=body.classList.contains('open');
+  var acc=btn.closest('.accordion');
+  acc.querySelectorAll('.accordion-btn').forEach(function(b){b.classList.remove('open');});
+  acc.querySelectorAll('.accordion-body').forEach(function(b){b.classList.remove('open');});
+  if(!isOpen){btn.classList.add('open');body.classList.add('open');}
+}
+function scrollNav(dir){
+  var el=document.getElementById('nav-inner');
+  el.scrollBy({left:dir*160,behavior:'smooth'});
+  setTimeout(updateNavArrows,200);
+}
+function updateNavArrows(){
+  var el=document.getElementById('nav-inner');
+  var btnL=document.getElementById('nav-left');
+  var btnR=document.getElementById('nav-right');
+  if(!el||!btnL||!btnR)return;
+  btnL.classList.toggle('hidden',el.scrollLeft<=4);
+  btnR.classList.toggle('hidden',el.scrollLeft+el.clientWidth>=el.scrollWidth-4);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  var el=document.getElementById('nav-inner');
+  if(el){el.addEventListener('scroll',updateNavArrows);updateNavArrows();}
+});
+
+var questions=[
+  {
+    q:"Sebuah model fraud detection selalu menjawab 'normal' untuk semua transaksi. Dari 10.000 transaksi, hanya 50 yang benar-benar fraud. Berapa akurasi model ini dan apa kesimpulannya?",
+    opts:["Akurasi 0,5% karena model tidak mendeteksi fraud apapun.","Akurasi 99,5% karena 9.950 transaksi ditebak benar, tapi model ini tidak berguna sama sekali.","Akurasi 50% karena model hanya berhasil di separuh kasus.","Akurasi tidak bisa dihitung karena model tidak pernah memprediksi fraud."],
+    correct:1,
+    explain:"Tepat. Model ini punya akurasi 99,5% karena 9.950 dari 10.000 transaksi memang normal dan dia 'benar' menebak semuanya. Tapi karena dia tidak pernah mendeteksi satu fraud pun, model ini sama sekali tidak berguna. Inilah mengapa akurasi menipu di dataset yang tidak seimbang."
+  },
+  {
+    q:"Satpam menangkap 40 orang dari total 90 yang dia tahan hari ini. Ternyata hanya 40 yang benar-benar copet, sementara 50 lainnya adalah pengunjung biasa. Ada 10 copet yang lolos tanpa tertangkap. Berapa Precision-nya?",
+    opts:["40 dibagi 50 sama dengan 80%","40 dibagi 90 sama dengan sekitar 44%","40 dibagi 50 sama dengan 80%, ini adalah Recall bukan Precision","10 dibagi 50 sama dengan 20%"],
+    correct:1,
+    explain:"Precision dihitung dari: True Positive dibagi (True Positive + False Positive) = 40 dibagi (40 + 50) = 44%. Artinya dari setiap 10 orang yang ditahan, hanya 4 yang benar-benar copet. 6 sisanya adalah pengunjung tidak bersalah yang ikut tersangkut."
+  },
+  {
+    q:"Dari situasi satpam yang sama: ada 50 copet hari ini. 40 berhasil tertangkap, 10 lolos. Berapa Recall-nya dan apa artinya?",
+    opts:["40 dibagi 90 = 44%. Artinya dari semua yang ditangkap, 44% adalah copet.","40 dibagi 50 = 80%. Artinya dari semua copet yang ada, 80% berhasil tertangkap.","50 dibagi 90 = 56%. Artinya satpam berhasil di 56% situasi.","10 dibagi 50 = 20%. Artinya 20% copet berhasil lolos."],
+    correct:1,
+    explain:"Recall dihitung dari: True Positive dibagi (True Positive + False Negative) = 40 dibagi (40 + 10) = 80%. Artinya dari 50 copet yang berkeliaran hari itu, 40 berhasil tertangkap. Masih ada 10 yang lolos dan itu tercermin dari Recall yang belum mencapai 100%."
+  },
+  {
+    q:"Dengan Precision 44% dan Recall 80%, rata-rata biasa menghasilkan 62%. Tapi F1-Score menghasilkan sekitar 57%. Mengapa F1-Score lebih rendah dan apa maknanya?",
+    opts:["F1-Score salah dihitung. Rata-rata biasa lebih akurat.","F1-Score menggunakan rata-rata harmonik yang lebih sensitif terhadap ketidakseimbangan. Precision yang rendah menarik angka akhirnya ke bawah sebagai peringatan.","F1-Score selalu lebih rendah dari rata-rata biasa karena rumusnya berbeda.","Perbedaan 5% tidak signifikan dan tidak perlu diperhatikan dalam praktik."],
+    correct:1,
+    explain:"F1-Score menggunakan rata-rata harmonik, bukan rata-rata biasa. Efeknya: kalau salah satu antara Precision atau Recall rendah, F1-Score akan menarik angka akhirnya jauh ke bawah. Ini adalah mekanisme peringatan bahwa ada ketidakseimbangan yang tidak boleh diabaikan, bukan sekadar selisih angka."
+  },
+  {
+    q:"AUC-ROC sebuah model adalah 0,5. Apa artinya dan apa yang harus dilakukan?",
+    opts:["Model berhasil mendeteksi 50% fraud. Cukup baik untuk tahap awal.","Model tidak lebih baik dari melempar koin. Di setiap threshold, peluang menangkap fraud sama dengan peluang salah menahan yang normal. Model perlu diganti atau dilatih ulang.","Model punya Recall 50% yang masih bisa ditingkatkan dengan menyesuaikan threshold.","AUC 0,5 berarti model bekerja dengan baik di separuh kondisi."],
+    correct:1,
+    explain:"AUC 0,5 berarti kurva ROC berbentuk diagonal lurus, sama persis dengan tebakan acak. Model tidak membedakan fraud dari yang normal lebih baik dari peluang 50-50. Ini bukan model yang berguna dan perlu diperbaiki secara fundamental, bukan sekadar menyesuaikan threshold."
+  },
+  {
+    q:"Sebuah bank kartu kredit memilih model dengan Recall sangat tinggi tapi Precision rendah. Apa konsekuensi praktisnya dan apakah keputusan ini masuk akal?",
+    opts:["Tidak masuk akal. Bank seharusnya selalu menyeimbangkan keduanya.","Masuk akal untuk kartu kredit. Recall tinggi berarti hampir semua fraud tertangkap. Precision rendah berarti lebih banyak transaksi normal yang diblokir, tapi dampaknya ringan dan cepat diselesaikan via customer service.","Tidak masuk akal karena Precision rendah berarti terlalu banyak pelanggan yang terganggu dan akan pindah ke bank lain.","Masuk akal hanya jika nilai setiap transaksi sangat besar seperti KPR."],
+    correct:1,
+    explain:"Untuk kartu kredit, pilihan ini masuk akal. Kartu kredit punya volume transaksi sangat tinggi dan nilai per transaksi relatif kecil, jadi akumulasi fraud yang lolos bisa sangat besar. Sementara konsekuensi Precision rendah, yaitu transaksi normal yang diblokir, biasanya cepat diselesaikan lewat verifikasi singkat. Berbeda dengan KPR di mana salah tuduh dampaknya jauh lebih berat."
+  },
+  {
+    q:"Perbedaan paling mendasar antara cara kerja auditor dan data analyst ketika menghadapi data yang sama adalah:",
+    opts:["Auditor lebih jago teknis sedangkan data analyst lebih paham bisnis.","Data analyst mencari insight apapun yang menarik dan bernilai. Auditor mencari bukti yang spesifik, terkait risiko yang sudah dipetakan, dan harus bisa dipertanggungjawabkan.","Auditor menggunakan tools yang lebih canggih sedangkan data analyst menggunakan tools yang lebih sederhana.","Data analyst bekerja lebih cepat sedangkan auditor bekerja lebih teliti."],
+    correct:1,
+    explain:"Perbedaannya bukan soal kemampuan teknis atau kecepatan, melainkan tujuan akhir dan standar pertanggungjawaban. Data analyst bermuara pada insight yang berguna bagi bisnis. Auditor bermuara pada bukti yang spesifik, bisa ditelusuri, dan bisa dipertahankan jika dipertanyakan secara hukum atau regulasi."
+  },
+  {
+    q:"Seorang auditor menemukan 200 transaksi di atas pukul 22.00 yang dibuat oleh akun yang biasanya aktif jam kantor. Langkah yang tepat selanjutnya adalah:",
+    opts:["Langsung melaporkan sebagai temuan fraud karena pola ini sangat mencurigakan.","Mengabaikannya karena transaksi di luar jam kerja bisa saja terjadi karena alasan operasional.","Memperlakukan ini sebagai anomali yang perlu investigasi lanjutan: cek apakah ada otorisasi yang sah, sistem batch yang berjalan otomatis, atau kebutuhan mendesak yang didokumentasikan.","Memblokir semua akun yang terlibat sambil menunggu penjelasan."],
+    correct:2,
+    explain:"Anomali adalah sinyal, bukan kesimpulan. Transaksi tengah malam bisa mencurigakan, tapi bisa juga punya penjelasan yang sah: sistem batch otomatis, operasional mendesak, atau shift malam yang memang ada. Auditor harus menyelidiki sebelum menarik kesimpulan. Melompat langsung ke tuduhan fraud tanpa investigasi adalah kesalahan profesional yang serius."
+  },
+  {
+    q:"Mengapa data cleaning merupakan langkah yang tidak bisa dilewati sebelum analisis audit dimulai?",
+    opts:["Karena data yang kotor membuat proses analisis lebih lambat.","Karena auditor diwajibkan oleh standar untuk mendokumentasikan semua perubahan data.","Karena data yang tidak bersih bisa menghasilkan anomali palsu yang mengarahkan investigasi ke jalur yang salah, atau menyembunyikan anomali nyata yang perlu ditemukan. Kesimpulan yang kuat hanya lahir dari data yang bisa dipercaya.","Karena regulator selalu memeriksa kualitas data sebelum menerima laporan audit."],
+    correct:2,
+    explain:"Ini soal validitas kesimpulan. Data yang kotor, misalnya format tidak konsisten, duplikasi nama vendor, atau nilai kosong yang ambigu, bisa menciptakan anomali palsu seolah ada fraud padahal tidak, atau sebaliknya menyembunyikan pola fraud yang nyata. Kesimpulan audit yang dibangun di atas data yang tidak bisa dipercaya tidak punya fondasi yang kuat."
+  },
+  {
+    q:"Apa yang dimaksud dengan audit trail dalam konteks audit berbasis data, dan mengapa ini berbeda dari sekadar menyimpan file analisis?",
+    opts:["Audit trail adalah catatan semua transaksi keuangan yang diperiksa, bukan proses analisisnya.","Audit trail adalah rekaman lengkap seluruh langkah yang bisa ditelusuri: bagaimana data dibersihkan, teknik apa yang digunakan, anomali apa yang ditemukan, investigasi apa yang dilakukan, dan bukti apa yang dikumpulkan. Ini yang membuat proses bisa diverifikasi dan dipertanggungjawabkan, bukan sekadar menyimpan file hasil akhir.","Audit trail hanya diperlukan untuk kasus yang berujung ke pengadilan, bukan untuk audit rutin.","Audit trail adalah fitur otomatis dari software audit modern yang tidak perlu dikelola secara manual."],
+    correct:1,
+    explain:"Audit trail bukan sekadar menyimpan file hasil analisis. Ini adalah rekaman lengkap yang memungkinkan siapapun untuk menelusuri setiap langkah dari awal hingga kesimpulan. Tanpanya, tidak ada cara untuk memverifikasi apakah prosesnya sudah benar, apakah ada langkah yang dilewati, atau apakah kesimpulannya didukung oleh bukti yang memadai. Inilah yang membedakan audit dari sekadar analisis data biasa."
+  }
+];
+
+var current=0,score=0,answered=false;
+function renderQuestion(){
+  answered=false;
+  document.getElementById('quiz-next-btn').disabled=true;
+  document.getElementById('quiz-score-text').textContent='Pertanyaan '+(current+1)+' dari '+questions.length;
+  var q=questions[current];
+  var optsHtml=q.opts.map(function(o,i){return '<button class="quiz-opt" onclick="selectAnswer('+i+')">'+o+'</button>';}).join('');
+  document.getElementById('quiz-body').innerHTML='<div class="quiz-q">'+q.q+'</div><div class="quiz-options">'+optsHtml+'</div><div class="quiz-feedback" id="qfeedback"></div>';
+}
+function selectAnswer(idx){
+  if(answered)return;
+  answered=true;
+  var q=questions[current];
+  var opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o){o.disabled=true;});
+  var fb=document.getElementById('qfeedback');
+  if(idx===q.correct){opts[idx].classList.add('correct');score++;fb.className='quiz-feedback show ok';fb.innerHTML='<strong>Benar!</strong> '+q.explain;}
+  else{opts[idx].classList.add('wrong');opts[q.correct].classList.add('correct');fb.className='quiz-feedback show nok';fb.innerHTML='<strong>Belum tepat.</strong> '+q.explain;}
+  var btn=document.getElementById('quiz-next-btn');
+  btn.disabled=false;
+  if(current===questions.length-1)btn.textContent='Lihat Hasil';
+}
+function nextQuestion(){
+  if(!answered)return;
+  current++;
+  if(current<questions.length){renderQuestion();}else{showResult();}
+}
+function showResult(){
+  document.getElementById('quiz-container').style.display='none';
+  var pct=Math.round(score/questions.length*100);
+  document.getElementById('quiz-result').style.display='block';
+  document.getElementById('result-icon').textContent=pct>=80?'&#127942;':pct>=60?'&#128077;':'&#128218;';
+  document.getElementById('result-title').textContent=pct>=80?'Pemahaman Sangat Baik!':pct>=60?'Cukup Baik, Lanjutkan!':'Yuk Dalami Lagi';
+  document.getElementById('result-desc').textContent='Kamu menjawab '+score+' dari '+questions.length+' pertanyaan dengan benar ('+pct+'%). '+(pct>=80?'Fondasi pemahamanmu tentang data analytics dan fraud detection dalam konteks audit sudah solid.':'Coba kembali ke bagian yang relevan dan ulangi kuis untuk memperdalam pemahamanmu.');
+  document.getElementById('result-bar').style.width=pct+'%';
+  document.getElementById('result-fraction').textContent=score+' / '+questions.length+' benar';
+}
+function restartQuiz(){
+  current=0;score=0;answered=false;
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-container').style.display='block';
+  document.getElementById('quiz-next-btn').textContent='Pertanyaan Berikutnya';
+  renderQuestion();
+}
+
+var glossaryData=[
+  {term:"Akurasi (Accuracy)",def:"Persentase dari semua prediksi model yang benar, dihitung dari (TP + TN) dibagi total data. Menipu di dataset yang tidak seimbang karena model yang tidak berguna pun bisa punya akurasi tinggi jika kelas mayoritas sangat dominan."},
+  {term:"Anomali",def:"Pola atau transaksi yang terlihat tidak biasa dibandingkan data lainnya. Dalam audit, anomali adalah sinyal yang membutuhkan investigasi lanjutan, bukan kesimpulan tentang adanya kecurangan."},
+  {term:"AUC (Area Under the Curve)",def:"Luas area di bawah kurva ROC. Nilainya antara 0 dan 1. AUC 0,5 berarti model tidak lebih baik dari tebakan acak. AUC mendekati 1 berarti model sangat andal membedakan kelas positif dan negatif di hampir semua kondisi threshold."},
+  {term:"Audit Trail",def:"Rekaman lengkap dari seluruh langkah proses audit yang memungkinkan penelusuran kembali: bagaimana data disiapkan, teknik apa yang digunakan, anomali apa yang ditemukan, investigasi apa yang dilakukan, dan bukti apa yang dikumpulkan. Berbeda dari sekadar menyimpan file hasil akhir."},
+  {term:"Benford's Law",def:"Teori bahwa dalam sekumpulan data yang terbentuk secara alami, angka pertama dari setiap nilai cenderung mengikuti distribusi tertentu di mana angka 1 paling sering muncul. Digunakan auditor untuk mendeteksi angka-angka yang mungkin dimanipulasi. Tidak cocok untuk data seperti nomor ID atau harga eceran yang sudah ditentukan."},
+  {term:"Class Imbalance",def:"Kondisi di mana jumlah data satu kelas jauh lebih banyak dari kelas lainnya. Dalam fraud detection, transaksi normal jauh lebih banyak dari transaksi fraud. Ini yang membuat akurasi menjadi metrik yang menipu."},
+  {term:"Confusion Matrix",def:"Tabel yang merangkum performa model klasifikasi dalam empat kotak: True Positive, True Negative, False Positive, dan False Negative. Semua metrik evaluasi model lainnya diturunkan dari keempat nilai ini. Disebut confusion matrix karena menunjukkan di mana model menjadi 'bingung' antara kelas."},
+  {term:"Cost-Sensitive Evaluation",def:"Pendekatan evaluasi model yang menghitung kerugian nyata dalam satuan uang dari setiap jenis kesalahan model, bukan sekadar persentase. Lebih relevan untuk pengambilan keputusan bisnis karena langsung menjawab pertanyaan berapa rupiah yang hilang akibat kesalahan model."},
+  {term:"Data Analyst",def:"Profesional yang menggunakan data untuk menemukan insight yang bernilai bagi bisnis. Titik akhir pekerjaannya adalah insight yang membantu pengambilan keputusan. Berbeda dari auditor yang titik akhirnya adalah bukti yang bisa dipertanggungjawabkan."},
+  {term:"Data Cleaning",def:"Proses membersihkan dan menyiapkan data sebelum dianalisis: menangani nilai kosong, memperbaiki format yang tidak konsisten, menyeragamkan penulisan, dan menghapus duplikasi. Langkah kritis karena data yang kotor menghasilkan analisis yang tidak bisa dipercaya."},
+  {term:"Duplicate Detection",def:"Teknik analytics yang mencari entri data yang identik atau sangat mirip. Dalam audit, digunakan untuk mendeteksi kemungkinan pembayaran yang diproses lebih dari sekali, baik karena kesalahan maupun disengaja."},
+  {term:"F1-Score",def:"Metrik yang menggabungkan Precision dan Recall menggunakan rata-rata harmonik. Lebih sensitif terhadap ketidakseimbangan antara keduanya dibanding rata-rata biasa. Kalau salah satu rendah, F1-Score akan menarik angka akhirnya jauh ke bawah sebagai peringatan."},
+  {term:"False Negative (FN)",def:"Kesalahan model di mana kasus yang sebenarnya positif (fraud) diprediksi sebagai negatif (normal). Dalam konteks satpam: copet yang lolos tanpa tertangkap. Sering dianggap lebih mahal secara finansial karena fraud benar-benar terjadi tanpa terdeteksi."},
+  {term:"False Positive (FP)",def:"Kesalahan model di mana kasus yang sebenarnya negatif (normal) diprediksi sebagai positif (fraud). Dalam konteks satpam: pengunjung biasa yang salah ditahan. Menyebabkan gangguan bagi pengguna dan bisa merusak kepercayaan jika terlalu sering terjadi."},
+  {term:"Fraud Risk Assessment",def:"Proses pemetaan risiko kecurangan yang dilakukan auditor sebelum membuka data. Mengidentifikasi area proses bisnis yang paling rentan terhadap kecurangan. Hasilnya menjadi dasar untuk menentukan hipotesis yang akan diuji melalui data analytics."},
+  {term:"Hipotesis Audit",def:"Dugaan spesifik tentang kemungkinan kecurangan atau kelemahan kontrol yang dirumuskan berdasarkan hasil fraud risk assessment. Menjadi arah yang memandu pemilihan teknik analytics dan interpretasi hasilnya."},
+  {term:"Investigasi Lanjutan",def:"Tahap setelah anomali ditemukan dari data analytics. Meliputi wawancara dengan pihak terkait, pengecekan dokumen pendukung, dan konfirmasi dari sumber eksternal. Barulah dari sini kesimpulan tentang ada atau tidaknya kecurangan bisa dibuat."},
+  {term:"Journal Entry Testing",def:"Teknik analytics yang memeriksa jurnal akuntansi untuk menemukan entri yang dibuat di luar pola normal: di luar jam kerja, oleh akun yang tidak biasanya membuat jurnal besar, atau tepat menjelang tutup buku. Berguna untuk mendeteksi manipulasi laporan keuangan."},
+  {term:"Precision",def:"Dari semua yang diprediksi model sebagai positif (fraud), berapa persen yang benar-benar positif. Rumus: TP dibagi (TP + FP). Precision rendah berarti model terlalu banyak salah menuduh kasus normal sebagai fraud."},
+  {term:"Recall (Sensitivity)",def:"Dari semua kasus yang benar-benar positif (fraud), berapa persen yang berhasil dideteksi model. Rumus: TP dibagi (TP + FN). Recall rendah berarti banyak fraud yang lolos tanpa terdeteksi."},
+  {term:"ROC Curve",def:"Receiver Operating Characteristic Curve. Grafik yang menunjukkan trade-off antara True Positive Rate (Recall) dan False Positive Rate di berbagai posisi threshold. Kurva yang melengkung tinggi ke sudut kiri atas menunjukkan model yang andal di semua kondisi."},
+  {term:"Threshold",def:"Batas nilai yang digunakan model untuk memutuskan apakah suatu kasus diklasifikasikan sebagai fraud atau normal. Analoginya adalah posisi tombol volume. Mengubah threshold mengubah trade-off antara Precision dan Recall."},
+  {term:"Trade-off",def:"Kondisi di mana meningkatkan satu hal berarti mengorbankan hal lain. Dalam fraud detection, meningkatkan Recall (menangkap lebih banyak fraud) biasanya menurunkan Precision (lebih banyak yang salah dituduh), dan sebaliknya."},
+  {term:"True Negative (TN)",def:"Kasus yang benar-benar negatif (normal) dan diprediksi model sebagai negatif. Dalam konteks satpam: pengunjung baik yang dibiarkan masuk dengan benar. Biasanya merupakan kelompok terbesar di dataset fraud detection."},
+  {term:"True Positive (TP)",def:"Kasus yang benar-benar positif (fraud) dan berhasil dideteksi model sebagai positif. Dalam konteks satpam: copet yang berhasil tertangkap. Ini adalah hasil yang paling diharapkan dari model fraud detection."},
+  {term:"Vendor Analysis",def:"Teknik analytics yang memeriksa karakteristik vendor yang terdaftar dalam sistem pengadaan. Digunakan untuk mendeteksi vendor fiktif atau mencurigakan berdasarkan indikasi seperti alamat yang sama dengan karyawan, tidak ada NPWP valid, atau baru terdaftar tepat sebelum pembayaran besar."}
+];
+
+function renderGlossary(filter){
+  var list=document.getElementById('glossary-list');
+  var data=filter?glossaryData.filter(function(g){return g.term.toLowerCase().includes(filter.toLowerCase())||g.def.toLowerCase().includes(filter.toLowerCase());}):glossaryData;
+  if(data.length===0){list.innerHTML='<li style="padding:24px;text-align:center;color:var(--text-muted);font-size:14px;">Tidak ada istilah yang cocok.</li>';return;}
+  list.innerHTML=data.map(function(g){return '<li class="glossary-item"><div class="glossary-term">'+g.term+'</div><div class="glossary-def">'+g.def+'</div></li>';}).join('');
+}
+function filterGlossary(){renderGlossary(document.getElementById('glossary-input').value);}
+renderQuestion();
+renderGlossary();
+</script>
+</body>
+</html>
