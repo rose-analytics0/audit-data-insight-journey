@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul: Yuk Kenalan Audit Keuangan</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B1F3A;--navy-light:#2A4F7C;--accent:#0FA3B1;--accent-soft:#E3F7F9;--amber:#E8A838;--amber-soft:#FDF3DC;--red-soft:#FDE8E8;--red:#C94040;--green:#2E7D5E;--green-soft:#E5F5EE;--purple:#6B48C8;--purple-soft:#F0ECFD;--gray-100:#F6F7F9;--gray-200:#EAECF0;--gray-400:#9BA3AF;--gray-600:#4B5563;--text:#1A2535;--text-muted:#5A6475;--border:rgba(11,31,58,0.12);--shadow-sm:0 1px 3px rgba(11,31,58,0.08);--shadow-md:0 4px 16px rgba(11,31,58,0.10);--radius:12px;--radius-sm:8px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-100);color:var(--text);line-height:1.75;font-size:15px;}
+.hero{background:var(--navy);color:white;padding:0;position:relative;overflow:hidden;}
+.hero-inner{max-width:940px;margin:0 auto;padding:60px 40px 52px;position:relative;z-index:2;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:420px;height:420px;border-radius:50%;border:60px solid rgba(15,163,177,0.09);}
+.hero::after{content:'';position:absolute;bottom:-60px;left:38%;width:260px;height:260px;border-radius:50%;border:40px solid rgba(15,163,177,0.05);}
+.badge-event{display:inline-flex;align-items:center;gap:8px;background:rgba(15,163,177,0.18);color:#7FD9E2;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;border:1px solid rgba(15,163,177,0.3);margin-bottom:20px;}
+.badge-event span{width:6px;height:6px;border-radius:50%;background:#0FA3B1;display:inline-block;}
+.hero h1{font-family:'Lora',serif;font-size:36px;font-weight:600;line-height:1.22;color:white;margin-bottom:14px;max-width:680px;}
+.hero-sub{color:rgba(255,255,255,0.60);font-size:15px;max-width:560px;margin-bottom:32px;line-height:1.7;}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;}
+.meta-item{font-size:13px;color:rgba(255,255,255,0.50);}
+.meta-item strong{color:rgba(255,255,255,0.85);font-weight:500;}
+.meta-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.28);display:inline-block;margin:0 4px;vertical-align:middle;}
+.nav-strip{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
+.nav-wrap{max-width:940px;margin:0 auto;padding:0 28px;display:flex;align-items:stretch;}
+.nav-inner{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;}
+.nav-inner::-webkit-scrollbar{display:none;}
+.nav-tab{display:flex;align-items:center;gap:6px;padding:13px 14px;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+.nav-tab:hover{color:var(--navy);}
+.nav-tab.active{color:var(--navy);border-bottom-color:var(--accent);}
+.nav-num{width:19px;height:19px;border-radius:50%;background:var(--gray-200);color:var(--gray-600);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-tab.active .nav-num{background:var(--accent);color:white;}
+.nav-arrow{flex-shrink:0;width:32px;background:white;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;transition:color 0.15s;border-bottom:2px solid transparent;padding:0;}
+.nav-arrow:hover{color:var(--navy);}
+.nav-arrow.hidden{opacity:0;pointer-events:none;}
+.main{max-width:940px;margin:0 auto;padding:44px 40px 90px;}
+.section{display:none;}
+.section.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.section-header{margin-bottom:34px;}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+.section-header h2{font-family:'Lora',serif;font-size:28px;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:12px;}
+.section-header p{color:var(--text-muted);font-size:15px;line-height:1.75;max-width:700px;}
+.card{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:26px 30px;margin-bottom:22px;box-shadow:var(--shadow-sm);}
+.card-title{font-weight:600;font-size:15px;color:var(--navy);margin-bottom:12px;}
+.card p{color:var(--text-muted);font-size:14px;line-height:1.8;}
+.accent-card{border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;border-left:4px solid;}
+.accent-card.blue{background:#EEF6FC;border-color:var(--accent);}
+.accent-card.amber{background:var(--amber-soft);border-color:var(--amber);}
+.accent-card.red{background:var(--red-soft);border-color:var(--red);}
+.accent-card.green{background:var(--green-soft);border-color:var(--green);}
+.accent-card.purple{background:var(--purple-soft);border-color:var(--purple);}
+.accent-card .ac-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:7px;}
+.accent-card.blue .ac-label{color:#0B7E8A;}
+.accent-card.amber .ac-label{color:#8B5E0A;}
+.accent-card.red .ac-label{color:#8B2020;}
+.accent-card.green .ac-label{color:#1B5C3D;}
+.accent-card.purple .ac-label{color:#4B2EA0;}
+.accent-card p{font-size:14px;color:var(--text);line-height:1.75;}
+.accent-card strong{font-weight:600;}
+.blockquote{border-left:3px solid var(--accent);padding:18px 22px 18px 26px;background:var(--accent-soft);border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:22px 0;font-family:'Lora',serif;font-style:italic;font-size:15px;color:#0B3D47;line-height:1.7;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:22px;}
+.type-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow-sm);}
+.type-card h4{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:8px;}
+.type-card p{font-size:13.5px;color:var(--text-muted);line-height:1.7;}
+.table-wrap{overflow-x:auto;margin-bottom:22px;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--border);}
+thead th{background:var(--navy);color:white;padding:12px 16px;text-align:left;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;}
+tbody tr:nth-child(even) td{background:var(--gray-100);}
+td{padding:12px 16px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6;}
+td:first-child{font-weight:500;color:var(--navy);}
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;white-space:nowrap;}
+.badge-navy{background:var(--navy);color:white;}
+.badge-gray{background:var(--gray-200);color:var(--gray-600);}
+.badge-green{background:var(--green-soft);color:var(--green);}
+.badge-amber{background:var(--amber-soft);color:#8B5E0A;}
+.badge-blue{background:var(--accent-soft);color:#0B7E8A;}
+.badge-red{background:var(--red-soft);color:#8B2020;}
+.badge-purple{background:var(--purple-soft);color:var(--purple);}
+.accordion{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:white;margin-bottom:22px;box-shadow:var(--shadow-sm);}
+.accordion-item{border-bottom:1px solid var(--border);}
+.accordion-item:last-child{border-bottom:none;}
+.accordion-btn{width:100%;text-align:left;padding:17px 22px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--navy);background:none;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;transition:background 0.15s;}
+.accordion-btn:hover{background:var(--gray-100);}
+.accordion-btn.open{background:var(--accent-soft);color:#0B7E8A;}
+.accordion-chevron{font-size:16px;transition:transform 0.2s;flex-shrink:0;}
+.accordion-btn.open .accordion-chevron{transform:rotate(180deg);}
+.accordion-body{display:none;padding:6px 22px 20px;font-size:14px;color:var(--text-muted);line-height:1.8;}
+.accordion-body.open{display:block;}
+.step-list{list-style:none;margin-bottom:22px;}
+.step-item{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--border);}
+.step-item:last-child{border-bottom:none;}
+.step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--navy);color:white;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.step-content h4{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:5px;}
+.step-content p{font-size:14px;color:var(--text-muted);line-height:1.75;}
+.divider{height:1px;background:var(--border);margin:30px 0;}
+.checklist{list-style:none;}
+.checklist li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-200);font-size:14px;color:var(--text);line-height:1.65;}
+.checklist li:last-child{border-bottom:none;}
+.check-icon{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--green-soft);display:flex;align-items:center;justify-content:center;margin-top:2px;font-size:11px;color:var(--green);font-weight:700;}
+.flow-wrap{display:flex;align-items:stretch;gap:0;margin-bottom:22px;overflow-x:auto;padding-bottom:6px;}
+.flow-step{flex-shrink:0;border-radius:var(--radius-sm);padding:14px 18px;text-align:center;min-width:126px;display:flex;flex-direction:column;justify-content:center;}
+.flow-step .fs-num{font-size:10px;font-weight:700;opacity:0.7;margin-bottom:4px;letter-spacing:0.07em;text-transform:uppercase;}
+.flow-step .fs-title{font-size:13px;font-weight:600;line-height:1.35;}
+.flow-step .fs-sub{font-size:11px;opacity:0.75;margin-top:4px;line-height:1.4;}
+.flow-arrow{flex-shrink:0;font-size:22px;color:var(--accent);padding:0 4px;display:flex;align-items:center;}
+.cycle-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:22px;}
+.cycle-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-sm);}
+.cycle-card .cc-num{width:30px;height:30px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;color:white;margin-bottom:10px;}
+.cycle-card h4{font-size:13.5px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+.cycle-card p{font-size:13px;color:var(--text-muted);line-height:1.65;}
+.hex-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;}
+.hex-card{border-radius:var(--radius);padding:18px 20px;border:1px solid var(--border);background:white;box-shadow:var(--shadow-sm);}
+.hex-card h4{font-size:14px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px;color:var(--navy);}
+.hex-card .hc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
+.hex-card p{font-size:13px;color:var(--text-muted);line-height:1.7;}
+.hex-card .example{font-size:12.5px;margin-top:10px;padding:10px 14px;border-radius:8px;line-height:1.65;}
+.case-card{background:white;border:2px solid var(--amber);border-radius:var(--radius);overflow:hidden;margin-bottom:22px;box-shadow:var(--shadow-md);}
+.case-header{background:var(--amber-soft);padding:14px 24px;border-bottom:2px solid var(--amber);display:flex;align-items:center;gap:10px;}
+.case-header h4{font-size:15px;font-weight:600;color:var(--navy);}
+.case-body{padding:24px;}
+.case-body p{font-size:14px;color:var(--text-muted);line-height:1.8;margin-bottom:14px;}
+.case-timeline{display:flex;flex-direction:column;gap:0;}
+.ct-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--gray-200);}
+.ct-item:last-child{border-bottom:none;}
+.ct-dot{flex-shrink:0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;margin-top:2px;}
+.ct-content h5{font-size:13.5px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.ct-content p{font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:0;}
+.dna-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.dna-label{font-size:13px;font-weight:500;color:var(--text);width:220px;flex-shrink:0;}
+.dna-bar-wrap{flex:1;background:var(--gray-200);border-radius:100px;height:10px;overflow:hidden;}
+.dna-bar{height:100%;border-radius:100px;}
+.dna-pct{font-size:12px;font-weight:600;color:var(--text-muted);width:38px;text-align:right;flex-shrink:0;}
+.mindset-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;}
+.mindset-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-sm);}
+.mindset-card .mc-icon{font-size:22px;margin-bottom:10px;}
+.mindset-card h4{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+.mindset-card p{font-size:13.5px;color:var(--text-muted);line-height:1.7;}
+.skill-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:22px;}
+.skill-col{background:white;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);}
+.skill-col-header{padding:13px 16px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;}
+.skill-col-body{padding:12px 16px;}
+.skill-item{font-size:13.5px;color:var(--text-muted);padding:7px 0;border-bottom:1px solid var(--gray-200);line-height:1.5;display:flex;align-items:center;gap:8px;}
+.skill-item:last-child{border-bottom:none;}
+.skill-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.salary-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:22px;}
+.salary-head{display:grid;grid-template-columns:200px 130px 1fr;background:var(--navy);}
+.salary-head div{padding:10px 16px;color:white;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;}
+.salary-row{display:grid;grid-template-columns:200px 130px 1fr;border-bottom:1px solid var(--border);background:white;}
+.salary-row:last-child{border-bottom:none;}
+.salary-row:nth-child(even){background:var(--gray-100);}
+.salary-cell{padding:12px 16px;font-size:14px;color:var(--text);line-height:1.5;}
+.salary-cell.label{font-weight:500;color:var(--navy);}
+.quiz-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow-sm);margin-bottom:22px;}
+.quiz-q{font-family:'Lora',serif;font-size:17px;font-weight:600;color:var(--navy);margin-bottom:22px;line-height:1.45;}
+.quiz-options{display:flex;flex-direction:column;gap:10px;}
+.quiz-opt{padding:13px 18px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;transition:all 0.15s;color:var(--text);background:white;text-align:left;font-family:'DM Sans',sans-serif;line-height:1.55;width:100%;}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);color:#0B7E8A;}
+.quiz-opt.correct{background:var(--green-soft);border-color:var(--green);color:var(--green);font-weight:500;}
+.quiz-opt.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.quiz-opt:disabled{cursor:default;}
+.quiz-feedback{margin-top:16px;padding:14px 18px;border-radius:var(--radius-sm);font-size:14px;line-height:1.7;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.ok{background:var(--green-soft);color:#1B5C3D;}
+.quiz-feedback.nok{background:var(--red-soft);color:#8B2020;}
+.quiz-nav{margin-top:22px;display:flex;gap:10px;align-items:center;}
+.btn-primary{background:var(--navy);color:white;border:none;padding:11px 24px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.15s;}
+.btn-primary:hover{background:var(--navy-light);}
+.btn-primary:disabled{background:var(--gray-400);cursor:default;}
+.quiz-score-text{font-size:13px;color:var(--text-muted);}
+.progress-wrap{background:var(--gray-200);border-radius:100px;height:6px;margin-bottom:6px;overflow:hidden;}
+.progress-bar{height:100%;border-radius:100px;background:var(--accent);transition:width 0.4s ease;}
+.glossary-search{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);margin-bottom:18px;outline:none;transition:border-color 0.15s;background:white;}
+.glossary-search:focus{border-color:var(--accent);}
+.glossary-list{list-style:none;}
+.glossary-item{padding:14px 0;border-bottom:1px solid var(--gray-200);}
+.glossary-item:last-child{border-bottom:none;}
+.glossary-term{font-weight:600;font-size:14px;color:var(--navy);margin-bottom:4px;}
+.glossary-def{font-size:14px;color:var(--text-muted);line-height:1.7;}
+.module-footer{max-width:940px;margin:0 auto;padding:28px 40px 52px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.footer-info{font-size:12px;color:var(--text-muted);line-height:1.7;}
+.footer-info strong{color:var(--text);font-weight:500;}
+.sr-only{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+@media(max-width:700px){
+  .hero-inner{padding:40px 20px 38px;} .hero h1{font-size:26px;} .nav-wrap{padding:0 8px;}
+  .main{padding:28px 20px 64px;}
+  .grid-2,.grid-3,.cycle-grid,.hex-grid,.skill-grid,.mindset-grid{grid-template-columns:1fr;}
+  .salary-row,.salary-head{grid-template-columns:1fr 1fr 1fr;font-size:12px;}
+  .module-footer{padding:20px 20px 44px;}
+}
+</style>
+</head>
+<body>
+<h1 class="sr-only">Modul Interaktif: Yuk Kenalan Audit Keuangan</h1>
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge-event"><span></span> Pre-Event Unlock Bootcamp Series, 31 Mei 2026</div>
+    <h1>Yuk Kenalan<br>Audit Keuangan</h1>
+    <p class="hero-sub">Apa yang sebenarnya dikerjakan auditor? Panduan lengkap dari dasar hingga masa depan profesi audit. Disusun dari materi Pre-Event Bootcamp bersama Arly Leonard Manafe.</p>
+    <div class="hero-meta">
+      <span class="meta-item"><strong>5 Topik Utama</strong></span>
+      <span class="meta-dot"></span>
+      <span class="meta-item"><strong>Visual Alur dan Siklus</strong></span>
+      <span class="meta-dot"></span>
+      <span class="meta-item"><strong>Studi Kasus Fraud</strong></span>
+      <span class="meta-dot"></span>
+      <span class="meta-item"><strong>Uji Pemahaman</strong></span>
+    </div>
+  </div>
+</div>
+<nav class="nav-strip">
+  <div class="nav-wrap">
+    <button class="nav-arrow hidden" id="nav-left" onclick="scrollNav(-1)">&#8249;</button>
+    <div class="nav-inner" id="nav-inner">
+      <button class="nav-tab active" onclick="showSection('s1',this)"><span class="nav-num">1</span> Intro Audit</button>
+      <button class="nav-tab" onclick="showSection('s2',this)"><span class="nav-num">2</span> Dunia Kerja</button>
+      <button class="nav-tab" onclick="showSection('s3',this)"><span class="nav-num">3</span> Audit Mindset</button>
+      <button class="nav-tab" onclick="showSection('s4',this)"><span class="nav-num">4</span> Proses Audit</button>
+      <button class="nav-tab" onclick="showSection('s5',this)"><span class="nav-num">5</span> Fraud Awareness</button>
+      <button class="nav-tab" onclick="showSection('s6',this)"><span class="nav-num">6</span> Uji Pemahaman</button>
+      <button class="nav-tab" onclick="showSection('s7',this)"><span class="nav-num">7</span> Glosarium</button>
+    </div>
+    <button class="nav-arrow" id="nav-right" onclick="scrollNav(1)">&#8250;</button>
+  </div>
+</nav>
+<main class="main">
+
+<!-- SECTION 1: INTRO AUDIT -->
+<section id="s1" class="section active">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 1</div>
+    <h2>Introduction to Financial Audit</h2>
+    <p>Sebelum bicara karier atau teknis, kita perlu luruskan dulu satu pertanyaan mendasar: sebenarnya apa yang dilakukan seorang auditor setiap harinya?</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Polling: Apa itu "Auditor" menurut kamu?</div>
+    <p style="margin-bottom:18px;">Di sesi pembuka, peserta diminta memilih dari tiga opsi. Mana yang paling mendekati pikiranmu?</p>
+    <div class="grid-3">
+      <div class="type-card" style="border-top:3px solid var(--red);">
+        <h4>&#128268; Polisi Perusahaan?</h4>
+        <p>Apakah auditor bertugas menangkap basah karyawan yang melakukan kesalahan operasional setiap hari?</p>
+      </div>
+      <div class="type-card" style="border-top:3px solid var(--amber);">
+        <h4>&#128269; Tukang Cari Kesalahan?</h4>
+        <p>Apakah kesuksesan auditor diukur dari seberapa banyak kesalahan kecil yang berhasil mereka temukan?</p>
+      </div>
+      <div class="type-card" style="border-top:3px solid var(--accent);">
+        <h4>&#128196; Pemeriksa Laporan?</h4>
+        <p>Atau sekadar memastikan angka di laporan keuangan sudah balance dan sesuai standar akuntansi?</p>
+      </div>
+    </div>
+    <div class="accent-card green" style="margin-top:4px;margin-bottom:0;">
+      <div class="ac-label">Jawabannya</div>
+      <p>Ketiganya kurang tepat. Auditor bukan polisi, bukan pemburu kesalahan, dan bukan sekadar pemeriksa angka. Tapi dari ketiganya, yang ketiga paling mendekati. Mari kita bangun pemahaman yang lebih tepat.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Analogi Audit: Medical Check-Up Perusahaan</div>
+    <p style="margin-bottom:16px;">Bayangkan kamu pergi ke dokter untuk pemeriksaan rutin. Dokter tidak datang karena kamu sudah sakit. Dokter memeriksa secara menyeluruh dan memberikan penilaian objektif tentang kondisi kesehatanmu kepada pihak yang perlu tahu seperti asuransi atau keluarga. Itulah auditor.</p>
+    <div class="flow-wrap">
+      <div class="flow-step" style="background:var(--navy);color:white;">
+        <div class="fs-num">Entitas</div>
+        <div class="fs-title">Manajemen</div>
+        <div class="fs-sub">Menyusun laporan keuangan</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--accent);color:white;">
+        <div class="fs-num">Proses</div>
+        <div class="fs-title">Auditor</div>
+        <div class="fs-sub">Memeriksa secara independen</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--green);color:white;">
+        <div class="fs-num">Output</div>
+        <div class="fs-title">Opini Audit</div>
+        <div class="fs-sub">Laporan yang bisa dipercaya</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--navy-light);color:white;">
+        <div class="fs-num">Pengguna</div>
+        <div class="fs-title">Stakeholders</div>
+        <div class="fs-sub">Investor, bank, pemerintah</div>
+      </div>
+    </div>
+    <p>Tujuannya bukan sekadar mencari "penyakit" alias kesalahan, melainkan memberikan opini objektif atas kewajaran laporan keuangan kepada pihak yang berkepentingan. Kalau dokter menemukan masalah, itu bonus dari pemeriksaan yang teliti, bukan tujuan utamanya.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tiga Jenis Audit Utama</div>
+    <p style="margin-bottom:18px;">Tidak semua audit sama. Ketiga jenis ini punya fokus, pengguna laporan, dan "vibe" yang berbeda.</p>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>&#128203; Financial Audit, Audit Laporan Keuangan</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Dilakukan oleh auditor eksternal dari Kantor Akuntan Publik (KAP). Tujuannya memastikan laporan keuangan yang disusun manajemen disajikan secara wajar sesuai standar akuntansi. Pengguna laporannya adalah publik luas: investor, kreditor, pemerintah, dan pemegang saham. Auditor di sini bekerja sebagai pihak ketiga yang independen, tidak punya kepentingan dalam perusahaan yang diaudit. Ibarat dokter dari rumah sakit berbeda yang diminta memeriksa pasien agar hasilnya tidak berpihak.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>&#127970; Internal Audit</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Evaluasi independen dari dalam perusahaan untuk meningkatkan efektivitas manajemen risiko dan kontrol internal. Auditor internal adalah karyawan perusahaan, melapor ke direksi atau komite audit. Fokusnya lebih luas dari sekadar laporan keuangan historis, mencakup efisiensi operasional, manajemen risiko, dan bahkan kejadian yang akan datang. Menurut IIA, audit internal adalah aktivitas konsultasi dan assurance yang dirancang untuk menambah nilai dan meningkatkan operasi organisasi.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>&#128270; Forensic Audit</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Investigasi mendalam yang dirancang khusus untuk mendeteksi kecurangan dan mengumpulkan bukti hukum. Hasilnya disampaikan ke pengadilan atau manajemen puncak. Auditor forensik bekerja seperti detektif finansial yang mencari bukti solid yang bisa dipertahankan di pengadilan. Berbeda dari audit biasa yang bersifat preventif atau evaluatif, forensic audit bersifat investigatif dan reaktif terhadap indikasi kecurangan.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Dua Konsep Fundamental yang Wajib Dipahami</div>
+    <p style="margin-bottom:16px;">Sebelum masuk ke hal teknis, ada dua prinsip dasar yang membentuk seluruh cara auditor berpikir dan bekerja.</p>
+    <div class="grid-2">
+      <div class="accent-card blue" style="margin:0;">
+        <div class="ac-label">Reasonable Assurance</div>
+        <p>Auditor tidak memberikan jaminan mutlak 100% bahwa laporan keuangan sempurna tanpa cela. Yang diberikan adalah <strong>keyakinan memadai</strong> bahwa laporan bebas dari salah saji material, baik karena error maupun fraud. Auditor bukan asuransi yang menanggung segala risiko. Ini penting dipahami agar ekspektasi terhadap audit realistis.</p>
+      </div>
+      <div class="accent-card amber" style="margin:0;">
+        <div class="ac-label">Professional Skepticism</div>
+        <p>Sikap kritis yang selalu waspada terhadap kondisi yang mungkin menunjukkan adanya misstatement. Prinsipnya: <strong>Trust, but Verify.</strong> Auditor tidak langsung curiga pada manajemen, tapi juga tidak begitu saja menerima asersi tanpa bukti pendukung yang valid. Ini bukan sikap paranoid, ini sikap profesional.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: DUNIA KERJA AUDITOR -->
+<section id="s2" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 2</div>
+    <h2>Dunia Kerja Auditor</h2>
+    <p>Dari perbedaan auditor internal dan eksternal, peran akuntan publik, hingga jenjang karier dan kisaran gaji. Bagian ini memberi gambaran nyata tentang dunia profesi audit.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Internal vs Eksternal Auditor: Apa Bedanya?</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Aspek</th><th>Eksternal Auditor (KAP)</th><th>Internal Auditor</th></tr></thead>
+        <tbody>
+          <tr><td>Status</td><td>Pihak ketiga yang independen dari luar perusahaan</td><td>Karyawan internal perusahaan</td></tr>
+          <tr><td>Tujuan Utama</td><td>Memberikan opini atas kewajaran laporan keuangan</td><td>Meningkatkan operasional, kepatuhan, dan manajemen risiko</td></tr>
+          <tr><td>Fokus Audit</td><td>Akurasi data historis keuangan entitas</td><td>Efisiensi, manajemen risiko, dan potensi ke depan</td></tr>
+          <tr><td>Melapor kepada</td><td>Investor, kreditor, pemerintah, dan publik</td><td>Manajemen eksekutif dan Dewan Komisaris atau Komite Audit</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Matriks Kuadran Auditor: Empat Jenis dalam Satu Pandangan</div>
+    <p style="margin-bottom:16px;">Di luar eksternal dan internal, ada dua jenis auditor lain yang punya peran berbeda dalam ekosistem akuntabilitas keuangan Indonesia.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Jenis Auditor</th><th>Fokus Utama</th><th>Melapor Kepada</th><th>Karakteristik</th></tr></thead>
+        <tbody>
+          <tr><td>Eksternal (KAP)</td><td>Opini kewajaran laporan keuangan</td><td>Publik dan pemegang saham</td><td>Independensi absolut. Pihak luar yang objektif.</td></tr>
+          <tr><td>Internal (Perusahaan)</td><td>Perbaikan sistem, efisiensi, kontrol risiko</td><td>Direksi atau Komite Audit</td><td>Konsultan internal. Fokus pada nilai tambah.</td></tr>
+          <tr><td>Pemerintah (BPK/BPKP)</td><td>Pengawasan uang negara dan kepatuhan</td><td>Negara, DPR, Presiden</td><td>Penjaga uang rakyat. Ketat pada regulasi publik.</td></tr>
+          <tr><td>Forensik</td><td>Investigasi fraud atau kecurangan</td><td>Pengadilan atau manajemen puncak</td><td>Detektif finansial. Mencari bukti hukum yang solid.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Siapa Akuntan Publik?</div>
+    <p style="margin-bottom:14px;">Akuntan publik adalah profesional di bidang akuntansi yang bekerja secara independen untuk memberikan jasa kepada masyarakat umum, terutama dalam melakukan audit, pemeriksaan, dan penilaian terhadap laporan keuangan perusahaan atau organisasi. Di Indonesia profesi ini diatur oleh UU No. 5 Tahun 2011 tentang Akuntan Publik.</p>
+    <div class="accent-card blue">
+      <div class="ac-label">Big Four sebagai Standar Internasional</div>
+      <p>Empat firma audit terbesar di dunia, yaitu PwC, Deloitte, KPMG, dan EY, dikenal sebagai "Big Four". Mereka menetapkan standar kualitas audit yang menjadi acuan industri secara global. Bekerja di Big Four atau KAP yang terafiliasi sering menjadi batu loncatan karier yang kuat bagi auditor muda.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mengapa Audit Eksternal Penting? (Why External Audit Matters)</div>
+    <div class="flow-wrap">
+      <div class="flow-step" style="background:var(--navy);color:white;">
+        <div class="fs-num">Langkah 1</div>
+        <div class="fs-title">Manajemen</div>
+        <div class="fs-sub">Menyusun laporan keuangan</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--accent);color:white;">
+        <div class="fs-num">Langkah 2</div>
+        <div class="fs-title">Auditor</div>
+        <div class="fs-sub">Memberikan keyakinan independen</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--green);color:white;">
+        <div class="fs-num">Langkah 3</div>
+        <div class="fs-title">Stakeholders</div>
+        <div class="fs-sub">Menerima laporan yang kredibel</div>
+      </div>
+    </div>
+    <p style="margin-bottom:14px;">Audit eksternal memberikan enam manfaat utama yang tidak bisa didapat jika perusahaan hanya mengandalkan laporan internal. Pertama, kredibilitas atas laporan keuangan. Kedua, kepercayaan investor dan stakeholder. Ketiga, transparansi dan akuntabilitas. Keempat, dukungan terhadap tata kelola perusahaan yang baik. Kelima, identifikasi dini atas risiko dan kelemahan pengendalian. Keenam, membantu pengambilan keputusan bisnis yang lebih tepat.</p>
+    <p>Intinya sederhana: manajemen menyusun laporan keuangan, auditor memberikan keyakinan independen atas kewajarannya, dan stakeholders bisa menggunakan laporan itu dengan kepercayaan yang lebih tinggi.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Peran dan Tanggung Jawab Akuntan Publik</div>
+    <div class="grid-2">
+      <div class="type-card" style="border-left:3px solid var(--accent);">
+        <h4>Audit Laporan Keuangan</h4>
+        <p>Memeriksa dan memastikan laporan keuangan disusun dengan benar sesuai standar akuntansi yang berlaku, lalu memberikan opini yang bisa dipercaya oleh publik.</p>
+      </div>
+      <div class="type-card" style="border-left:3px solid var(--amber);">
+        <h4>Menjaga Transparansi dan Kepercayaan</h4>
+        <p>Audit independen memastikan tidak ada kecurangan atau kesalahan material dalam laporan keuangan, sehingga kepercayaan publik dan investor tetap terjaga.</p>
+      </div>
+      <div class="type-card" style="border-left:3px solid var(--green);">
+        <h4>Membantu Pengambilan Keputusan Bisnis</h4>
+        <p>Memberikan masukan terkait kondisi keuangan perusahaan sehingga manajemen dapat mengambil keputusan bisnis yang lebih tepat dan strategis.</p>
+      </div>
+      <div class="type-card" style="border-left:3px solid var(--purple);">
+        <h4>Konsultasi Pajak dan Kepatuhan</h4>
+        <p>Memberikan saran terkait pajak dan memastikan perusahaan mematuhi peraturan yang berlaku, membantu perusahaan menghindari masalah hukum atau denda.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Jenis Jasa Akuntan Publik</div>
+    <p style="margin-bottom:16px;">Berdasarkan UU No. 5 Tahun 2011, jasa akuntan publik terbagi menjadi dua kelompok besar.</p>
+    <div class="grid-2">
+      <div class="accent-card blue" style="margin:0;">
+        <div class="ac-label">Jasa Asurans</div>
+        <p>Termasuk audit umum atas laporan keuangan, audit khusus, audit kepatuhan, dan jasa atestasi. Semua jenis jasa ini memberikan tingkat keyakinan tertentu kepada pengguna laporan.</p>
+      </div>
+      <div class="accent-card amber" style="margin:0;">
+        <div class="ac-label">Jasa Non-Asurans dan Jasa Lainnya</div>
+        <p>Termasuk jasa konsultasi manajemen, perpajakan, due diligence, dan berbagai jasa advisory lainnya yang tidak secara langsung menghasilkan opini formal.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Kenapa Perusahaan Harus Diaudit Akuntan Publik?</div>
+    <p style="margin-bottom:16px;">Ada enam alasan utama mengapa audit bukan sekadar kewajiban regulasi, tapi investasi dalam kepercayaan dan keberlangsungan bisnis.</p>
+    <ul class="checklist">
+      <li><div class="check-icon">1</div><div><strong>Meningkatkan kepercayaan pemangku kepentingan</strong>, termasuk investor, kreditur, dan mitra bisnis yang mengandalkan laporan keuangan untuk mengambil keputusan.</div></li>
+      <li><div class="check-icon">2</div><div><strong>Memastikan kepatuhan terhadap regulasi</strong> yang berlaku, baik standar akuntansi maupun peraturan industri yang relevan.</div></li>
+      <li><div class="check-icon">3</div><div><strong>Deteksi dan pencegahan kecurangan</strong> sejak dini sebelum berkembang menjadi masalah yang lebih besar.</div></li>
+      <li><div class="check-icon">4</div><div><strong>Meningkatkan reputasi perusahaan</strong> di mata publik, investor, dan lembaga keuangan yang menjadi sumber pendanaan.</div></li>
+      <li><div class="check-icon">5</div><div><strong>Meningkatkan pengendalian internal</strong> melalui rekomendasi auditor yang teridentifikasi selama proses pemeriksaan.</div></li>
+      <li><div class="check-icon">6</div><div><strong>Memfasilitasi pengambilan keputusan</strong> yang lebih baik dengan dasar informasi keuangan yang dapat diandalkan.</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Langkah-langkah Menuju Karier Akuntan Publik</div>
+    <ol class="step-list">
+      <li class="step-item">
+        <div class="step-num">A</div>
+        <div class="step-content">
+          <h4>Memperoleh Pendidikan yang Diperlukan</h4>
+          <p>Langkah pertama adalah gelar sarjana di bidang akuntansi. Di sinilah kamu mempelajari dasar-dasar akuntansi, audit, perpajakan, serta ilmu ekonomi yang relevan. Ini fondasi yang tidak bisa dilewati.</p>
+        </div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">B</div>
+        <div class="step-content">
+          <h4>Memahami dan Mengejar Sertifikasi</h4>
+          <p>Di Indonesia, A-CPA adalah tingkat dasar (minimal semester 6 S1 Akuntansi) dan CPA adalah tingkat profesional yang membutuhkan pengalaman kerja minimal 3 tahun di bidang audit, akuntansi, atau keuangan.</p>
+        </div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">C</div>
+        <div class="step-content">
+          <h4>Bergabung dengan Organisasi Profesional</h4>
+          <p>Bergabung dengan IAPI (Institut Akuntan Publik Indonesia) atau IIA Indonesia membantu kamu membangun jaringan, mengikuti perkembangan standar profesi, dan mengakses peluang pengembangan karier yang lebih luas.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Internal Audit: Definisi Resmi dari IIA</div>
+    <div class="blockquote">
+      "Audit internal adalah aktivitas konsultasi dan assurance yang independen dan objektif, yang dirancang untuk menambah nilai dan meningkatkan operasi organisasi. Ini membantu organisasi mencapai tujuannya dengan membawa pendekatan yang sistematis dan disiplin untuk mengevaluasi dan meningkatkan efektivitas manajemen risiko, pengendalian, dan proses tata kelola."
+      <div style="margin-top:10px;font-size:12px;font-style:normal;color:#2A6E7A;">Institute of Internal Auditors (IIA)</div>
+    </div>
+    <p>Kata kunci dari definisi ini adalah <strong>menambah nilai</strong>. Auditor internal bukan sekadar "polisi internal" yang mencari kesalahan, melainkan mitra strategis manajemen dalam memperkuat organisasi dari dalam.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Jenjang Karier dalam Internal Audit</div>
+    <div class="flow-wrap">
+      <div class="flow-step" style="background:#CBD5E1;color:var(--navy);">
+        <div class="fs-num">Awal</div>
+        <div class="fs-title">Junior Auditor</div>
+        <div class="fs-sub">Bangun fondasi teknis</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--navy-light);color:white;">
+        <div class="fs-num">Berkembang</div>
+        <div class="fs-title">Senior Auditor</div>
+        <div class="fs-sub">Pimpin penugasan</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--navy);color:white;">
+        <div class="fs-num">Menengah</div>
+        <div class="fs-title">Superintendent atau Manager</div>
+        <div class="fs-sub">Kelola tim dan hubungan</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--accent);color:white;">
+        <div class="fs-num">Senior</div>
+        <div class="fs-title">CAE atau GM</div>
+        <div class="fs-sub">Trusted advisor</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--amber);color:var(--navy);">
+        <div class="fs-num">Puncak</div>
+        <div class="fs-title">Direktur atau Komisaris</div>
+        <div class="fs-sub">Pengaruh strategis</div>
+      </div>
+    </div>
+    <p style="margin-bottom:14px;">Setelah pensiun, banyak mantan auditor senior menjadi anggota Dewan Komisaris, Komite Audit, atau dosen praktisi. Ini menunjukkan bahwa pengalaman audit internal adalah bekal yang sangat dihargai di level eksekutif.</p>
+    <div class="salary-wrap">
+      <div class="salary-head">
+        <div>Level</div>
+        <div>Pengalaman</div>
+        <div>Kisaran Gaji (IDR/bulan)</div>
+      </div>
+      <div class="salary-row">
+        <div class="salary-cell label">Junior sampai Senior</div>
+        <div class="salary-cell">0 sampai 3 tahun</div>
+        <div class="salary-cell">Rp 10 juta hingga Rp 20 juta</div>
+      </div>
+      <div class="salary-row">
+        <div class="salary-cell label">Superintendent sampai Manager</div>
+        <div class="salary-cell">3 sampai 10 tahun</div>
+        <div class="salary-cell">Rp 21 juta hingga Rp 60 juta</div>
+      </div>
+      <div class="salary-row">
+        <div class="salary-cell label">GM atau CAE atau Direktur</div>
+        <div class="salary-cell">Di atas 11 tahun</div>
+        <div class="salary-cell">Rp 60 juta hingga Rp 100 juta</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);">Sumber: Salary Survey McKinsey 2025.</p>
+  </div>
+</section>
+
+<!-- SECTION 3: AUDIT MINDSET -->
+<section id="s3" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 3</div>
+    <h2>Audit Mindset</h2>
+    <p>Keterampilan teknis bisa dipelajari dalam beberapa bulan. Tapi cara berpikir seorang auditor dibangun bertahun-tahun dan inilah yang membedakan auditor biasa dari auditor yang benar-benar andal.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">DNA Cara Berpikir Auditor</div>
+    <p style="margin-bottom:20px;">Kalau cara berpikir auditor dipetakan seperti komposisi DNA, hasilnya seperti ini. Skeptisisme profesional mendominasi karena inilah yang menjaga auditor tetap kritis tanpa menjadi paranoid.</p>
+    <div class="dna-row">
+      <div class="dna-label">Professional Skepticism</div>
+      <div class="dna-bar-wrap"><div class="dna-bar" style="width:45%;background:var(--navy);"></div></div>
+      <div class="dna-pct">45%</div>
+    </div>
+    <div class="dna-row">
+      <div class="dna-label">Analytical Thinking</div>
+      <div class="dna-bar-wrap"><div class="dna-bar" style="width:30%;background:var(--accent);"></div></div>
+      <div class="dna-pct">30%</div>
+    </div>
+    <div class="dna-row">
+      <div class="dna-label">Curiosity dan Inquiry</div>
+      <div class="dna-bar-wrap"><div class="dna-bar" style="width:15%;background:var(--green);"></div></div>
+      <div class="dna-pct">15%</div>
+    </div>
+    <div class="dna-row">
+      <div class="dna-label">Objectivity</div>
+      <div class="dna-bar-wrap"><div class="dna-bar" style="width:10%;background:var(--amber);"></div></div>
+      <div class="dna-pct">10%</div>
+    </div>
+    <p style="margin-top:16px;">Skeptisisme profesional mendominasi karena auditor dilatih untuk tidak menelan informasi mentah-mentah. Mereka memverifikasi, menganalisis korelasi data, dan menjaga objektivitas tanpa bias. Bukan curiga pada semua orang, tapi tidak percaya begitu saja tanpa bukti.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Anatomi Audit Mindset: Lima Elemen yang Membentuk Cara Berpikir Auditor</div>
+    <p style="margin-bottom:18px;">Kelima elemen ini bekerja bersama membentuk satu cara pandang yang khas. Klik masing-masing untuk memahami bagaimana elemen itu bekerja dalam situasi nyata.</p>
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>&#128269; Curious: Selalu Bertanya Mengapa</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Auditor yang andal tidak berhenti di permukaan. Mereka mencari root cause, bukan sekadar melihat gejala. Ketika menemukan anomali seperti biaya listrik naik 300 persen saat pabrik sedang libur, auditor tidak mencatat "biaya meningkat" lalu lanjut. Mereka bertanya: mengapa bisa terjadi? Siapa yang otorisasi? Dokumen apa yang mendukungnya? Rasa ingin tahu yang terstruktur inilah bahan bakar dari seluruh proses audit.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>&#128085; Skeptical: Trust, but Verify</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Skeptisisme profesional bukan berarti auditor curiga pada semua orang. Ini berarti auditor tidak langsung menerima asersi tanpa bukti fisik atau digital yang mendukungnya. Ketika manajemen mengatakan "tidak ada masalah di sini," auditor tetap menguji dan memverifikasi. Prinsipnya: percaya boleh, tapi verifikasi tetap wajib. Ini adalah sikap yang melindungi auditor dari manipulasi dan melindungi pengguna laporan dari informasi yang menyesatkan.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>&#128200; Analytical: Mencari Pola Anomali</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Auditor terlatih membaca data untuk menemukan pola yang tidak wajar. Ketika mengaudit pengeluaran dan menemukan tumpukan bon, auditor jeli akan mencari anomali: apakah tanggalnya berurutan tidak wajar? Apakah vendornya nyata dan bisa diverifikasi? Apakah format nota dari toko berbeda tampak seragam seolah dibuat dari template yang sama? Kemampuan analitis ini yang membedakan auditor andal dari yang sekadar mencentang daftar periksa.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>&#9878;&#65039; Objective: Berpijak pada Fakta dan Data</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Auditor tidak boleh dipengaruhi oleh opini orang lain, tekanan atasan, atau simpati terhadap pihak yang diaudit. Setiap kesimpulan harus berpijak pada fakta dan data yang bisa diverifikasi. Ini adalah fondasi dari kredibilitas dan kepercayaan publik terhadap profesi audit. Objektivitas bukan berarti tidak punya perasaan, tapi berarti perasaan tidak boleh menggeser penilaian profesional.
+        </div>
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          <span>&#128268; Risk-Based Thinking: Radar Internal Auditor</span>
+          <span class="accordion-chevron">&#8964;</span>
+        </button>
+        <div class="accordion-body">
+          Auditor selalu memiliki radar internal yang memindai: di mana letak risiko terbesar di perusahaan ini? Pendekatan berbasis risiko ini membantu mengalokasikan waktu dan sumber daya audit pada area yang paling penting, bukan memeriksa semua hal secara merata. Seorang auditor yang berpikir berbasis risiko akan lebih cepat menemukan masalah yang sesungguhnya dibanding yang hanya mengikuti daftar prosedur standar.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Simulasi: Uji Insting Auditormu</div>
+    <p style="margin-bottom:16px;">Bayangkan kamu sedang mengaudit pengeluaran operasional sebuah perusahaan. Kamu menemukan tumpukan bon dan bukti pembayaran. Sebelum mulai memeriksa satu per satu, apa yang pertama kali akan kamu perhatikan sebagai auditor yang berpikir dengan mindset yang tepat?</p>
+    <div class="accent-card amber">
+      <div class="ac-label">Yang Dicari Auditor Jeli</div>
+      <p>Auditor dengan mindset yang baik akan langsung memindai pola, bukan detail satu per satu. Mereka bertanya: apakah tanggalnya berurutan secara tidak wajar, misalnya banyak bon bertanggal akhir bulan saja? Apakah vendornya bisa diverifikasi keberadaannya? Apakah format nota dari toko yang berbeda-beda tampak seragam seolah dibuat dari template yang sama? Apakah jumlahnya selalu di bawah batas otorisasi tertentu? Insting analitis inilah yang membedakan auditor andal dari yang sekadar mencentang daftar.</p>
+    </div>
+    <div class="accent-card green">
+      <div class="ac-label">Pelajaran dari Simulasi Ini</div>
+      <p>Mindset audit bukan tentang kecepatan memeriksa dokumen, melainkan tentang <strong>kualitas pertanyaan yang kamu ajukan</strong>. Semakin tajam pertanyaannya, semakin efisien dan efektif proses auditnya. Itulah mengapa Bapak Arly menegaskan bahwa audit mindset adalah aset yang harus dilatih terus-menerus, bukan sesuatu yang otomatis datang bersama gelar atau sertifikasi.</p>
+    </div>
+  </div>
+
+  <div class="blockquote">
+    "Auditor dilatih untuk tidak menelan informasi mentah-mentah. Mereka memverifikasi, menganalisis korelasi data, dan menjaga objektivitas tanpa bias."
+    <div style="margin-top:10px;font-size:12px;font-style:normal;color:#2A6E7A;">Arly Leonard Manafe, Pre-Event Bootcamp Unlock 2026</div>
+  </div>
+</section>
+
+<!-- SECTION 4: PROSES AUDIT -->
+<section id="s4" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 4</div>
+    <h2>Basic Audit Process</h2>
+    <p>Audit bukan pekerjaan yang datang tiba-tiba lalu pergi. Ada siklus yang sistematis dan terstruktur yang harus dilalui, dari perencanaan hingga tindak lanjut rekomendasi.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Pendekatan Berbasis Risiko: Audit Risk Model</div>
+    <p style="margin-bottom:16px;">Sebelum memulai audit, auditor menghitung risiko terlebih dahulu. Ini bukan formalitas, melainkan dasar untuk menentukan seberapa dalam dan luas pengujian yang perlu dilakukan.</p>
+    <div class="accent-card blue">
+      <div class="ac-label">Formula Audit Risk</div>
+      <p style="font-size:18px;font-weight:700;color:var(--navy);letter-spacing:0.03em;margin-bottom:12px;">AR = IR &times; CR &times; DR</p>
+      <p><strong>AR (Audit Risk)</strong> adalah risiko auditor salah memberikan opini. <strong>IR (Inherent Risk)</strong> adalah risiko bawaan dari bisnis klien yang tidak bisa dihilangkan, misalnya industri dengan transaksi kas besar. <strong>CR (Control Risk)</strong> adalah risiko bahwa kontrol internal klien gagal mencegah atau mendeteksi salah saji. <strong>DR (Detection Risk)</strong> adalah risiko auditor gagal mendeteksi salah saji yang ada, dan ini satu-satunya komponen yang bisa langsung dikendalikan auditor melalui desain prosedur pengujiannya.</p>
+    </div>
+    <p>Logikanya sederhana: semakin tinggi IR dan CR sebuah klien, semakin rendah DR yang diizinkan, artinya auditor harus bekerja lebih teliti, lebih mendalam, dan dengan sampel yang lebih besar. Pendekatan berbasis risiko ini memastikan energi audit difokuskan di tempat yang paling membutuhkan perhatian.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Siklus Pelaksanaan Audit: Empat Tahap Utama</div>
+    <p style="margin-bottom:18px;">Dalam gambaran yang lebih ringkas, siklus audit bisa dipahami dalam empat tahap besar yang berurutan.</p>
+    <div class="flow-wrap">
+      <div class="flow-step" style="background:var(--navy);color:white;">
+        <div class="fs-num">Tahap 1</div>
+        <div class="fs-title">Planning</div>
+        <div class="fs-sub">Pahami bisnis, tentukan materialitas, rancang strategi</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--accent);color:white;">
+        <div class="fs-num">Tahap 2</div>
+        <div class="fs-title">Audit Program</div>
+        <div class="fs-sub">Susun langkah spesifik dan prosedur pengujian</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--green);color:white;">
+        <div class="fs-num">Tahap 3</div>
+        <div class="fs-title">Fieldwork</div>
+        <div class="fs-sub">Turun ke lapangan: wawancara, observasi, uji dokumen</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--amber);color:var(--navy);">
+        <div class="fs-num">Tahap 4</div>
+        <div class="fs-title">Reporting</div>
+        <div class="fs-sub">Simpulkan temuan dan terbitkan opini audit akhir</div>
+      </div>
+    </div>
+    <p>Keempat tahap ini tidak bisa dibalik urutannya. Planning yang buruk akan membuat fieldwork menjadi tidak terarah. Fieldwork yang tidak terstruktur akan membuat reporting menjadi tidak kuat. Setiap tahap adalah fondasi bagi tahap berikutnya.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Siklus Diagnostik: Enam Tahap Lengkap Basic Audit Process</div>
+    <p style="margin-bottom:18px;">Bila diuraikan lebih detail, proses audit berjalan dalam enam tahap yang membentuk siklus penuh seperti siklus diagnostik seorang dokter terhadap pasien.</p>
+    <div class="cycle-grid">
+      <div class="cycle-card">
+        <div class="cc-num" style="background:var(--navy);">1</div>
+        <h4>Planning</h4>
+        <p>Pahami model bisnis "pasien" dan tentukan target diagnosis. Auditor mempelajari industri, regulasi yang berlaku, dan kondisi umum perusahaan sebelum menyentuh satu pun dokumen keuangan.</p>
+      </div>
+      <div class="cycle-card">
+        <div class="cc-num" style="background:var(--accent);">2</div>
+        <h4>Risk Assessment</h4>
+        <p>Petakan area bahaya: kas, persediaan, pengadaan, piutang, dan area lain yang paling rentan. Hasil pemetaan ini menentukan ke mana fokus pengujian diarahkan dan berapa dalam tingkat pengujiannya.</p>
+      </div>
+      <div class="cycle-card">
+        <div class="cc-num" style="background:var(--green);">3</div>
+        <h4>Audit Program</h4>
+        <p>Rancang metode pengujian yang spesifik untuk setiap area risiko. Ada dua jenis pengujian: Test of Controls untuk menguji apakah kontrol berjalan, dan Substantive Tests untuk memverifikasi angka-angkanya.</p>
+      </div>
+      <div class="cycle-card">
+        <div class="cc-num" style="background:var(--amber);">4</div>
+        <h4>Fieldwork</h4>
+        <p>Operasi lapangan: wawancara personel, observasi fisik aset, inspeksi dokumen, vouching transaksi, rekonsiliasi, dan konfirmasi eksternal ke bank atau pihak ketiga. Ini tahap yang paling "terlihat" dari luar.</p>
+      </div>
+      <div class="cycle-card">
+        <div class="cc-num" style="background:var(--red);">5</div>
+        <h4>Finding dan Reporting</h4>
+        <p>Sintesis temuan: auditor menyimpulkan hasil pengujian, mengevaluasi seluruh bukti yang dikumpulkan, menyusun laporan audit, dan menerbitkan opini. Komunikasi temuan ke manajemen dilakukan secara profesional dan berbasis bukti.</p>
+      </div>
+      <div class="cycle-card">
+        <div class="cc-num" style="background:var(--purple);">6</div>
+        <h4>Follow-Up</h4>
+        <p>Monitor apakah "perbaikan" benar-benar dieksekusi. Laporan audit yang bagus tapi rekomendasinya tidak pernah diimplementasikan tidak memberikan nilai nyata. Follow-up adalah tahap yang sering diremehkan tapi sangat kritis.</p>
+      </div>
+    </div>
+    <div class="accent-card blue">
+      <div class="ac-label">Mengapa Siklus, Bukan Garis Lurus</div>
+      <p>Proses audit disebut siklus karena setelah follow-up selesai, temuan dan pembelajaran dari audit ini menjadi bahan perencanaan audit berikutnya. Organisasi yang sehat memiliki siklus audit yang terus berputar, bukan audit sekali lalu selesai.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: FRAUD AWARENESS -->
+<section id="s5" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 5</div>
+    <h2>Fraud Awareness</h2>
+    <p>Memahami kecurangan bukan berarti menjadi paranoid. Ini tentang memiliki radar yang tajam untuk mengenali kondisi yang menciptakan peluang kecurangan, serta memahami bagaimana auditor berperan dalam mendeteksi dan mencegahnya.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Definisi Fraud</div>
+    <p style="margin-bottom:14px;">Ada dua definisi resmi yang sering digunakan dalam dunia audit. Keduanya menekankan satu hal yang sama: <strong>kesengajaan</strong>. Tanpa niat yang disengaja, suatu kesalahan adalah error, bukan fraud.</p>
+    <div class="grid-2">
+      <div class="accent-card amber" style="margin:0;">
+        <div class="ac-label">ACFE (Fraud Examiner Manual 2015)</div>
+        <p>Fraud mencakup setiap tindakan yang <strong>disengaja</strong> untuk merampas barang atau uang milik orang lain dengan tipu muslihat, penipuan, atau cara lain yang tidak adil.</p>
+      </div>
+      <div class="accent-card blue" style="margin:0;">
+        <div class="ac-label">ISA 240 (Standar Audit Internasional)</div>
+        <p>Tindakan yang <strong>disengaja</strong> oleh satu atau lebih individu dalam organisasi, menggunakan cara menipu untuk memperoleh keuntungan yang tidak adil atau ilegal.</p>
+      </div>
+    </div>
+    <p style="margin-top:16px;">Fraud selalu melibatkan empat elemen sekaligus: niat untuk berbuat salah, pelanggaran kepercayaan, tujuan mendapatkan keuntungan yang biasanya bersifat finansial, dan dampak kerugian bagi pihak lain.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fraud Tree dan Klasifikasi Kecurangan</div>
+    <p style="margin-bottom:16px;">ACFE mengklasifikasikan fraud ke dalam tiga cabang besar yang membentuk apa yang disebut "Fraud Tree". Setiap cabang punya karakteristik dan modus yang berbeda.</p>
+    <div class="grid-3">
+      <div class="type-card" style="border-top:3px solid var(--red);">
+        <h4>&#128178; Corruption (Korupsi)</h4>
+        <p>Penyalahgunaan wewenang untuk keuntungan pribadi. Contohnya adalah konflik kepentingan, suap (bribery), pemberian uang secara ilegal (illegal gratuity), dan pemerasan ekonomi (economic extortion).</p>
+      </div>
+      <div class="type-card" style="border-top:3px solid var(--amber);">
+        <h4>&#128181; Asset Misappropriation</h4>
+        <p>Pencurian atau penyalahgunaan aset perusahaan. Ini adalah jenis fraud yang paling umum. Contohnya skimming kas, larceny, billing schemes menggunakan vendor fiktif, payroll schemes, dan expense reimbursement schemes.</p>
+      </div>
+      <div class="type-card" style="border-top:3px solid var(--purple);">
+        <h4>&#128196; Financial Statement Fraud</h4>
+        <p>Manipulasi laporan keuangan agar terlihat lebih baik atau lebih buruk dari kondisi sebenarnya. Contohnya adalah overstating pendapatan, understating liabilitas, atau mencatat transaksi pada periode yang salah (timing differences).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Evolusi Teori Fraud: dari Triangle hingga Hexagon</div>
+    <p style="margin-bottom:18px;">Pemahaman tentang mengapa orang melakukan fraud terus berkembang. Setiap model baru menambahkan lapisan yang membuat analisis semakin tajam dan realistis.</p>
+
+    <div class="accent-card blue" style="margin-bottom:20px;">
+      <div class="ac-label">Fraud Triangle (Cressey, 1953): Fondasi Klasik</div>
+      <p>Model paling awal dan paling dikenal. Tiga elemen yang hampir selalu hadir saat seseorang melakukan fraud adalah <strong>Pressure</strong> (tekanan finansial atau pekerjaan), <strong>Opportunity</strong> (celah dalam sistem kontrol), dan <strong>Rationalization</strong> (pembenaran dalam benak pelaku). Auditor tidak bisa menghilangkan tekanan atau rasionalisasi karena keduanya ada di dalam diri individu. Yang bisa dikendalikan adalah kesempatan, dan itulah fokus utama pengendalian internal.</p>
+    </div>
+
+    <div class="hex-grid">
+      <div class="hex-card">
+        <h4><span class="hc-badge" style="background:var(--red-soft);color:var(--red);">Triangle</span> Pressure (Tekanan)</h4>
+        <p>Motivasi yang mendorong seseorang mempertimbangkan tindakan curang. Bisa berupa tekanan finansial pribadi, target kerja yang tidak realistis, atau kompetisi bisnis yang ekstrem.</p>
+        <div class="example" style="background:var(--red-soft);color:#5A1E1E;">Contoh: Staf keuangan memiliki utang besar dan gaji tidak cukup menutupnya. Tekanan ini membuatnya mulai memikirkan cara "meminjam" dari kas perusahaan.</div>
+      </div>
+      <div class="hex-card">
+        <h4><span class="hc-badge" style="background:var(--amber-soft);color:#8B5E0A;">Triangle</span> Opportunity (Kesempatan)</h4>
+        <p>Celah dalam sistem yang memungkinkan fraud terjadi tanpa terdeteksi. Bisa berupa kontrol yang lemah, prosedur yang tidak jelas, atau kurangnya pengawasan.</p>
+        <div class="example" style="background:var(--amber-soft);color:#5A3A00;">Contoh: Di perusahaan yang sama, satu orang memegang kunci kas sekaligus mencatat transaksinya tanpa pengawasan atasan. Tidak ada pemisahan tugas.</div>
+      </div>
+      <div class="hex-card">
+        <h4><span class="hc-badge" style="background:var(--green-soft);color:var(--green);">Triangle</span> Rationalization (Rasionalisasi)</h4>
+        <p>Cara pelaku membenarkan tindakannya dalam benaknya sendiri. Ini adalah elemen psikologis yang membuat pelaku merasa tindakannya bisa dibenarkan.</p>
+        <div class="example" style="background:var(--green-soft);color:#1A3D2B;">Contoh: "Saya hanya meminjam sementara, nanti dikembalikan." atau "Perusahaan ini sudah untung banyak, tidak akan terasa." atau "Atasan saya juga melakukan hal yang sama."</div>
+      </div>
+      <div class="hex-card">
+        <h4><span class="hc-badge" style="background:var(--accent-soft);color:#0B7E8A;">Diamond</span> Capability (Kapabilitas)</h4>
+        <p>Ditambahkan oleh Wolfe dan Hermanson (2004). Tidak semua orang yang memiliki tekanan dan kesempatan mampu mengeksekusi fraud. Dibutuhkan posisi, kecerdasan, atau kekuasaan tertentu.</p>
+        <div class="example" style="background:var(--accent-soft);color:#0B3D47;">Contoh: Seorang manajer keuangan yang paham celah sistem, tahu cara memanipulasi jurnal, dan punya akses ke multiple sistem berbeda jauh lebih capable melakukan fraud dibanding karyawan baru.</div>
+      </div>
+      <div class="hex-card">
+        <h4><span class="hc-badge" style="background:var(--purple-soft);color:var(--purple);">Pentagon</span> Arrogance (Arogansi)</h4>
+        <p>Ditambahkan oleh Horwarth (2011). Rasa tidak terkalahkan, merasa di atas aturan, atau yakin tidak akan pernah ketahuan. Sering ditemukan pada fraud yang dilakukan eksekutif senior.</p>
+        <div class="example" style="background:var(--purple-soft);color:#4B2EA0;">Contoh: Seorang direktur keuangan yang sudah melakukan manipulasi selama bertahun-tahun tanpa ketahuan mulai berani mengambil jumlah yang lebih besar karena merasa sistem audit tidak akan menjangkaunya.</div>
+      </div>
+      <div class="hex-card">
+        <h4><span class="hc-badge" style="background:var(--red-soft);color:var(--red);">Hexagon</span> Collusion (Kolusi)</h4>
+        <p>Elemen terbaru. Fraud yang melibatkan kerja sama dua orang atau lebih jauh lebih sulit dideteksi karena pengawasan satu orang bisa dinetralkan oleh kerja sama pihak lain.</p>
+        <div class="example" style="background:var(--red-soft);color:#5A1E1E;">Contoh: Staf pengadaan berkolusi dengan vendor fiktif yang dikelola kerabatnya. Staf menyetujui invoice palsu, bagian keuangan yang juga terlibat mencairkan pembayaran. Dua titik kontrol berhasil dilewati sekaligus.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fraud Examination Steps: Alur Investigasi Fraud</div>
+    <p style="margin-bottom:16px;">Ketika indikasi fraud terdeteksi, prosesnya bukan langsung menuduh. Ada alur investigasi yang terstruktur dan harus diikuti dengan disiplin.</p>
+    <div class="flow-wrap">
+      <div class="flow-step" style="background:var(--gray-200);color:var(--navy);">
+        <div class="fs-num">Pemicu</div>
+        <div class="fs-title">Indikasi Fraud</div>
+        <div class="fs-sub">Tips, anomali akuntansi, atau sumber lain</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--navy);color:white;">
+        <div class="fs-num">Step 1</div>
+        <div class="fs-title">Initial Predication</div>
+        <div class="fs-sub">Kumpulkan dasar praduga yang cukup kuat</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--accent);color:white;">
+        <div class="fs-num">Step 2</div>
+        <div class="fs-title">Investigation Plan</div>
+        <div class="fs-sub">Rancang strategi investigasi secara terstruktur</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--amber);color:var(--navy);">
+        <div class="fs-num">Step 3</div>
+        <div class="fs-title">Investigation Process</div>
+        <div class="fs-sub">Kumpulkan bukti, wawancara, analisis dokumen</div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step" style="background:var(--green);color:white;">
+        <div class="fs-num">Step 4</div>
+        <div class="fs-title">Investigation Report</div>
+        <div class="fs-sub">Dokumentasikan temuan dan rekomendasikan tindakan</div>
+      </div>
+    </div>
+    <div class="accent-card amber">
+      <div class="ac-label">Catatan Penting tentang Predikasi</div>
+      <p>Predikasi adalah keseluruhan keadaan yang menyebabkan seseorang yang terlatih secara profesional meyakini bahwa penipuan telah terjadi, sedang terjadi, atau akan terjadi. Pemeriksaan fraud tidak boleh dilakukan tanpa predikasi yang tepat karena bisa berujung pada tuduhan yang tidak berdasar dan masalah hukum bagi investigator.</p>
+    </div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-header">
+      <span style="font-size:20px;">&#128209;</span>
+      <h4>Studi Kasus: Ketika Internal Audit Menemukan Sesuatu yang Lebih Besar</h4>
+    </div>
+    <div class="case-body">
+      <p>Kasus berikut adalah ilustrasi fiktif yang disusun berdasarkan pola fraud yang sering terjadi di perusahaan manufaktur menengah. Tujuannya untuk menggambarkan bagaimana jalur temuan bisa bergerak dari internal audit menuju forensic audit eksternal.</p>
+      <div class="case-timeline">
+        <div class="ct-item">
+          <div class="ct-dot" style="background:var(--accent);">IA</div>
+          <div class="ct-content">
+            <h5>Auditor Internal Menemukan Anomali Rutin</h5>
+            <p>Dalam audit operasional kuartal ketiga, tim internal audit PT Maju Bersama menemukan pola tidak biasa: beban pengadaan dari satu vendor meningkat 280 persen dalam enam bulan terakhir, padahal volume produksi tidak berubah signifikan. Ini terdeteksi karena auditor menggunakan analisis tren sederhana pada data pembelian.</p>
+          </div>
+        </div>
+        <div class="ct-item">
+          <div class="ct-dot" style="background:var(--amber);">&#8593;</div>
+          <div class="ct-content">
+            <h5>Eskalasi dan Pendalaman Awal</h5>
+            <p>Auditor internal menelusuri lebih jauh dan menemukan bahwa vendor tersebut baru terdaftar tiga bulan lalu, alamatnya adalah rumah tinggal, dan kontak penanggung jawabnya adalah nama yang sama dengan adik ipar dari Kepala Divisi Pengadaan. Temuan ini segera dieskalasi ke Komite Audit sesuai protokol.</p>
+          </div>
+        </div>
+        <div class="ct-item">
+          <div class="ct-dot" style="background:var(--red);">&#9888;</div>
+          <div class="ct-content">
+            <h5>Batas Kewenangan Internal Audit</h5>
+            <p>Komite Audit menilai bahwa temuan ini sudah melewati batas cakupan audit internal biasa karena melibatkan potensi konflik kepentingan struktural dan kemungkinan kolusi lintas departemen. Internal audit memiliki keterbatasan: tidak punya kewenangan penuh untuk melakukan wawancara investigatif, dan temuan ini berpotensi menjadi bukti hukum.</p>
+          </div>
+        </div>
+        <div class="ct-item">
+          <div class="ct-dot" style="background:var(--purple);">FA</div>
+          <div class="ct-content">
+            <h5>Forensic Auditor Eksternal Dilibatkan</h5>
+            <p>Perusahaan menunjuk firma forensic audit eksternal yang independen. Tim forensik melakukan pengumpulan bukti digital termasuk email dan log akses sistem, wawancara investigatif dengan pihak-pihak terkait, penelusuran aliran dana, dan verifikasi identitas vendor. Semua bukti dikumpulkan dengan standar yang bisa dipertahankan di pengadilan.</p>
+          </div>
+        </div>
+        <div class="ct-item">
+          <div class="ct-dot" style="background:var(--green);">&#10003;</div>
+          <div class="ct-content">
+            <h5>Hasil dan Pembelajaran</h5>
+            <p>Investigasi mengkonfirmasi adanya vendor fiktif dengan total kerugian Rp 3,4 miliar selama delapan bulan. Kepala Divisi Pengadaan terbukti berkolusi dengan staf keuangan yang memproses pembayaran. Kasus dilimpahkan ke aparat hukum. Perusahaan kemudian memperkuat kontrol pengadaan dengan vendor due diligence yang lebih ketat dan pemisahan tugas yang lebih jelas. <strong>Temuan awal dari internal audit menjadi titik awal yang menyelamatkan perusahaan dari kerugian yang lebih besar.</strong></p>
+          </div>
+        </div>
+      </div>
+      <div class="accent-card green" style="margin-top:18px;margin-bottom:0;">
+        <div class="ac-label">Pelajaran dari Kasus Ini</div>
+        <p>Internal audit tidak harus mengerjakan segalanya sendiri. Kekuatan audit internal justru ada pada kemampuan deteksi dini melalui monitoring rutin berbasis data. Ketika temuan melampaui cakupan dan kewenangan internal, eskalasi yang tepat waktu ke forensic audit eksternal bukan tanda kelemahan, melainkan tanda profesionalisme. Kolaborasi antara keduanya adalah yang menghasilkan akuntabilitas yang sesungguhnya.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Transformasi 2026: Masa Depan Audit</div>
+    <p style="margin-bottom:16px;">Dunia audit sedang berubah lebih cepat dari sebelumnya. Memahami arah perubahan ini penting untuk mempersiapkan diri sebagai auditor generasi berikutnya.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Aspek</th><th>Cara Lama</th><th>Cara Baru (2026+)</th></tr></thead>
+        <tbody>
+          <tr><td>Cakupan Data</td><td>Menguji sampel 10% data secara manual</td><td>Data Analytics memungkinkan analisis 100% populasi data dalam hitungan detik</td></tr>
+          <tr><td>Frekuensi Audit</td><td>Audit tahunan yang bersifat retrospektif</td><td>Continuous Auditing: monitoring transaksi otomatis secara real-time</td></tr>
+          <tr><td>Fokus Cakupan</td><td>Murni pada angka laporan keuangan historis</td><td>Diperluas ke ESG Assurance: jejak karbon, dampak sosial, dan tata kelola</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Manusia vs Mesin: Apakah AI Menggantikan Auditor?</div>
+    <div class="grid-2">
+      <div class="accent-card red" style="margin:0;">
+        <div class="ac-label">Wilayah Mesin: Bisa Diotomatisasi AI</div>
+        <p>Tugas berulang seperti entri data mekanis, pemeriksaan dokumen standar, pencocokan rekonsiliasi sederhana, dan deteksi anomali pola dasar sudah bisa dan akan semakin banyak dilakukan oleh mesin dengan lebih cepat dan konsisten.</p>
+      </div>
+      <div class="accent-card green" style="margin:0;">
+        <div class="ac-label">Wilayah Manusia: Tidak Tergantikan</div>
+        <p>Professional judgment, etika dan integritas, negosiasi tingkat tinggi dengan auditee, wawancara investigatif yang membutuhkan empati, dan pemahaman konteks bisnis yang kompleks dan ambigu tetap sepenuhnya wilayah manusia.</p>
+      </div>
+    </div>
+    <div class="blockquote" style="margin-top:18px;">
+      "AI tidak akan menggantikan auditor. Tapi auditor yang mahir menggunakan AI akan menggantikan auditor yang tidak menggunakannya."
+      <div style="margin-top:10px;font-size:12px;font-style:normal;color:#2A6E7A;">Arly Leonard Manafe, Pre-Event Bootcamp Unlock 2026</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Skill Tree Auditor Modern</div>
+    <p style="margin-bottom:16px;">Auditor masa depan adalah hibrida antara akuntan, data scientist, dan psikolog bisnis. Ada tiga kelompok kompetensi yang perlu dikembangkan secara bersamaan.</p>
+    <div class="skill-grid">
+      <div class="skill-col">
+        <div class="skill-col-header" style="background:var(--navy);color:white;">Technical, Konteks</div>
+        <div class="skill-col-body">
+          <div class="skill-item"><div class="skill-dot" style="background:var(--navy);"></div>ESG Awareness</div>
+          <div class="skill-item"><div class="skill-dot" style="background:var(--navy);"></div>Risk Management</div>
+          <div class="skill-item"><div class="skill-dot" style="background:var(--navy);"></div>Auditing dan Internal Control</div>
+          <div class="skill-item"><div class="skill-dot" style="background:var(--navy);"></div>Akuntansi Dasar</div>
+        </div>
+      </div>
+      <div class="skill-col">
+        <div class="skill-col-header" style="background:var(--accent);color:white;">Technology, Tools</div>
+        <div class="skill-col-body">
+          <div class="skill-item"><div class="skill-dot" style="background:var(--accent);"></div>AI dan Cyber Risk Assurance</div>
+          <div class="skill-item"><div class="skill-dot" style="background:var(--accent);"></div>Data Analytics</div>
+          <div class="skill-item"><div class="skill-dot" style="background:var(--accent);"></div>SQL dan Power BI</div>
+          <div class="skill-item"><div class="skill-dot" style="background:var(--accent);"></div>Excel Advanced</div>
+        </div>
+      </div>
+      <div class="skill-col">
+        <div class="skill-col-header" style="background:var(--amber);color:var(--navy);">Human, Eksekusi</div>
+        <div class="skill-col-body">
+          <div class="skill-item"><div class="skill-dot" style="background:var(--amber);"></div>Leadership dan Presentasi</div>
+          <div class="skill-item"><div class="skill-dot" style="background:var(--amber);"></div>Negosiasi</div>
+          <div class="skill-item"><div class="skill-dot" style="background:var(--amber);"></div>Critical Thinking</div>
+          <div class="skill-item"><div class="skill-dot" style="background:var(--amber);"></div>Communication</div>
+        </div>
+      </div>
+    </div>
+    <div class="accent-card blue">
+      <div class="ac-label">Formula Auditor 2026</div>
+      <p style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">Auditor 2026 = Business + Risk + Technology + Data + Human Judgment</p>
+      <p>Audit bukan sekadar memeriksa angka. Audit adalah seni memahami risiko dan kemampuan melihat apa yang tidak dilihat orang lain, serta membantu organisasi tetap transparan, akuntabel, dan dapat dipercaya di dunia yang semakin kompleks.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: KUIS -->
+<section id="s6" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Bagian 6</div>
+    <h2>Uji Pemahaman</h2>
+    <p>Sepuluh pertanyaan yang mencakup seluruh materi dari bagian 1 sampai 5. Klik jawaban yang menurutmu paling tepat, lalu baca penjelasannya untuk memperdalam pemahaman.</p>
+  </div>
+  <div class="quiz-card" id="quiz-container">
+    <div id="quiz-body"></div>
+    <div class="quiz-nav">
+      <button class="btn-primary" id="quiz-next-btn" onclick="nextQuestion()" disabled>Pertanyaan Berikutnya</button>
+      <span class="quiz-score-text" id="quiz-score-text"></span>
+    </div>
+  </div>
+  <div id="quiz-result" style="display:none;">
+    <div class="card" style="text-align:center;padding:44px 30px;">
+      <div style="font-size:44px;margin-bottom:14px;" id="result-icon">&#127881;</div>
+      <div style="font-family:'Lora',serif;font-size:24px;font-weight:600;color:var(--navy);margin-bottom:10px;" id="result-title">Selesai!</div>
+      <div style="font-size:15px;color:var(--text-muted);margin-bottom:22px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7;" id="result-desc"></div>
+      <div style="margin-bottom:22px;">
+        <div class="progress-wrap" style="max-width:320px;margin:0 auto 8px;"><div class="progress-bar" id="result-bar"></div></div>
+        <div style="font-size:13px;color:var(--text-muted);" id="result-fraction"></div>
+      </div>
+      <button class="btn-primary" onclick="restartQuiz()">Ulangi Kuis</button>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 7: GLOSARIUM -->
+<section id="s7" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Referensi</div>
+    <h2>Glosarium Istilah</h2>
+    <p>Seluruh istilah teknis yang muncul dalam materi ini, dijelaskan dalam bahasa yang mudah dipahami. Gunakan kotak pencarian untuk menemukan istilah yang kamu cari.</p>
+  </div>
+  <div class="card">
+    <input type="search" class="glossary-search" placeholder="Cari istilah, misalnya: fraud, materialitas, CPA..." id="glossary-input" oninput="filterGlossary()">
+    <ul class="glossary-list" id="glossary-list"></ul>
+  </div>
+</section>
+
+</main>
+
+<footer class="module-footer">
+  <div class="footer-info">
+    <strong>Disusun oleh:</strong> Rosliana Dwi Astuti, S.Ak<br>
+    <strong>Sumber:</strong> Pre-Event Bootcamp Unlock Series, 31 Mei 2026.<br>
+    Narasumber: Arly Leonard Manafe, SE., M.Acc., CA., CPA., CCFA. Manager Internal Audit dan Risk Management.
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <span class="badge badge-gray">IIA Standards</span>
+    <span class="badge badge-gray">ACFE</span>
+    <span class="badge badge-gray">ISA 240</span>
+    <span class="badge badge-gray">Fraud Hexagon</span>
+    <span class="badge badge-gray">Unlock 2026</span>
+  </div>
+</footer>
+
+<script>
+function showSection(id,tab){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  tab.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleAcc(btn){
+  var body=btn.nextElementSibling;
+  var isOpen=body.classList.contains('open');
+  var acc=btn.closest('.accordion');
+  acc.querySelectorAll('.accordion-btn').forEach(function(b){b.classList.remove('open');});
+  acc.querySelectorAll('.accordion-body').forEach(function(b){b.classList.remove('open');});
+  if(!isOpen){btn.classList.add('open');body.classList.add('open');}
+}
+function scrollNav(dir){
+  var el=document.getElementById('nav-inner');
+  el.scrollBy({left:dir*160,behavior:'smooth'});
+  setTimeout(updateNavArrows,200);
+}
+function updateNavArrows(){
+  var el=document.getElementById('nav-inner');
+  var btnL=document.getElementById('nav-left');
+  var btnR=document.getElementById('nav-right');
+  if(!el||!btnL||!btnR)return;
+  btnL.classList.toggle('hidden',el.scrollLeft<=4);
+  btnR.classList.toggle('hidden',el.scrollLeft+el.clientWidth>=el.scrollWidth-4);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  var el=document.getElementById('nav-inner');
+  if(el){el.addEventListener('scroll',updateNavArrows);updateNavArrows();}
+});
+
+var questions=[
+  {q:"Apa analogi yang paling tepat menggambarkan peran auditor keuangan menurut materi ini?",opts:["Polisi yang menangkap karyawan yang berbuat salah.","Dokter yang melakukan medical check-up atas kesehatan keuangan perusahaan.","Akuntan yang memastikan semua angka di neraca sudah balance.","Detektif yang mencari bukti kejahatan keuangan."],correct:1,explain:"Tepat. Analogi medical check-up menangkap esensi audit dengan baik: auditor memeriksa secara independen, tujuannya memberikan opini objektif bukan sekadar mencari penyakit, dan hasilnya berguna bagi investor, bank, dan pemerintah."},
+  {q:"Dalam Audit Risk Model (AR = IR x CR x DR), komponen mana yang merupakan satu-satunya yang bisa langsung dikendalikan oleh auditor?",opts:["Inherent Risk, dengan memilih klien yang lebih aman.","Control Risk, dengan membantu klien memperbaiki sistemnya.","Detection Risk, melalui desain prosedur dan intensitas pengujian.","Audit Risk, dengan menetapkan target risiko yang lebih rendah."],correct:2,explain:"Benar. Detection Risk adalah satu-satunya komponen yang langsung ada di tangan auditor. IR adalah risiko bawaan bisnis dan CR ditentukan oleh kualitas kontrol internal klien, keduanya tidak bisa diubah oleh auditor. Yang bisa auditor lakukan adalah merancang pengujian yang lebih ketat untuk menurunkan DR sehingga AR total tetap dalam batas yang dapat diterima."},
+  {q:"Apa perbedaan mendasar antara Internal Audit dan External Audit dari sisi tujuan dan pengguna laporan?",opts:["External audit fokus pada masa depan, internal audit fokus pada masa lalu.","Internal audit dilakukan pihak ketiga independen, external audit oleh karyawan perusahaan.","External audit memberikan opini kewajaran laporan keuangan untuk publik luas. Internal audit memberikan rekomendasi perbaikan kepada manajemen dan komite audit.","Keduanya sama, hanya berbeda dalam hal siapa yang membayar honornya."],correct:2,explain:"Tepat. Perbedaan mendasarnya ada di tujuan dan pengguna. External audit menghasilkan opini untuk publik luas termasuk investor dan kreditur. Internal audit menghasilkan rekomendasi perbaikan untuk manajemen internal dan komite audit perusahaan."},
+  {q:"DNA cara berpikir auditor didominasi oleh elemen apa, dan mengapa elemen itu mendominasi?",opts:["Analytical Thinking (30%) karena auditor harus bisa membaca data kompleks.","Professional Skepticism (45%) karena auditor harus mampu memverifikasi tanpa langsung mempercayai asersi apapun.","Objectivity (10%) karena auditor harus selalu netral dalam setiap situasi.","Curiosity (15%) karena auditor harus selalu ingin tahu lebih banyak."],correct:1,explain:"Benar. Professional Skepticism mendominasi 45 persen karena ini adalah pelindung utama auditor dari manipulasi dan kesalahan penilaian. Prinsip trust but verify memastikan auditor tidak menelan informasi mentah-mentah, melainkan selalu memverifikasi sebelum menarik kesimpulan."},
+  {q:"Dalam Fraud Triangle, elemen mana yang paling bisa dipengaruhi oleh auditor melalui audit dan rekomendasi pengendalian internal?",opts:["Pressure, karena auditor bisa membantu mengurangi beban finansial karyawan.","Rationalization, karena auditor bisa mengubah cara berpikir pelaku.","Opportunity, karena auditor bisa mengidentifikasi dan merekomendasikan perbaikan celah pengendalian.","Ketiga elemen harus ditangani bersamaan agar efektif."],correct:2,explain:"Tepat. Tekanan dan rasionalisasi ada di dalam diri individu dan sulit dikontrol dari luar. Opportunity adalah satu-satunya elemen yang bisa dikurangi secara sistematis melalui penguatan pengendalian internal, pemisahan tugas, dan monitoring yang lebih ketat."},
+  {q:"Apa yang ditambahkan oleh model Fraud Diamond yang tidak ada dalam Fraud Triangle?",opts:["Collusion, yaitu kerja sama antara pelaku fraud.","Arrogance, yaitu rasa tidak terkalahkan dari pelaku.","Capability, yaitu kemampuan atau posisi pelaku untuk mengeksekusi fraud.","Competence, yaitu keahlian teknis yang dimiliki pelaku."],correct:2,explain:"Tepat. Fraud Diamond menambahkan Capability yang dikembangkan oleh Wolfe dan Hermanson pada 2004. Tidak semua orang yang memiliki tekanan dan kesempatan mampu mengeksekusi fraud. Dibutuhkan posisi, kecerdasan, akses sistem, atau kekuasaan tertentu, dan itulah yang dimaksud dengan capability."},
+  {q:"Dalam studi kasus PT Maju Bersama, mengapa investigasi akhirnya dilimpahkan ke forensic auditor eksternal dan bukan diselesaikan oleh tim internal audit?",opts:["Karena internal audit tidak cukup kompeten untuk menangani kasus seperti ini.","Karena internal audit memiliki keterbatasan kewenangan dan potensi temuan yang bisa menjadi bukti hukum membutuhkan standar pengumpulan bukti yang berbeda.","Karena regulasi mengharuskan semua kasus fraud ditangani auditor eksternal.","Karena internal audit tidak memiliki akses ke data keuangan perusahaan."],correct:1,explain:"Tepat. Internal audit memiliki peran penting dalam deteksi dini melalui monitoring rutin, tapi ketika temuan melampaui cakupan kewenangan dan berpotensi menjadi bukti hukum, eskalasi ke forensic audit eksternal adalah langkah yang tepat secara profesional. Forensic auditor memiliki kewenangan dan metodologi khusus untuk mengumpulkan bukti yang bisa dipertahankan di pengadilan."},
+  {q:"Apa yang dimaksud dengan Reasonable Assurance dalam konteks audit?",opts:["Auditor memberikan jaminan 100 persen bahwa laporan keuangan benar-benar bebas dari segala kesalahan.","Auditor memberikan keyakinan memadai berdasarkan bukti yang dikumpulkan secara profesional, bukan jaminan mutlak.","Auditor hanya memeriksa sebagian kecil transaksi dan memberi opini berdasarkan sampel itu saja.","Auditor memberikan penilaian yang masuk akal berdasarkan pengalaman pribadi tanpa prosedur formal."],correct:1,explain:"Benar. Reasonable Assurance berarti auditor tidak memberikan jaminan mutlak 100 persen. Yang diberikan adalah keyakinan yang memadai bahwa laporan bebas dari salah saji material, baik karena error maupun fraud, berdasarkan bukti yang dikumpulkan melalui prosedur audit yang sistematis dan profesional."},
+  {q:"Menurut materi tentang masa depan audit, pernyataan mana yang paling tepat tentang peran AI dalam profesi audit?",opts:["AI akan sepenuhnya menggantikan auditor dalam 5 tahun ke depan karena bisa bekerja lebih cepat dan akurat.","AI tidak relevan untuk profesi audit karena audit membutuhkan penilaian manusia sepenuhnya.","AI tidak akan menggantikan auditor, tapi auditor yang mahir menggunakan AI akan menggantikan auditor yang tidak menggunakannya.","AI hanya berguna untuk perusahaan teknologi besar, bukan industri keuangan tradisional."],correct:2,explain:"Tepat. Ini adalah kesimpulan kunci dari materi. AI akan mengotomatisasi tugas berulang seperti rekonsiliasi dan deteksi anomali dasar, tapi professional judgment, etika, dan pemahaman konteks bisnis yang kompleks tetap wilayah manusia yang tidak tergantikan."},
+  {q:"Apa yang dimaksud dengan tahap Follow-Up dalam siklus diagnostik audit, dan mengapa tahap ini sering diremehkan padahal sangat kritis?",opts:["Follow-up adalah tahap menerbitkan laporan final dan menyerahkan tanggung jawab ke manajemen.","Follow-up adalah tahap memastikan rekomendasi audit benar-benar diimplementasikan oleh manajemen, bukan sekadar disimpan dalam folder laporan.","Follow-up adalah tahap sampling ulang untuk memverifikasi kembali temuan sebelumnya.","Follow-up adalah pertemuan antara auditor dan komite audit untuk merencanakan audit berikutnya."],correct:1,explain:"Tepat. Follow-up sering diremehkan karena laporan sudah diterbitkan dan secara formal penugasan sudah selesai. Padahal tanpa follow-up yang disiplin, rekomendasi audit hanya menjadi dokumen yang tidak menghasilkan perbaikan nyata. Nilai sesungguhnya dari audit ada pada perubahan yang terjadi setelah laporan diterbitkan."}
+];
+
+var current=0,score=0,answered=false;
+function renderQuestion(){
+  answered=false;
+  document.getElementById('quiz-next-btn').disabled=true;
+  document.getElementById('quiz-score-text').textContent='Pertanyaan '+(current+1)+' dari '+questions.length;
+  var q=questions[current];
+  var optsHtml=q.opts.map(function(o,i){return '<button class="quiz-opt" onclick="selectAnswer('+i+')">'+o+'</button>';}).join('');
+  document.getElementById('quiz-body').innerHTML='<div class="quiz-q">'+q.q+'</div><div class="quiz-options">'+optsHtml+'</div><div class="quiz-feedback" id="qfeedback"></div>';
+}
+function selectAnswer(idx){
+  if(answered)return;
+  answered=true;
+  var q=questions[current];
+  var opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o){o.disabled=true;});
+  var fb=document.getElementById('qfeedback');
+  if(idx===q.correct){opts[idx].classList.add('correct');score++;fb.className='quiz-feedback show ok';fb.innerHTML='<strong>Benar!</strong> '+q.explain;}
+  else{opts[idx].classList.add('wrong');opts[q.correct].classList.add('correct');fb.className='quiz-feedback show nok';fb.innerHTML='<strong>Belum tepat.</strong> '+q.explain;}
+  var btn=document.getElementById('quiz-next-btn');
+  btn.disabled=false;
+  if(current===questions.length-1)btn.textContent='Lihat Hasil';
+}
+function nextQuestion(){
+  if(!answered)return;
+  current++;
+  if(current<questions.length){renderQuestion();}
+  else{showResult();}
+}
+function showResult(){
+  document.getElementById('quiz-container').style.display='none';
+  var pct=Math.round(score/questions.length*100);
+  document.getElementById('quiz-result').style.display='block';
+  document.getElementById('result-icon').textContent=pct>=80?'&#127942;':pct>=60?'&#128077;':'&#128218;';
+  document.getElementById('result-title').textContent=pct>=80?'Pemahaman Sangat Baik!':pct>=60?'Cukup Baik, Lanjutkan!':'Yuk Dalami Lagi';
+  document.getElementById('result-desc').textContent='Kamu menjawab '+score+' dari '+questions.length+' pertanyaan dengan benar ('+pct+'%). '+(pct>=80?'Fondasi pemahamanmu tentang audit keuangan sudah solid.':'Coba kembali ke bagian yang relevan dan ulangi kuis untuk memperdalam pemahamanmu.');
+  document.getElementById('result-bar').style.width=pct+'%';
+  document.getElementById('result-fraction').textContent=score+' / '+questions.length+' benar';
+}
+function restartQuiz(){
+  current=0;score=0;answered=false;
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-container').style.display='block';
+  document.getElementById('quiz-next-btn').textContent='Pertanyaan Berikutnya';
+  renderQuestion();
+}
+
+var glossaryData=[
+  {term:"ACFE (Association of Certified Fraud Examiners)",def:"Organisasi internasional yang berfokus pada pencegahan dan deteksi fraud. Menerbitkan Fraud Examiner Manual dan laporan RTTN (Report to the Nations) yang menjadi referensi standar global tentang kerugian akibat fraud."},
+  {term:"Akuntan Publik",def:"Profesional akuntansi yang bekerja secara independen untuk memberikan jasa audit, pemeriksaan, dan penilaian laporan keuangan kepada publik. Di Indonesia diatur oleh UU No. 5 Tahun 2011."},
+  {term:"Analytical Thinking",def:"Kemampuan berpikir analitis yang menjadi salah satu DNA auditor. Auditor menggunakan kemampuan ini untuk mencari pola anomali dalam data dan dokumen yang bisa menunjukkan adanya masalah atau kecurangan."},
+  {term:"Arrogance (Fraud Pentagon)",def:"Elemen yang ditambahkan dalam Fraud Pentagon oleh Horwarth (2011). Menggambarkan sikap pelaku fraud yang merasa dirinya di atas aturan atau tidak akan pernah ketahuan. Sering ditemukan pada fraud yang dilakukan eksekutif senior."},
+  {term:"Asset Misappropriation",def:"Salah satu dari tiga cabang utama Fraud Tree. Mencakup pencurian atau penyalahgunaan aset perusahaan, termasuk skimming kas, billing schemes dengan vendor fiktif, payroll schemes, dan expense reimbursement schemes. Merupakan jenis fraud yang paling sering terjadi."},
+  {term:"Audit Committee (Komite Audit)",def:"Komite di bawah Dewan Komisaris yang bertanggung jawab mengawasi proses audit internal dan eksternal serta integritas pelaporan keuangan. Auditor internal melapor kepada komite ini untuk menjaga independensinya dari manajemen operasional."},
+  {term:"Audit Program",def:"Dokumen berisi rencana langkah-langkah spesifik dan prosedur pengujian yang akan dilakukan dalam suatu engagement audit. Mencakup Test of Controls dan Substantive Tests yang dirancang berdasarkan hasil risk assessment."},
+  {term:"Audit Risk (AR)",def:"Risiko bahwa auditor memberikan opini yang salah atas laporan keuangan. Dihitung dengan formula AR = IR x CR x DR. Auditor harus mengelola komponen DR agar AR total tetap pada tingkat yang dapat diterima."},
+  {term:"Capability (Fraud Diamond)",def:"Elemen keempat yang ditambahkan oleh Wolfe dan Hermanson (2004) pada model Fraud Diamond. Menggambarkan bahwa tidak semua orang yang memiliki tekanan dan kesempatan mampu mengeksekusi fraud. Dibutuhkan posisi, kecerdasan, atau akses tertentu."},
+  {term:"CAE (Chief Audit Executive)",def:"Pemimpin tertinggi fungsi audit internal dalam sebuah organisasi, setara dengan General Manager atau Senior Manager di bidang audit. Melapor langsung kepada direksi atau komite audit untuk menjaga independensi fungsi audit."},
+  {term:"Collusion (Fraud Hexagon)",def:"Elemen terbaru dalam evolusi model fraud. Menggambarkan kerja sama dua orang atau lebih dalam melakukan kecurangan. Fraud yang melibatkan kolusi jauh lebih sulit dideteksi karena satu titik kontrol yang lemah bisa dimanfaatkan oleh beberapa pihak sekaligus."},
+  {term:"Continuous Auditing",def:"Pendekatan audit modern di mana monitoring transaksi dilakukan secara otomatis dan real-time, berbeda dari audit tradisional yang dilakukan setahun sekali secara retrospektif. Memungkinkan deteksi anomali jauh lebih cepat."},
+  {term:"Control Risk (CR)",def:"Risiko bahwa sistem pengendalian internal klien gagal mencegah atau mendeteksi salah saji material. Semakin lemah pengendalian internal, semakin tinggi CR, dan semakin intensif pengujian substantif yang diperlukan auditor."},
+  {term:"Corruption",def:"Salah satu dari tiga cabang utama Fraud Tree. Mencakup penyalahgunaan wewenang untuk keuntungan pribadi, termasuk konflik kepentingan, suap (bribery), pemberian uang secara ilegal (illegal gratuity), dan pemerasan ekonomi."},
+  {term:"Detection Risk (DR)",def:"Risiko bahwa prosedur audit yang diterapkan auditor gagal mendeteksi salah saji material yang sebenarnya ada. Satu-satunya komponen Audit Risk Model yang bisa langsung dikendalikan oleh auditor melalui desain prosedur pengujiannya."},
+  {term:"ESG Assurance",def:"Bentuk audit baru yang mencakup verifikasi atas klaim lingkungan (Environmental), sosial (Social), dan tata kelola (Governance) sebuah perusahaan. Semakin penting seiring meningkatnya tuntutan transparansi dari investor dan regulator global."},
+  {term:"External Auditor",def:"Auditor dari Kantor Akuntan Publik yang merupakan pihak ketiga independen dari perusahaan yang diaudit. Tujuan utamanya memberikan opini atas kewajaran laporan keuangan untuk kepentingan publik luas termasuk investor dan kreditur."},
+  {term:"Financial Statement Fraud",def:"Salah satu dari tiga cabang utama Fraud Tree. Mencakup manipulasi laporan keuangan agar terlihat lebih baik atau lebih buruk dari kondisi sebenarnya, termasuk overstating pendapatan, understating liabilitas, dan timing differences."},
+  {term:"Follow-Up",def:"Tahap terakhir dalam siklus audit enam langkah. Memastikan bahwa rekomendasi yang diberikan auditor benar-benar diimplementasikan oleh manajemen. Tanpa follow-up yang disiplin, nilai sesungguhnya dari audit tidak akan terwujud."},
+  {term:"Forensic Audit",def:"Investigasi mendalam yang dirancang khusus untuk mendeteksi kecurangan dan mengumpulkan bukti yang dapat digunakan dalam proses hukum. Auditor forensik memiliki metodologi dan kewenangan khusus untuk mengumpulkan bukti yang bisa dipertahankan di pengadilan."},
+  {term:"Fraud",def:"Tindakan yang disengaja untuk memperoleh keuntungan secara tidak jujur, melibatkan pelanggaran kepercayaan, dan menyebabkan kerugian bagi pihak lain. Elemen 'disengaja' yang membedakan fraud dari error atau kesalahan yang tidak disengaja."},
+  {term:"Fraud Diamond",def:"Pengembangan dari Fraud Triangle oleh Wolfe dan Hermanson (2004) yang menambahkan elemen Capability sebagai elemen keempat. Menggambarkan bahwa kemampuan pelaku untuk mengeksekusi fraud adalah faktor tambahan yang menentukan apakah fraud benar-benar terjadi."},
+  {term:"Fraud Hexagon",def:"Model terbaru dalam evolusi teori fraud yang menambahkan Collusion sebagai elemen keenam. Paling relevan untuk menjelaskan fraud skala besar yang melibatkan banyak pihak secara terkoordinasi dan sistematis."},
+  {term:"Fraud Pentagon",def:"Pengembangan dari Fraud Diamond yang menambahkan elemen Competence (kemampuan teknis) dan Arrogance (rasa tidak terkalahkan). Model ini lebih menangkap realitas fraud yang dilakukan oleh pelaku berpengalaman dengan posisi yang kuat."},
+  {term:"Fraud Tree",def:"Kerangka klasifikasi fraud yang dikembangkan oleh ACFE. Membagi seluruh jenis fraud menjadi tiga cabang utama: Corruption, Asset Misappropriation, dan Financial Statement Fraud. Setiap cabang memiliki sub-cabang yang lebih spesifik."},
+  {term:"Fraud Triangle",def:"Model klasik oleh Donald Cressey yang menjelaskan tiga kondisi yang hampir selalu hadir saat seseorang melakukan fraud: Pressure (tekanan), Opportunity (kesempatan), dan Rationalization (rasionalisasi). Menjadi fondasi dari semua model fraud yang berkembang kemudian."},
+  {term:"IAPI (Institut Akuntan Publik Indonesia)",def:"Organisasi profesi yang mewadahi akuntan publik di Indonesia. Bergabung dengan IAPI membantu auditor membangun jaringan profesional dan mengikuti perkembangan standar profesi terkini."},
+  {term:"IIA (Institute of Internal Auditors)",def:"Organisasi internasional yang menetapkan standar profesi audit internal secara global. Mendefinisikan audit internal sebagai aktivitas konsultasi dan assurance yang independen, objektif, dan dirancang untuk menambah nilai organisasi."},
+  {term:"Inherent Risk (IR)",def:"Risiko bawaan dari model bisnis klien yang ada secara alami, terlepas dari ada tidaknya pengendalian internal. Industri dengan transaksi kas besar atau aset likuid yang mudah dipindahkan cenderung memiliki IR yang lebih tinggi."},
+  {term:"Internal Audit",def:"Fungsi audit yang dilakukan oleh karyawan internal perusahaan, melapor kepada direksi atau komite audit. Fokusnya pada perbaikan sistem, efisiensi operasional, dan manajemen risiko berkelanjutan, bukan pada opini laporan keuangan untuk publik."},
+  {term:"ISA 240",def:"International Standard on Auditing 240 yang mengatur tanggung jawab auditor terkait fraud dalam audit laporan keuangan. Mendefinisikan fraud dan menetapkan prosedur yang harus dilakukan auditor untuk menilai dan merespons risiko fraud."},
+  {term:"KAP (Kantor Akuntan Publik)",def:"Perusahaan tempat akuntan publik bekerja dan menjalankan jasa audit eksternal. Di Indonesia dikenal dengan sebutan KAP, setara dengan audit firm di level internasional termasuk Big Four seperti Deloitte, PwC, EY, dan KPMG."},
+  {term:"Materialitas",def:"Ambang batas nilai yang dianggap signifikan dalam konteks audit. Salah saji dianggap material jika bisa mempengaruhi keputusan pengguna laporan keuangan. Auditor menentukan tingkat materialitas di awal proses perencanaan untuk memandu intensitas pengujian."},
+  {term:"Opportunity (Fraud Triangle)",def:"Elemen kedua dalam Fraud Triangle. Celah dalam sistem pengendalian internal yang memungkinkan fraud terjadi tanpa terdeteksi. Satu-satunya elemen dari tiga elemen fraud yang bisa dikurangi secara sistematis oleh auditor melalui penguatan kontrol."},
+  {term:"Predication (Investigasi Fraud)",def:"Keseluruhan keadaan yang menyebabkan seseorang yang terlatih secara profesional meyakini bahwa penipuan telah terjadi, sedang terjadi, atau akan terjadi. Pemeriksaan fraud tidak boleh dimulai tanpa predikasi yang memadai karena bisa berujung pada masalah hukum."},
+  {term:"Professional Skepticism",def:"Sikap kritis auditor yang tidak langsung menerima asersi tanpa bukti pendukung yang valid. Prinsip utamanya adalah Trust but Verify: tidak langsung curiga, tapi tidak pernah percaya tanpa verifikasi. Mendominasi 45 persen dari DNA cara berpikir auditor."},
+  {term:"Rationalization (Fraud Triangle)",def:"Elemen ketiga dalam Fraud Triangle. Kemampuan pelaku membenarkan tindakan curangnya dalam benaknya sendiri, misalnya merasa tindakannya kecil, sudah umum dilakukan, atau merupakan respons terhadap ketidakadilan yang ia rasakan."},
+  {term:"Reasonable Assurance",def:"Konsep fundamental dalam audit yang menyatakan bahwa auditor tidak memberikan jaminan mutlak 100 persen atas kewajaran laporan keuangan. Yang diberikan adalah keyakinan memadai berdasarkan bukti yang dikumpulkan secara sistematis dan profesional."},
+  {term:"Risk Assessment",def:"Tahap kedua dalam siklus audit enam langkah. Auditor memetakan area-area yang paling berisiko dalam bisnis klien untuk menentukan di mana fokus pengujian akan diarahkan dan seberapa dalam tingkat pengujiannya."},
+  {term:"Risk-Based Thinking",def:"Salah satu dari lima elemen audit mindset. Kemampuan auditor untuk selalu memindai dan mengidentifikasi di mana letak risiko terbesar dalam suatu organisasi, sehingga energi audit bisa dialokasikan secara efisien ke area yang paling membutuhkan perhatian."},
+  {term:"Substantive Tests",def:"Prosedur audit yang dirancang untuk memverifikasi apakah saldo akun dan transaksi yang dilaporkan didukung oleh bukti yang memadai. Berbeda dari Test of Controls yang menguji apakah prosedur pengendalian berjalan sebagaimana mestinya."},
+  {term:"Test of Controls",def:"Prosedur audit yang menguji apakah pengendalian internal klien berjalan sebagaimana mestinya dalam periode audit. Hasilnya menentukan seberapa jauh auditor bisa mengandalkan pengendalian internal tersebut dan seberapa luas Substantive Tests yang masih diperlukan."},
+  {term:"Vouching",def:"Prosedur audit fieldwork di mana auditor menelusuri transaksi yang tercatat dalam pembukuan kembali ke dokumen sumber aslinya seperti invoice, kontrak, atau kwitansi untuk memverifikasi kebenaran dan keabsahan transaksi tersebut."}
+];
+
+function renderGlossary(filter){
+  var list=document.getElementById('glossary-list');
+  var data=filter?glossaryData.filter(function(g){return g.term.toLowerCase().includes(filter.toLowerCase())||g.def.toLowerCase().includes(filter.toLowerCase());}):glossaryData;
+  if(data.length===0){list.innerHTML='<li style="padding:24px;text-align:center;color:var(--text-muted);font-size:14px;">Tidak ada istilah yang cocok. Coba kata kunci lain.</li>';return;}
+  list.innerHTML=data.map(function(g){return '<li class="glossary-item"><div class="glossary-term">'+g.term+'</div><div class="glossary-def">'+g.def+'</div></li>';}).join('');
+}
+function filterGlossary(){renderGlossary(document.getElementById('glossary-input').value);}
+renderQuestion();
+renderGlossary();
+</script>
+</body>
+</html>
