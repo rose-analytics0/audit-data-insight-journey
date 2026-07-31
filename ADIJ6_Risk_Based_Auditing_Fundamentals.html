@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk Based Audit — Audit & Data Insight Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-950:#081422;
+  --navy-900:#0c1d31;
+  --navy-800:#122b47;
+  --navy-700:#1a3a5c;
+  --teal-500:#2fa89b;
+  --teal-300:#8fd6c9;
+  --teal-100:#e4f5f1;
+  --amber-500:#e0a458;
+  --amber-300:#f3cf98;
+  --paper:#f6f3ec;
+  --ink:#0c1d31;
+  --muted:#9db3c7;
+  --danger:#d9694f;
+  --major:#e0a458;
+  --moderate:#7fb7a3;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--navy-950);
+  color:var(--paper);
+  font-family:'IBM Plex Sans',sans-serif;
+  line-height:1.65;
+}
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:700;margin:0 0 .4em;color:#fff;}
+h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);color:var(--teal-300);}
+h3{font-size:1.25rem;color:var(--amber-300);}
+p{margin:0 0 1em;}
+a{color:var(--teal-300);}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:.72rem;
+  color:var(--amber-300);
+  margin-bottom:.6em;
+  display:block;
+}
+.wrap{max-width:880px;margin:0 auto;padding:0 24px;}
+
+/* NAV */
+nav.stickynav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(8,20,34,.92);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--navy-700);
+  overflow-x:auto;
+  white-space:nowrap;
+}
+nav.stickynav .navinner{display:flex;gap:4px;padding:10px 20px;max-width:1100px;margin:0 auto;}
+nav.stickynav a{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.72rem;
+  color:var(--muted);
+  text-decoration:none;
+  padding:8px 12px;
+  border-radius:20px;
+  transition:.2s;
+  flex-shrink:0;
+}
+nav.stickynav a:hover, nav.stickynav a.active{background:var(--teal-500);color:#04140f;}
+
+/* HERO */
+header.hero{
+  padding:90px 24px 70px;
+  background:
+    radial-gradient(ellipse at top left, rgba(47,168,155,.22), transparent 55%),
+    radial-gradient(ellipse at bottom right, rgba(224,164,88,.14), transparent 50%);
+  border-bottom:1px solid var(--navy-700);
+}
+.hero-card{max-width:880px;margin:0 auto;}
+.speaker-tag{
+  display:inline-flex;gap:10px;align-items:center;
+  background:var(--navy-800);border:1px solid var(--navy-700);
+  padding:10px 18px;border-radius:30px;
+  font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--teal-300);
+  margin-top:22px;
+}
+.risk-flow{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  margin-top:28px;font-family:'IBM Plex Mono',monospace;font-size:.85rem;
+}
+.risk-flow span.node{background:var(--navy-800);border:1px solid var(--teal-500);padding:8px 14px;border-radius:8px;color:var(--teal-300);}
+.risk-flow span.arrow{color:var(--amber-500);}
+
+/* SECTIONS */
+section.mod{padding:60px 24px;border-bottom:1px solid var(--navy-800);}
+section.mod:nth-child(even){background:var(--navy-900);}
+.numtag{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:38px;height:38px;border-radius:10px;
+  background:var(--teal-500);color:#04140f;
+  font-family:'IBM Plex Mono',monospace;font-weight:600;
+  margin-right:12px;flex-shrink:0;
+}
+.sectitle{display:flex;align-items:center;margin-bottom:26px;}
+
+/* Simple language box */
+.simple-box{
+  background:var(--navy-800);
+  border-left:4px solid var(--amber-500);
+  border-radius:6px;
+  padding:18px 22px;
+  margin:22px 0;
+}
+.simple-box .lbl{
+  font-family:'IBM Plex Mono',monospace;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--amber-300);
+  display:block;margin-bottom:8px;
+}
+
+/* Analogy box */
+.analogy-box{
+  background:linear-gradient(135deg, rgba(47,168,155,.12), rgba(47,168,155,.03));
+  border:1px solid var(--teal-500);
+  border-radius:6px;
+  padding:18px 22px;
+  margin:22px 0;
+}
+.analogy-box .lbl{
+  font-family:'IBM Plex Mono',monospace;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--teal-300);
+  display:block;margin-bottom:8px;
+}
+
+/* standard-pairing box */
+.std-box{
+  background:var(--navy-800);border:1px dashed var(--muted);border-radius:6px;
+  padding:14px 18px;margin:18px 0;font-size:.92rem;
+}
+.std-box .lbl{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;}
+
+/* tables */
+.tblwrap{overflow-x:auto;margin:20px 0;border-radius:8px;border:1px solid var(--navy-700);}
+table{border-collapse:collapse;width:100%;font-size:.88rem;}
+th,td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--navy-800);}
+th{background:var(--navy-800);color:var(--teal-300);font-family:'IBM Plex Mono',monospace;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;}
+tr:last-child td{border-bottom:none;}
+td.crit{color:var(--danger);font-weight:600;}
+td.maj{color:var(--major);font-weight:600;}
+td.mod{color:var(--moderate);font-weight:600;}
+
+/* accordion */
+details.acc{
+  background:var(--navy-800);border:1px solid var(--navy-700);
+  border-radius:8px;margin:12px 0;overflow:hidden;
+}
+details.acc summary{
+  cursor:pointer;padding:16px 20px;font-family:'IBM Plex Mono',monospace;
+  font-weight:600;color:var(--teal-300);list-style:none;
+  display:flex;justify-content:space-between;align-items:center;
+}
+details.acc summary::-webkit-details-marker{display:none;}
+details.acc summary::after{content:'+';font-size:1.3rem;color:var(--amber-500);}
+details.acc[open] summary::after{content:'−';}
+details.acc .accbody{padding:0 20px 20px;}
+
+/* component deep-dive cards */
+.compcard{
+  background:var(--navy-800);border:1px solid var(--navy-700);border-radius:10px;
+  padding:22px;margin:18px 0;
+}
+.oldnew{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+@media(max-width:600px){.oldnew{grid-template-columns:1fr;}}
+.oldnew .cell{padding:14px;border-radius:8px;font-size:.88rem;}
+.oldnew .old{background:rgba(157,179,199,.1);border:1px solid var(--muted);}
+.oldnew .new{background:rgba(224,164,88,.12);border:1px solid var(--amber-500);}
+.oldnew .cell .tag{font-family:'IBM Plex Mono',monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:6px;color:var(--muted);}
+.oldnew .new .tag{color:var(--amber-300);}
+
+/* pyramid */
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:6px;margin:30px 0;}
+.pyramid .lvl{
+  border-radius:8px;padding:18px 26px;text-align:center;
+  font-family:'IBM Plex Mono',monospace;
+}
+.pyramid .lvl1{background:var(--teal-500);color:#04140f;width:46%;font-weight:700;}
+.pyramid .lvl2{background:var(--navy-700);border:1px solid var(--teal-300);width:66%;}
+.pyramid .lvl3{background:var(--navy-800);border:1px solid var(--muted);width:88%;}
+.pyramid .lvl .cat{display:block;font-size:.68rem;color:var(--amber-300);margin-top:6px;text-transform:uppercase;letter-spacing:.08em;}
+
+/* COSO cube-ish grid */
+.coso-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:20px 0;}
+@media(max-width:640px){.coso-grid{grid-template-columns:repeat(2,1fr);}}
+.coso-cell{
+  background:var(--navy-800);border:1px solid var(--teal-500);border-radius:8px;
+  padding:12px 10px;text-align:center;font-size:.78rem;font-family:'IBM Plex Mono',monospace;
+  color:var(--teal-300);
+}
+.coso-obj{background:var(--navy-700);border-color:var(--amber-500);color:var(--amber-300);}
+
+/* stat bars for financial coverage */
+.statrow{margin:14px 0;}
+.statrow .lbl{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:.82rem;margin-bottom:6px;}
+.statbar{background:var(--navy-800);border-radius:6px;height:10px;overflow:hidden;}
+.statbar > div{background:linear-gradient(90deg,var(--teal-500),var(--amber-500));height:100%;}
+.statitems{font-size:.82rem;color:var(--muted);margin-top:6px;}
+
+/* quiz */
+.quiz-q{background:var(--navy-800);border:1px solid var(--navy-700);border-radius:10px;padding:20px;margin:16px 0;}
+.quiz-opt{
+  display:block;width:100%;text-align:left;background:var(--navy-900);
+  border:1px solid var(--navy-700);color:var(--paper);padding:12px 16px;
+  border-radius:8px;margin:8px 0;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:.92rem;
+  transition:.15s;
+}
+.quiz-opt:hover{border-color:var(--teal-500);}
+.quiz-opt.correct{background:rgba(47,168,155,.25);border-color:var(--teal-500);}
+.quiz-opt.wrong{background:rgba(217,105,79,.2);border-color:var(--danger);}
+.quiz-fb{margin-top:10px;font-size:.85rem;color:var(--teal-300);display:none;}
+.tf-btns{display:flex;gap:12px;margin-top:12px;}
+.tf-btn{margin:0;flex:1;text-align:center;}
+.tf-btn.selected{border-color:var(--teal-500);background:rgba(47,168,155,.18);}
+.tf-btn.correct-mark{background:rgba(47,168,155,.3);border-color:var(--teal-500);}
+.tf-btn.wrong-mark{background:rgba(217,105,79,.25);border-color:var(--danger);}
+.quiz-score{font-family:'IBM Plex Mono',monospace;color:var(--amber-300);margin-top:20px;font-size:.95rem;}
+
+/* glossary */
+.gloss-item{border-bottom:1px solid var(--navy-800);padding:14px 0;}
+.gloss-term{font-family:'IBM Plex Mono',monospace;color:var(--amber-300);font-weight:600;}
+
+footer{padding:50px 24px;text-align:center;color:var(--muted);font-size:.85rem;}
+footer a{color:var(--teal-300);}
+ul{padding-left:20px;}
+li{margin-bottom:.4em;}
+.badge{
+  display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.7rem;
+  padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;
+}
+.badge.high{background:rgba(217,105,79,.2);color:var(--danger);}
+.badge.med{background:rgba(224,164,88,.2);color:var(--amber-300);}
+.badge.low{background:rgba(127,183,163,.2);color:var(--moderate);}
+</style>
+</head>
+<body>
+
+<nav class="stickynav">
+  <div class="navinner">
+    <a href="#beranda">Beranda</a>
+    <a href="#risiko">Memahami Risiko</a>
+    <a href="#proses">Proses & Definisi RBA</a>
+    <a href="#pendekatan">Pendekatan & Dilema</a>
+    <a href="#bandingan">RBA vs Metodologi Lama</a>
+    <a href="#sumber">Sumber Info & Rencana</a>
+    <a href="#cakupan">Cakupan Keuangan</a>
+    <a href="#kriteria">Kriteria Penilaian</a>
+    <a href="#lini">Three Lines & COSO</a>
+    <a href="#komponen">5 Komponen COSO</a>
+    <a href="#deepdive">Bedah Tiap Komponen</a>
+    <a href="#piramida">Risk Aware Enterprise</a>
+    <a href="#kuis">Kuis</a>
+    <a href="#glosarium">Glosarium</a>
+  </div>
+</nav>
+
+<header class="hero" id="beranda">
+  <div class="hero-card">
+    <span class="eyebrow">Audit &amp; Data Insight Journey — Modul</span>
+    <h1>Risk Based Audit: Mengaudit Berdasarkan Apa yang Paling Bisa Merugikan</h1>
+    <p style="font-size:1.1rem;color:var(--muted);max-width:640px;">
+      Kalau audit biasa itu menjadwalkan servis untuk semua kendaraan dengan frekuensi yang sama,
+      Risk Based Audit itu memeriksa dulu kendaraan yang paling sering dipakai dan paling rawan
+      rusak, sebelum sempat menyervis mobil kantor yang jarang dipakai.
+    </p>
+    <div class="speaker-tag">
+      🎤 Lis Suryani, S.Kom., MM, QRGP, CRGP — Webinar oleh Unlock Indonesia
+    </div>
+    <div class="risk-flow">
+      <span class="node">Objective</span><span class="arrow">➔</span>
+      <span class="node">Plan of Action</span><span class="arrow">➔</span>
+      <span class="node">What Can Go Wrong</span><span class="arrow">➔</span>
+      <span class="node">Risk</span>
+    </div>
+  </div>
+</header>
+
+<section class="mod" id="risiko">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">1</span><h2>Memahami Risiko: Kenapa Organisasi Ini Ada?</h2></div>
+
+    <p>Sebelum bicara soal audit, Ibu Lis Suryani mengajak mundur satu langkah dulu: kenapa sebuah
+    organisasi itu didirikan? Di sektor swasta, jawabannya adalah untuk <strong>meningkatkan nilai
+    bagi pemegang saham</strong>. Di sektor pemerintah, tujuannya adalah <strong>memberi manfaat bagi
+    publik</strong>. Semua yang dilakukan organisasi, dari rapat sampai transaksi harian, seharusnya
+    mengarah ke salah satu dari dua tujuan itu.</p>
+
+    <p>Nah, risiko itu muncul dari alur sederhana ini:</p>
+    <div class="risk-flow">
+      <span class="node">Objective</span><span class="arrow">➔</span>
+      <span class="node">Plan of Action</span><span class="arrow">➔</span>
+      <span class="node">What Can Go Wrong</span><span class="arrow">➔</span>
+      <span class="node">Risk</span>
+    </div>
+
+    <div class="simple-box">
+      <span class="lbl">Dalam bahasa sederhana</span>
+      Organisasi punya tujuan, lalu menyusun rencana untuk mencapainya. Di sepanjang rencana itu,
+      selalu ada kemungkinan sesuatu meleset dari yang diharapkan. Kemungkinan meleset itulah yang
+      disebut risiko. Risiko bukan berarti sesuatu yang buruk pasti terjadi, tapi kemungkinan bahwa
+      sesuatu bisa membuat tujuan tidak tercapai.
+    </div>
+
+    <div class="analogy-box">
+      <span class="lbl">Analogi: Perjalanan Menuju Suatu Kota</span>
+      Bayangkan organisasi seperti perjalanan mobil menuju suatu kota. Ada tujuan (objective) dan
+      rencana perjalanan (plan of action): rute, kendaraan, bahan bakar, waktu berangkat. Namun di
+      sepanjang jalan selalu ada kemungkinan meleset, ban bocor, rem bermasalah, jalan ditutup,
+      bahan bakar habis sebelum sampai. Semua kemungkinan itulah yang disebut risiko, hal-hal yang
+      bisa menghambat tercapainya tujuan organisasi. Analogi perjalanan ini akan terus kita pakai
+      di sepanjang modul ini.
+    </div>
+
+    <h3>Dua Komponen Risiko: Frekuensi dan Dampak</h3>
+    <p>Setiap risiko dinilai dari dua sisi, seberapa sering kemungkinan itu terjadi dan seberapa
+    besar akibatnya kalau benar-benar terjadi.</p>
+
+    <div class="tblwrap">
+      <table>
+        <tr><th>Frequency (Seberapa Sering)</th><th>Impact (Seberapa Besar Dampaknya)</th></tr>
+        <tr><td>a. Remote (nyaris tidak pernah)</td><td>a. Insignificant (tidak berarti)</td></tr>
+        <tr><td>b. Unlikely (jarang)</td><td>b. Minor (kecil)</td></tr>
+        <tr><td>c. Possible (mungkin terjadi)</td><td>c. Moderate (sedang)</td></tr>
+        <tr><td>d. Likely (cenderung terjadi)</td><td>d. Major (besar)</td></tr>
+        <tr><td>e. Almost Certain (hampir pasti)</td><td>e. Catastrophic (menghancurkan)</td></tr>
+      </table>
+    </div>
+
+    <div class="analogy-box">
+      <span class="lbl">Analogi</span>
+      Ban bocor di jalan sepi menjelang tujuan mungkin sering terjadi (likely) tapi dampaknya cuma
+      menunda perjalanan sebentar (minor). Sebaliknya, rem blong di jalan tol menurun jarang terjadi
+      (unlikely) tapi dampaknya bisa fatal (catastrophic). Auditor menilai dua sumbu ini bersamaan,
+      seberapa sering suatu risiko bisa terjadi dan seberapa besar akibatnya kalau benar-benar terjadi.
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="proses">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">2</span><h2>Proses Risk Assessment & Definisi Risk Based Audit</h2></div>
+
+    <h3>5 Langkah Risk Assessment Process</h3>
+    <ol>
+      <li>Establish the Context (menetapkan konteks)</li>
+      <li>Identify the Risk (mengidentifikasi risiko)</li>
+      <li>Analyze the Risk (menganalisis risiko)</li>
+      <li>Evaluate and Prioritize the Risk (mengevaluasi dan memprioritaskan risiko)</li>
+      <li>Tackle the Risk (menangani risiko)</li>
+    </ol>
+
+    <h3>Risk Management vs Risk Assessment: Jangan Tertukar</h3>
+    <div class="oldnew">
+      <div class="cell old">
+        <span class="tag">Risk Management</span>
+        Bagian integral dari sistem pengendalian internal, dan ini tanggung jawab <strong>manajemen</strong>,
+        bukan auditor. Manajemen yang menjalankan dan mengelola risiko sehari-hari.
+      </div>
+      <div class="cell new">
+        <span class="tag">Risk Assessment (Audit)</span>
+        Bagian dari <strong>perencanaan audit</strong>, tempat auditor mempertimbangkan risiko individual
+        maupun faktor risiko generik untuk menentukan apa yang perlu diperiksa lebih dulu.
+      </div>
+    </div>
+
+    <div class="simple-box">
+      <span class="lbl">Dalam bahasa sederhana</span>
+      Risk management itu urusan manajemen mengelola risikonya sendiri. Risk assessment dalam
+      konteks audit itu urusan auditor menilai risiko untuk menentukan prioritas pemeriksaan.
+      Auditor tidak menggantikan tugas manajemen, ia hanya menilai seberapa baik manajemen sudah
+      mengelola risikonya.
+    </div>
+
+    <h3>Definisi Risk Based Audit</h3>
+    <p>Risk Based Audit (RBA) adalah metodologi internal yang berfokus pada risiko inheren dalam
+    aktivitas atau sistem organisasi, dan memberi keyakinan (assurance) bahwa risiko tersebut
+    dikelola oleh manajemen sesuai batas selera risiko (risk appetite) yang sudah ditetapkan. RBA
+    adalah bagian dari kerangka manajemen risiko organisasi itu sendiri, dan di setiap tahapnya
+    ia berusaha memperkuat tanggung jawab manajemen serta Dewan Direksi (BOD) dalam mengelola risiko.</p>
+
+    <div class="std-box">
+      <span class="lbl">Kaitan standar</span>
+      Prinsip ini sejalan dengan <strong>GIAS 2025</strong> dan <strong>IPPF</strong> yang menegaskan bahwa
+      fungsi audit internal memberi assurance atas efektivitas proses manajemen risiko, bukan
+      menjalankan proses itu sendiri.
+    </div>
+
+    <div class="analogy-box">
+      <span class="lbl">Analogi</span>
+      Di perjalanan ini, manajemen berperan sebagai pengemudi yang mengendalikan kendaraan dan
+      merespons setiap risiko yang muncul. Auditor internal bukan pengemudi, melainkan mekanik
+      yang memastikan rem, ban, dan mesin dalam kondisi baik sehingga pengemudi bisa menjalankan
+      perjalanan dengan aman. Auditor memberi assurance bahwa pengendalian sudah berjalan
+      sebagaimana mestinya, bukan mengambil alih kemudi.
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="pendekatan">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">3</span><h2>Pendekatan Risk Based Auditing & Dilema Auditor</h2></div>
+
+    <h3>8 Langkah Pendekatan RBA</h3>
+    <ol>
+      <li>Identifikasi Audit Universe (semua area yang berpotensi diaudit)</li>
+      <li>Memecah audit universe menjadi unit-unit yang bisa diaudit</li>
+      <li>Identifikasi Risiko</li>
+      <li>Penilaian & Evaluasi Risiko</li>
+      <li>Risk Scoring / Heat Map</li>
+      <li>Penyusunan RBIA Plan</li>
+      <li>Eksekusi</li>
+      <li>Pelaporan</li>
+    </ol>
+
+    <div class="analogy-box">
+      <span class="lbl">Analogi</span>
+      Bayangkan sebuah bengkel besar yang menangani banyak kendaraan (audit universe). Bengkel
+      punya waktu dan sumber daya yang terbatas, sehingga mekanik tidak mungkin memeriksa semua
+      kendaraan dengan perhatian yang sama. Mekanik mulai dengan memetakan kendaraan mana yang
+      paling sering dipakai atau paling rawan rusak (heat map), lalu menyusun jadwal servis (RBIA
+      Plan) yang memprioritaskan kendaraan berisiko tinggi itu.
+    </div>
+
+    <h3>Kerangka Konseptual Dasar Perencanaan Audit Berbasis Risiko</h3>
+    <ol>
+      <li>Menentukan dan mengategorikan audit universe</li>
+      <li>Mengidentifikasi peristiwa yang berpotensi menimbulkan risiko dan peluang di seluruh audit universe</li>
+      <li>Memberi skor pada peristiwa tersebut dari sisi probabilitas dan dampak (dengan mempertimbangkan
+      tindakan mitigasi manajemen) untuk menentukan tingkat risiko residual</li>
+      <li>Menyusun rencana audit berbasis risiko dengan faktor risiko generik dan kriteria skoring untuk
+      menentukan prioritas audit di seluruh audit universe</li>
+      <li>Menyajikan hasil perencanaan berbasis risiko melalui rencana kerja strategis dan tahunan yang
+      terus diperbarui</li>
+    </ol>
+
+    <h3>Dilema Auditor</h3>
+    <p>Tantangan terbesar auditor adalah memberi <strong>tingkat keyakinan</strong> bahwa fungsi audit
+    internal telah menangkap dan menilai "semua" risiko material yang mengancam perusahaan. Padahal
+    sumber daya audit selalu terbatas.</p>
+
+    <div class="tblwrap">
+      <table>
+        <tr><th>Sisi Biaya</th><th>Sisi Dilema</th></tr>
+        <tr><td>Penggunaan sumber daya (waktu, orang, anggaran)</td>
+        <td><strong>Significance</strong> — seberapa dalam audit harus dilakukan<br>
+        <strong>Relevance</strong> — apa yang sebenarnya perlu diaudit<br>
+        <strong>Coverage</strong> — seberapa luas cakupan audit</td></tr>
+      </table>
+    </div>
+
+    <div class="simple-box">
+      <span class="lbl">Dalam bahasa sederhana</span>
+      Auditor punya waktu dan tenaga terbatas, tapi diharapkan menjamin semua risiko besar sudah
+      "ketangkep". Karena tidak mungkin memeriksa semuanya sedalam-dalamnya, auditor harus memilih:
+      seberapa dalam memeriksa, apa yang paling penting diperiksa, dan seberapa luas cakupannya.
+      Di sinilah risk based audit membantu, karena keputusan itu didasarkan pada data risiko, bukan
+      tebak-tebakan.
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="bandingan">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">4</span><h2>Risk Based Auditing vs Metodologi Lama</h2></div>
+
+    <p>Bagian ini sering jadi favorit peserta webinar karena langsung kelihatan bedanya antara cara
+    audit lama dan pendekatan berbasis risiko, secara berdampingan.</p>
+
+    <details class="acc" open>
+      <summary>Audit Universe, Tujuan Audit, Rencana Tahunan, Jenis Audit</summary>
+      <div class="accbody">
+        <div class="tblwrap">
+          <table>
+            <tr><th>Aspek</th><th>Risk-Based Auditing</th><th>Metodologi Lama</th></tr>
+            <tr><td>Audit Universe</td><td>Seluruh aktivitas bisnis</td>
+            <td>Utamanya area keuangan, ditambah kepatuhan hukum dan operasional</td></tr>
+            <tr><td>Tujuan Audit</td><td>Memberi opini apakah risiko dikelola pada level yang bisa diterima</td>
+            <td>Memastikan kontrol internal berjalan, meningkatkan efisiensi</td></tr>
+            <tr><td>Rencana Tahunan</td><td>Audit diarahkan ke area berisiko tinggi</td>
+            <td>Rencana siklikal, tidak selalu bergantung pada level risiko</td></tr>
+            <tr><td>Jenis Audit</td><td>Hanya dibedakan antara audit proyek (pengembangan sistem)
+            dan proses berjalan</td><td>Dibedakan antara audit keuangan, operasional, kepatuhan, dan lainnya</td></tr>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>Keterlibatan Organisasi, Fieldwork, Testing, Laporan</summary>
+      <div class="accbody">
+        <div class="tblwrap">
+          <table>
+            <tr><th>Aspek</th><th>Risk-Based Auditing</th><th>Metodologi Lama</th></tr>
+            <tr><td>Keterlibatan bagian lain organisasi</td>
+            <td>Dilibatkan di semua tahap perencanaan dan audit, karena merekalah pemilik risiko
+            dan harus memberi assurance ke stakeholder</td>
+            <td>Minimal, mungkin hanya menyetujui rencana audit dan terlibat di akhir untuk
+            menyepakati temuan</td></tr>
+            <tr><td>Fieldwork</td><td>Memastikan organisasi sudah mengidentifikasi semua risikonya
+            dan mengendalikannya</td>
+            <td>Berdasarkan program kerja yang sudah ditetapkan, terkadang tanpa tujuan yang jelas,
+            sekadar menjalankan tes</td></tr>
+            <tr><td>Testing</td><td>Tes serupa, tapi berfokus mengonfirmasi kontrol penting berjalan.
+            Penekanan berubah sesuai kematangan risiko organisasi</td>
+            <td>Mengonfirmasi kontrol berjalan tanpa memprioritaskan pentingnya, dan bisa jadi
+            hanya mencari kesalahan sekecil apa pun</td></tr>
+            <tr><td>Laporan</td><td>Memberi opini ke manajemen apakah risikonya dikelola pada level
+            yang bisa diterima, dan melaporkan jika tidak</td>
+            <td>Mengonfirmasi kontrol internal berjalan dan melaporkan bila tidak</td></tr>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <div class="simple-box">
+      <span class="lbl">Dalam bahasa sederhana</span>
+      Audit lama itu seperti menjadwalkan servis untuk seluruh kendaraan dengan frekuensi yang sama,
+      tanpa melihat mana yang paling sering digunakan atau paling kritis bagi operasional. Risk based
+      audit menentukan prioritas berdasarkan tingkat risiko, sehingga pemeriksaan difokuskan pada
+      kendaraan yang memberikan dampak terbesar terhadap pencapaian tujuan organisasi.
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="sumber">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">5</span><h2>Sumber Informasi untuk Kategorisasi & Contoh Rencana RBA</h2></div>
+
+    <h3>Dari Mana Auditor Mengambil Informasi untuk Mengategorikan Risiko?</h3>
+    <ul>
+      <li>Informasi manajemen yang menjabarkan tujuan, sasaran, dan target</li>
+      <li>Panduan layanan organisasi</li>
+      <li>Struktur organisasi atau direktori kantor</li>
+      <li>Laporan tahunan dan target kinerja organisasi</li>
+      <li>Rencana korporat / rencana departemen / rencana bisnis</li>
+      <li>Rencana pengembangan TI, infrastruktur lain, dan anggaran gedung</li>
+      <li>Laporan audit eksternal, konsultan, inspeksi, dan review</li>
+      <li>Rencana audit operasional dan strategis yang sudah ada</li>
+    </ul>
+
+    <div class="std-box">
+      <span class="lbl">Kaitan standar</span>
+      Pemanfaatan laporan audit eksternal sebagai salah satu sumber informasi ini sejalan dengan
+      semangat koordinasi antar-lini assurance dalam <strong>GIAS 2025</strong>, agar audit internal
+      tidak bekerja terisolasi dari hasil kerja pihak lain.
+    </div>
+
+    <h3>Contoh Rencana Audit Internal Berbasis Risiko</h3>
+    <div class="tblwrap">
+      <table>
+        <tr><th>No</th><th>Kritikalitas</th><th>Skor</th><th>Proses</th><th>Frekuensi</th></tr>
+        <tr><td>1</td><td class="crit">Tinggi</td><td>25–30</td>
+        <td>Revenue, Human Resource</td><td>Triwulanan hingga semesteran</td></tr>
+        <tr><td>2</td><td class="maj">Sedang</td><td>20–25</td>
+        <td>Accounts Payable, Fixed Assets, Compliances</td><td>Semesteran hingga sekali setahun</td></tr>
+        <tr><td>3</td><td class="mod">Rendah</td><td>&lt; 25</td>
+        <td>Admin Functions</td><td>Tahunan hingga sekali dua tahun</td></tr>
+      </table>
+    </div>
+
+    <div class="analogy-box">
+      <span class="lbl">Analogi</span>
+      Ini seperti jadwal servis kendaraan di sebuah armada. Truk yang paling sering dipakai dan
+      paling vital untuk operasional (skor tinggi) diservis tiap tiga bulan. Mobil kantor yang jarang
+      dipakai (skor rendah) cukup diservis setahun sekali. Frekuensi pemeriksaan mengikuti seberapa
+      kritikal proses itu bagi organisasi.
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="cakupan">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">6</span><h2>Perencanaan Audit Berbasis Risiko: Cakupan Komponen Keuangan</h2></div>
+
+    <p>Salah satu cara memvalidasi rencana audit berbasis risiko adalah memastikan komponen-komponen
+    keuangan utama tercakup dengan persentase yang tinggi.</p>
+
+    <div class="statrow">
+      <div class="lbl"><span>Assets</span><span>98%</span></div>
+      <div class="statbar"><div style="width:98%"></div></div>
+      <div class="statitems">Kas & setara kas, piutang, unbilled receivables, persediaan, biaya
+      dibayar di muka, aset tidak lancar</div>
+    </div>
+    <div class="statrow">
+      <div class="lbl"><span>Liabilities</span><span>96%</span></div>
+      <div class="statbar"><div style="width:96%"></div></div>
+      <div class="statitems">Kreditur, pinjaman, provisi, unearned income, modal saham, laba
+      ditahan, kepentingan nonpengendali</div>
+    </div>
+    <div class="statrow">
+      <div class="lbl"><span>Expense</span><span>95%</span></div>
+      <div class="statbar"><div style="width:95%"></div></div>
+      <div class="statitems">Harga pokok penjualan, biaya energi, biaya karyawan, depresiasi &
+      amortisasi</div>
+    </div>
+    <div class="statrow">
+      <div class="lbl"><span>Revenue</span><span>98%</span></div>
+      <div class="statbar"><div style="width:98%"></div></div>
+      <div class="statitems">Pendapatan bunga, biaya proses (processing fee), biaya jasa
+      (service fee)</div>
+    </div>
+
+    <div class="simple-box">
+      <span class="lbl">Dalam bahasa sederhana</span>
+      Angka persentase ini menunjukkan seberapa besar porsi pos keuangan yang sudah "kesentuh" oleh
+      rencana audit. Kalau cakupan aset cuma 98%, itu artinya hampir semua jenis aset penting
+      perusahaan masuk dalam radar audit, bukan cuma sebagian kecil saja.
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="kriteria">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">7</span><h2>Kriteria Penilaian Temuan & Rating Laporan</h2></div>
+
+    <p>Supaya penilaian temuan audit tidak subjektif, dibuat kriteria baku untuk menentukan apakah
+    sebuah temuan tergolong <span class="badge high">Critical</span>,
+    <span class="badge med">Major</span>, atau <span class="badge low">Moderate</span>.</p>
+
+    <details class="acc" open>
+      <summary>Kriteria Contoh untuk Menilai Temuan (Sample Criteria)</summary>
+      <div class="accbody">
+        <div class="tblwrap">
+          <table>
+            <tr><th>Faktor Risiko</th><th>Critical</th><th>Major</th><th>Moderate</th></tr>
+            <tr><td><strong>Finansial</strong> — potensi kerugian</td>
+            <td class="crit">&gt; Rp 5 miliar</td><td class="maj">Rp 1–5 miliar</td>
+            <td class="mod">Rp 1 juta s.d &lt; Rp 1 miliar</td></tr>
+            <tr><td><strong>Hukum & Regulasi</strong></td>
+            <td class="crit">Potensi tuntutan/denda &gt; Rp 1 juta</td>
+            <td class="maj">Potensi denda &lt; Rp 1 juta</td>
+            <td class="mod">Ketidakpatuhan teknis (tanpa denda)</td></tr>
+            <tr><td><strong>Kerawanan Fraud</strong></td>
+            <td class="crit">Ada indikasi kemungkinan fraud</td><td>—</td><td>—</td></tr>
+            <tr><td><strong>Kebijakan & Prosedur</strong></td>
+            <td class="crit">Kebijakan/prosedur/praktik tidak ada sama sekali</td>
+            <td class="maj">Kebijakan ada tapi tidak dijalankan</td>
+            <td class="mod">Prosedur belum terdokumentasi tapi praktiknya sudah ada</td></tr>
+            <tr><td><strong>Kesalahan Transaksi</strong> (termasuk SLA)</td>
+            <td class="crit">&gt; 20% sampel audit</td><td class="maj">5–20% sampel audit</td>
+            <td class="mod">&lt; 5% sampel audit</td></tr>
+            <tr><td><strong>Temuan Berulang</strong></td>
+            <td class="crit">Rating terakhir Critical/Major</td>
+            <td class="maj">Rating terakhir Moderate</td><td>—</td></tr>
+            <tr><td><strong>Dampak ke Pelanggan</strong></td>
+            <td class="crit">&gt; 1% basis pelanggan (komplain)</td>
+            <td class="maj">0.5–1% basis pelanggan</td>
+            <td class="mod">&lt; 0.5% basis pelanggan</td></tr>
+            <tr><td><strong>Sistem & Alat</strong></td>
+            <td class="crit">Kebocoran data rahasia, sistem down berdampak ke bisnis</td>
+            <td class="maj">Validasi/akses kontrol lemah, berpotensi memicu fraud</td>
+            <td class="mod">Bug sistem yang memengaruhi efisiensi/kecepatan</td></tr>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary>Kriteria Rating Laporan Secara Keseluruhan</summary>
+      <div class="accbody">
+        <div class="tblwrap">
+          <table>
+            <tr><th>Rating Laporan</th><th>Critical</th><th>Major</th><th>Moderate</th></tr>
+            <tr><td class="mod">Acceptable</td><td>—</td><td>—</td><td>Kurang dari 4</td></tr>
+            <tr><td class="maj">Needs Improvement</td><td>1</td><td>1–2</td><td>≥ 4</td></tr>
+            <tr><td class="crit">Unsatisfactory</td><td>2–3</td><td>3–5</td><td>—</td></tr>
+            <tr><td class="crit">Poor</td><td>&gt; 3</td><td>&gt; 5</td><td>—</td></tr>
+          </table>
+        </div>
+        <p style="margin-top:14px;"><strong>Faktor konversi:</strong> 1 temuan Critical setara
+        2 temuan Major setara 4 temuan Moderate.</p>
+      </div>
+    </details>
+
+    <div class="analogy-box">
+      <span class="lbl">Analogi</span>
+      Bayangkan hasil pemeriksaan kendaraan di bengkel yang menggabungkan beberapa temuan jadi satu
+      rating akhir. Satu temuan rem blong (Critical) bisa "membebani" hasil pemeriksaan lebih berat
+      dibanding beberapa goresan cat kecil (Moderate) sekaligus. Faktor konversi ini yang membuat
+      mekanik atau auditor bisa membandingkan keseriusan temuan yang berbeda jenis dalam satu skala
+      yang sama.
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="lini">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">8</span><h2>Koordinasi Three Lines of Defense & 8 Komponen COSO ERM</h2></div>
+
+    <h3>Tiga Lini Pertahanan dalam Manajemen Risiko</h3>
+    <div class="tblwrap">
+      <table>
+        <tr><th>Lini Pertama</th><th>Lini Kedua</th><th>Lini Ketiga</th></tr>
+        <tr><td><strong>Risk Owners / Managers</strong><br>Manajemen operasional yang
+        menjalankan aktivitas sehari-hari</td>
+        <td><strong>Risk Control and Compliance</strong><br>Independensi terbatas, melapor
+        terutama ke manajemen</td>
+        <td><strong>Risk Assurance</strong><br>Audit internal, independensi lebih besar,
+        melapor ke badan pengawas (governing body)</td></tr>
+      </table>
+    </div>
+
+    <div class="std-box">
+      <span class="lbl">Kaitan standar</span>
+      Posisi lini ketiga sebagai pemberi assurance independen ke governing body ini konsisten
+      dengan prinsip independensi organisasional dalam <strong>IPPF</strong> dan <strong>GIAS 2025</strong>.
+    </div>
+
+    <div class="analogy-box">
+      <span class="lbl">Analogi</span>
+      Lini pertama itu seperti supir dan montir yang langsung mengendalikan dan merawat mobil.
+      Lini kedua itu seperti petugas keselamatan perusahaan yang menyusun aturan berkendara.
+      Lini ketiga itu seperti inspektur independen yang datang dari luar untuk memastikan
+      supir, montir, dan petugas keselamatan sama-sama benar menjalankan tugasnya, lalu
+      melapor langsung ke pemilik perusahaan.
+    </div>
+
+    <h3>8 Komponen COSO ERM</h3>
+    <p>Model COSO ERM digambarkan sebagai kubus dengan tiga sisi: kategori tujuan, delapan komponen,
+    dan tingkat entitas.</p>
+
+    <p class="mono" style="color:var(--amber-300);">Kategori Tujuan: Strategic · Operations · Reporting · Compliance</p>
+    <div class="coso-grid">
+      <div class="coso-cell">1. Internal Environment</div>
+      <div class="coso-cell">2. Objective Setting</div>
+      <div class="coso-cell">3. Event Identification</div>
+      <div class="coso-cell">4. Risk Assessment</div>
+      <div class="coso-cell">5. Risk Response</div>
+      <div class="coso-cell">6. Control Activities</div>
+      <div class="coso-cell">7. Information & Communication</div>
+      <div class="coso-cell">8. Monitoring</div>
+    </div>
+    <p class="mono" style="color:var(--muted);font-size:.82rem;">Tingkat Entitas: Entity Level · Division · Business Unit · Subsidiary</p>
+
+    <div class="simple-box">
+      <span class="lbl">Dalam bahasa sederhana</span>
+      Kubus COSO ERM ini menunjukkan bahwa manajemen risiko harus dilihat dari tiga sisi sekaligus:
+      untuk tujuan apa (strategis, operasional, pelaporan, kepatuhan), lewat delapan komponen
+      apa saja, dan di level organisasi mana (seluruh entitas, divisi, unit bisnis, atau anak
+      perusahaan). Satu risiko yang sama bisa punya bentuk berbeda tergantung dari sisi mana kamu
+      melihatnya.
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="komponen">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">9</span><h2>Ringkasan Perubahan Framework COSO</h2></div>
+
+    <div class="oldnew">
+      <div class="cell old">
+        <span class="tag">Yang Tidak Berubah</span>
+        <ul style="margin-bottom:0;">
+          <li>Definisi inti pengendalian internal</li>
+          <li>3 kategori tujuan dan 5 komponen pengendalian internal</li>
+          <li>Kelima komponen tetap wajib ada untuk pengendalian internal yang efektif</li>
+          <li>Peran penting judgement dalam merancang, menerapkan, dan menilai efektivitas pengendalian</li>
+        </ul>
+      </div>
+      <div class="cell new">
+        <span class="tag">Yang Berubah</span>
+        <ul style="margin-bottom:0;">
+          <li>Diperbarui sesuai perubahan lingkungan bisnis dan operasional</li>
+          <li>Tujuan operasi dan pelaporan diperluas cakupannya</li>
+          <li>Konsep dasar 5 komponen yang tadinya implisit, kini dikodifikasi jadi 17 prinsip</li>
+          <li>Diperbarui untuk relevansi dan ketergantungan pada teknologi informasi</li>
+          <li>Menambahkan penilaian dan respons risiko fraud</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>5 Komponen dan 17 Prinsip</h3>
+    <p>Kelima komponen dan 17 prinsip ini harus <strong>hadir dan berfungsi</strong>, serta beroperasi
+    secara terintegrasi satu sama lain, bukan berdiri sendiri-sendiri.</p>
+
+    <details class="acc" open>
+      <summary>1. Control Environment (Lingkungan Pengendalian)</summary>
+      <div class="accbody">
+        <ol>
+          <li>Menunjukkan komitmen pada integritas dan nilai etika</li>
+          <li>Menjalankan tanggung jawab pengawasan</li>
+          <li>Menetapkan struktur, wewenang, dan tanggung jawab</li>
+          <li>Menunjukkan komitmen pada kompetensi</li>
+          <li>Menegakkan akuntabilitas</li>
+        </ol>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>2. Risk Assessment (Penilaian Risiko)</summary>
+      <div class="accbody">
+        <ol start="6">
+          <li>Menetapkan tujuan yang sesuai</li>
+          <li>Mengidentifikasi dan menganalisis risiko</li>
+          <li>Menilai risiko fraud</li>
+          <li>Mengidentifikasi dan menganalisis perubahan signifikan</li>
+        </ol>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>3. Control Activities (Aktivitas Pengendalian)</summary>
+      <div class="accbody">
+        <ol start="10">
+          <li>Memilih dan mengembangkan aktivitas pengendalian</li>
+          <li>Memilih dan mengembangkan pengendalian umum atas teknologi</li>
+          <li>Menerapkan melalui kebijakan dan prosedur</li>
+        </ol>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>4. Information and Communication (Informasi dan Komunikasi)</summary>
+      <div class="accbody">
+        <ol start="13">
+          <li>Menggunakan informasi yang relevan</li>
+          <li>Berkomunikasi secara internal</li>
+          <li>Berkomunikasi secara eksternal</li>
+        </ol>
+      </div>
+    </details>
+    <details class="acc">
+      <summary>5. Monitoring Activities (Aktivitas Pemantauan)</summary>
+      <div class="accbody">
+        <ol start="16">
+          <li>Melakukan evaluasi berkelanjutan dan/atau terpisah</li>
+          <li>Mengevaluasi dan mengomunikasikan kekurangan (deficiencies)</li>
+        </ol>
+      </div>
+    </details>
+
+    <div class="simple-box">
+      <span class="lbl">Dalam bahasa sederhana</span>
+      Kalau 5 komponen itu diibaratkan lima bagian utama kendaraan (rangka, mesin, rem, kemudi,
+      dan panel kontrol), 17 prinsip adalah detail teknis di tiap bagian. Kendaraan baru dianggap
+      layak jalan kalau kelima bagian utamanya lengkap dan detailnya benar-benar terpasang, bukan
+      cuma tertulis di buku manual.
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="deepdive">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">10</span><h2>Bedah Tiap Komponen: Dari Definisi Lama ke Definisi Baru</h2></div>
+    <p>Bagian ini membedah kelima komponen satu per satu, dan menunjukkan bagaimana definisi
+    setiap komponen bergeser dari framework COSO 1992 (Old) ke framework 2013 (New).</p>
+
+    <div class="compcard">
+      <h3>A. Control Environment</h3>
+      <p>Manajemen menunjukkan komitmen pada integritas dan nilai etika, juga kompetensi, menjalankan
+      tanggung jawab pengawasan, <strong>menetapkan struktur, wewenang, dan tanggung jawab</strong>,
+      serta menegakkan akuntabilitas.</p>
+      <div class="oldnew">
+        <div class="cell old"><span class="tag">Old</span>Efektivitas fondasi organisasi:
+        atribut individu orang-orangnya (integritas, nilai etika, kompetensi) dan lingkungan
+        tempat organisasi beroperasi.</div>
+        <div class="cell new"><span class="tag">New</span>Penetapan struktur perusahaan, dengan
+        mempertimbangkan kesesuaian wewenang, tanggung jawab, dan komunikasi informasi.</div>
+      </div>
+      <p><strong>Dokumen terkait:</strong> Kode Etik / Code of Conduct, kebijakan & prosedur SDM,
+      struktur organisasi, deskripsi jabatan.</p>
+      <p><strong>Hard Controls</strong> (yang formal dan tertulis): kepatuhan staf pada kebijakan
+      perusahaan, manajer unit bisnis melakukan Control Self Assessment (CSA), prosedur unit sesuai
+      standar internasional, prosedur persetujuan eksplisit untuk hal signifikan, dan audit internal
+      memeriksa berbagai aspek administrasi perusahaan.</p>
+      <p><strong>Soft Controls</strong> (yang membentuk budaya): mendorong kejujuran, transparansi,
+      dan etika untuk mencegah fraud; menetapkan kebijakan tata kelola dan kode etik bisnis;
+      menanamkan nilai korporat (misalnya nilai "SPIRIT") agar integritas jadi bagian dari
+      budaya kerja.</p>
+      <div class="std-box"><span class="lbl">Perubahan Framework 2013</span>
+      Merangkum 7 faktor dari framework 1992 menjadi 5 prinsip, dan memperjelas peran tata kelola,
+      ekspektasi integritas, risk oversight (termasuk kaitannya dengan alokasi sumber daya), dan
+      kebutuhan mempertimbangkan pengendalian internal di seluruh organisasi yang makin kompleks.</div>
+      <div class="analogy-box"><span class="lbl">Analogi</span>Control environment itu seperti
+      rangka dan sasis mobil dalam perjalanan kita. Kalau rangkanya rapuh (orang-orangnya tidak
+      berintegritas, strukturnya tidak jelas siapa bertanggung jawab atas apa), sekuat apa pun
+      mesin dan remnya (komponen lain), kendaraan itu tetap berisiko celaka di jalan.</div>
+    </div>
+
+    <div class="compcard">
+      <h3>B. Risk Assessment</h3>
+      <p>Organisasi menetapkan tujuan bisnis serta mekanisme untuk mengidentifikasi, menganalisis,
+      dan mengelola risiko terkait, <strong>termasuk risiko fraud</strong>.</p>
+      <div class="oldnew">
+        <div class="cell old"><span class="tag">Old</span>Efektivitas aktivitas manajemen risiko
+        yang sedang berjalan.</div>
+        <div class="cell new"><span class="tag">New</span>Identifikasi risiko fraud secara khusus
+        dalam aktivitas penilaian risiko yang berjalan.</div>
+      </div>
+      <p><strong>Fokus utama:</strong> proses risk assessment, kerangka manajemen risiko, risk
+      tolerance, dan penilaian khusus atas risiko fraud.</p>
+      <div class="std-box"><span class="lbl">Perubahan Framework 2013</span>
+      Memperjelas bahwa risk assessment mencakup proses identifikasi, analisis, dan respons risiko;
+      memperluas pembahasan risk tolerance; menambahkan dimensi kecepatan (velocity) dan daya
+      tahan (persistence) risiko selain dampak dan kemungkinan; menekankan pentingnya memahami
+      perubahan signifikan pada faktor internal maupun eksternal; dan menyertakan penilaian
+      khusus atas risiko fraud.</div>
+      <div class="analogy-box"><span class="lbl">Analogi</span>Kalau sebelumnya penilaian risiko
+      itu seperti memeriksa cuaca sebelum berangkat saja, framework baru meminta kita juga
+      memeriksa seberapa cepat badai di depan bisa datang (velocity) dan seberapa lama ia
+      menghadang perjalanan kita (persistence), bukan cuma seberapa besar dan seberapa mungkin
+      terjadi.</div>
+    </div>
+
+    <div class="compcard">
+      <h3>C. Control Activities</h3>
+      <p>Organisasi menetapkan dan menjalankan kontrol, <strong>termasuk kontrol atas teknologi</strong>,
+      untuk memastikan tindakan yang diidentifikasi manajemen benar-benar menangani risiko demi
+      tercapainya tujuan perusahaan. Kontrol ini dijalankan lewat kebijakan dan prosedur.</p>
+      <div class="oldnew">
+        <div class="cell old"><span class="tag">Old</span>Efektivitas aktivitas pengendalian
+        organisasi.</div>
+        <div class="cell new"><span class="tag">New</span>Kesesuaian pemilihan dan pengembangan
+        pengendalian umum atas teknologi.</div>
+      </div>
+      <p><strong>Bentuk kontrol:</strong> kebijakan & prosedur, pemisahan tugas (segregation of
+      duties), struktur TI, dan IT General Controls.</p>
+      <p><strong>Klasifikasi kontrol:</strong></p>
+      <ul>
+        <li><strong>Manual vs IT</strong> — Manual (misalnya tanda tangan persetujuan dokumen),
+        IT-Dependent Manual (misalnya mengecek transaksi janggal dari laporan pengecualian), dan
+        IT Application Controls (misalnya sistem yang mencegah duplikasi transaksi)</li>
+        <li><strong>Preventive vs Detective</strong> — Preventive (merevisi transaksi sebelum
+        lanjut ke proses berikutnya), Detective (mengecek transaksi proses sebelumnya sudah benar
+        atau belum)</li>
+      </ul>
+      <div class="std-box"><span class="lbl">Perubahan Framework 2013</span>
+      Memperbarui pembahasan sesuai evolusi teknologi sejak 1992, membahas keterkaitan antara
+      proses bisnis, aktivitas kontrol otomatis, dan General IT Controls (GITC), membedakan
+      kontrol level transaksi dari kontrol di level organisasi lain, dan memperjelas bahwa
+      aktivitas kontrol adalah tindakan yang ditetapkan kebijakan/prosedur, bukan kebijakan/
+      prosedurnya itu sendiri.</div>
+      <div class="analogy-box"><span class="lbl">Analogi</span>Preventive control itu seperti
+      sabuk pengaman yang mencegah kamu terlempar sebelum tabrakan terjadi. Detective control itu
+      seperti kamera dashcam yang merekam supaya kamu tahu apa yang terjadi setelah insiden.
+      Keduanya perlu, tapi fungsinya beda.</div>
+    </div>
+
+    <div class="compcard">
+      <h3>D. Information and Communication</h3>
+      <p>Organisasi <strong>menggunakan informasi yang relevan</strong> yang dikomunikasikan baik
+      secara internal maupun eksternal untuk mendukung berjalannya pengendalian internal.</p>
+      <div class="oldnew">
+        <div class="cell old"><span class="tag">Old</span>Komunikasi informasi secara tepat
+        waktu.</div>
+        <div class="cell new"><span class="tag">New</span>Perolehan, penghasilan, dan penggunaan
+        informasi yang relevan dan berkualitas untuk berjalannya pengendalian internal.</div>
+      </div>
+      <h4 style="color:var(--teal-300);margin-top:16px;">Ciri Informasi yang Baik</h4>
+      <ul>
+        <li><strong>Relevansi</strong> — sesuai tujuan penggunaannya</li>
+        <li><strong>Kelengkapan</strong> — memuat semua detail yang dibutuhkan pengguna</li>
+        <li><strong>Kekinian</strong> — sedekat mungkin dengan waktu pengambilan keputusan</li>
+        <li><strong>Ketepatan waktu</strong> — tersedia saat dibutuhkan</li>
+        <li><strong>Ketersediaan/aksesibilitas</strong> — mudah diakses, tapi tetap mencegah
+        pihak yang tidak berkepentingan mengaksesnya</li>
+      </ul>
+      <div class="analogy-box"><span class="lbl">Analogi</span>Komunikasi yang baik itu dua arah,
+      seperti pengemudi dan navigator yang saling bertukar info sepanjang perjalanan (rute macet,
+      kondisi jalan di depan), bukan siaran radio satu arah. Sistem komunikasi organisasi juga
+      harus mencakup jalur internal (ke karyawan) dan eksternal (ke pihak luar), dan dievaluasi
+      berkala supaya nilainya tetap maksimal.</div>
+      <div class="std-box"><span class="lbl">Perubahan Framework 2013</span>
+      Menekankan kualitas informasi, membahas dampak persyaratan regulasi terhadap keandalan dan
+      perlindungan informasi, mempertimbangkan volume dan sumber informasi seiring kompleksitas
+      bisnis yang meningkat, dan mencerminkan dampak teknologi terhadap kecepatan, cara, dan
+      kualitas arus informasi.</div>
+    </div>
+
+    <div class="compcard">
+      <h3>E. Monitoring Activities</h3>
+      <p>Seluruh proses dan kontrol harus dipantau dan dimodifikasi sesuai kebutuhan, melalui
+      evaluasi berkelanjutan dan/atau terpisah, serta evaluasi dan komunikasi atas kekurangan
+      yang ditemukan.</p>
+      <div class="oldnew">
+        <div class="cell old"><span class="tag">Old</span>Efektivitas pemantauan atas seluruh
+        aktivitas.</div>
+        <div class="cell new"><span class="tag">New</span>Pemilihan, pengembangan, dan
+        pelaksanaan evaluasi berkelanjutan dan/atau terpisah untuk memastikan komponen
+        pengendalian internal hadir dan berfungsi.</div>
+      </div>
+      <p><strong>Komponen monitoring:</strong> laporan dan pemantauan, Control Self-Assessment,
+      audit internal, dan evaluasi berkelanjutan (ongoing evaluation).</p>
+      <p><strong>Fokus Monitoring (aktivitas/input):</strong> proses kontrol yang mengawasi
+      manajemen untuk menilai kemajuan operasional bisnis.</p>
+      <p><strong>Fokus Evaluasi (output, outcome, rencana tindak lanjut):</strong> melakukan
+      Control Self-Assessment (CSA), dan menyiapkan laporan bagi manajemen yang merinci hasil
+      penilaian, termasuk kekurangan, penyebab selisih antara operasi dan rencana, penanggung
+      jawab, serta rekomendasi perbaikan.</p>
+      <div class="std-box"><span class="lbl">Perubahan Framework 2013</span>
+      Memperjelas istilah, dua kategori utama aktivitas pemantauan kini disebut "ongoing
+      evaluations" dan "separate evaluations", menambahkan kebutuhan pemahaman dasar (baseline)
+      dalam menetapkan dan mengevaluasi kedua jenis evaluasi tersebut, serta memperluas
+      pembahasan soal pemanfaatan teknologi dan penyedia jasa eksternal.</div>
+      <div class="analogy-box"><span class="lbl">Analogi</span>Monitoring itu seperti memantau
+      dashboard mobil selama perjalanan. "Ongoing evaluation" itu seperti kamu mengecek indikator
+      bahan bakar dan suhu mesin setiap saat selama menyetir (bagian dari rutinitas berkendara).
+      "Separate evaluation" itu seperti uji kelayakan kendaraan (KIR) tahunan yang lebih menyeluruh
+      dan dilakukan terpisah dari rutinitas harian di jalan.</div>
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="piramida">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">11</span><h2>Membangun Risk Aware Enterprise</h2></div>
+
+    <p>Kesadaran risiko yang matang di sebuah organisasi dibangun berjenjang, dari level pengurus
+    tertinggi sampai ke pemilik proses sehari-hari.</p>
+
+    <div class="pyramid">
+      <div class="lvl lvl1">Dewan Direksi (BOD)<br>Oversight of Risk Management
+        <span class="cat">Risk Governance</span></div>
+      <div class="lvl lvl2">Risk Management Committee<br>
+        (1) Menyintesis isu untuk Dewan &nbsp;(2) Menetapkan kebijakan & toleransi ERM<br>
+        (3) Meninjau isu risiko signifikan &nbsp;(4) Memastikan tata kelola & infrastruktur risiko
+        <span class="cat">Risk Infrastructure and Management</span></div>
+      <div class="lvl lvl3">Functional Head<br>
+        (1) Memiliki manajemen & mitigasi risiko &nbsp;(2) Melakukan penilaian risiko berkala<br>
+        (3) Memberi pernyataan atas eksposur risiko di area bisnisnya
+        <span class="cat">Risk Ownership</span></div>
+    </div>
+
+    <div class="simple-box">
+      <span class="lbl">Dalam bahasa sederhana</span>
+      Kesadaran risiko bukan tugas satu orang atau satu divisi saja. Dewan Direksi mengawasi dari
+      atas, komite manajemen risiko menerjemahkan arahan itu jadi kebijakan dan memantau isu
+      besar, dan kepala fungsi di lapangan yang benar-benar memiliki dan mengelola risiko
+      sehari-hari. Ketiganya harus jalan bersama supaya organisasi benar-benar "sadar risiko",
+      bukan cuma di atas kertas.
+    </div>
+
+    <div class="analogy-box">
+      <span class="lbl">Analogi</span>
+      Kembali ke perjalanan mobil kita: Board of Directors menentukan arah perjalanan, Risk
+      Management Committee menerjemahkan arah itu menjadi aturan dan memantau risiko di sepanjang
+      jalan, sementara Functional Head yang menjalankan pengendalian dan mengelola risiko dalam
+      aktivitas sehari-hari di lapangan. Ketika ketiganya bergerak selaras, itulah yang membangun
+      Risk Aware Enterprise, organisasi yang menjadikan kesadaran risiko bagian dari cara kerjanya
+      di setiap tingkat, sejak menentukan tujuan sampai tiba dengan selamat.
+    </div>
+  </div>
+</section>
+
+<section class="mod" id="kuis">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">12</span><h2>Uji Pemahaman — Jebakan Konsep Audit Berbasis Risiko</h2></div>
+    <p>Jawablah pertanyaan-pertanyaan berikut dengan memilih <strong>Benar</strong> atau
+    <strong>Salah</strong>. Beberapa soal sengaja menggunakan kesalahan umum yang sering terjadi
+    di lapangan. Jangan terburu-buru, pikirkan baik-baik konsep dasarnya.</p>
+    <p style="color:var(--muted);font-size:.9rem;">Soal dikelompokkan per bab. Kunci jawaban dan
+    pembahasan singkat tersedia di halaman terpisah, tampil setelah kamu menjawab semua soal.</p>
+    <div id="quizArea"></div>
+    <div style="text-align:center;margin-top:24px;">
+      <button id="checkAnswersBtn" class="quiz-opt" style="max-width:320px;margin:0 auto;
+      background:var(--teal-500);color:#04140f;font-weight:700;border-color:var(--teal-500);">
+      Cek Jawaban & Buka Halaman Kunci</button>
+    </div>
+    <div class="quiz-score" id="quizScore"></div>
+  </div>
+</section>
+
+<section class="mod" id="kunci" style="display:none;">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">13</span><h2>Halaman Kunci Jawaban & Pembahasan Singkat</h2></div>
+    <p style="color:var(--muted);">Setiap soal di halaman sebelumnya adalah pernyataan yang bisa
+    Benar atau Salah. Berikut jawaban yang tepat beserta alasannya.</p>
+    <div id="keyArea"></div>
+  </div>
+</section>
+
+<section class="mod" id="glosarium">
+  <div class="wrap">
+    <div class="sectitle"><span class="numtag">14</span><h2>Glosarium Istilah Teknis</h2></div>
+
+    <div class="gloss-item"><span class="gloss-term">Risk Appetite</span> — batas level risiko
+    yang bersedia diterima organisasi dalam mengejar tujuannya.</div>
+    <div class="gloss-item"><span class="gloss-term">Risk Tolerance</span> — batas variasi yang
+    masih bisa diterima di sekitar risk appetite, biasanya dinyatakan dalam ukuran yang lebih
+    spesifik dan terukur dibanding risk appetite.</div>
+    <div class="gloss-item"><span class="gloss-term">Inherent Risk</span> — risiko bawaan dari
+    suatu aktivitas atau sistem sebelum mempertimbangkan pengendalian apa pun yang sudah dijalankan
+    manajemen.</div>
+    <div class="gloss-item"><span class="gloss-term">Residual Risk</span> — risiko yang masih
+    tersisa setelah mempertimbangkan tindakan mitigasi yang sudah dilakukan manajemen.</div>
+    <div class="gloss-item"><span class="gloss-term">Audit Universe</span> — seluruh area,
+    proses, atau unit dalam organisasi yang berpotensi menjadi objek audit.</div>
+    <div class="gloss-item"><span class="gloss-term">Auditable Unit</span> — pecahan lebih kecil
+    dari audit universe yang sudah cukup spesifik untuk dijadikan satu objek audit tersendiri.</div>
+    <div class="gloss-item"><span class="gloss-term">Generic Risk Factors</span> — faktor risiko
+    umum (misalnya besaran nilai transaksi, kompleksitas proses, riwayat temuan) yang dipakai
+    sebagai kriteria untuk memberi skor pada setiap objek audit.</div>
+    <div class="gloss-item"><span class="gloss-term">Risk Scoring</span> — proses memberi nilai
+    numerik pada suatu risiko berdasarkan kombinasi frekuensi dan dampaknya.</div>
+    <div class="gloss-item"><span class="gloss-term">Heat Map</span> — pemetaan visual risiko
+    berdasarkan frekuensi dan dampaknya, biasa dipakai untuk menentukan prioritas audit.</div>
+    <div class="gloss-item"><span class="gloss-term">RBIA Plan</span> — rencana audit internal
+    berbasis risiko (Risk Based Internal Audit Plan) yang menjadi output akhir dari proses
+    penilaian dan skoring risiko di seluruh audit universe.</div>
+    <div class="gloss-item"><span class="gloss-term">Control Self-Assessment (CSA)</span> —
+    proses di mana unit bisnis menilai sendiri efektivitas pengendalian di areanya, sebelum
+    ditinjau lebih lanjut oleh audit internal.</div>
+    <div class="gloss-item"><span class="gloss-term">Hard Controls</span> — pengendalian yang
+    formal, tertulis, dan bisa diverifikasi langsung, seperti kebijakan, prosedur, dan persetujuan
+    berjenjang.</div>
+    <div class="gloss-item"><span class="gloss-term">Soft Controls</span> — pengendalian yang
+    bersifat budaya dan perilaku, seperti nilai integritas, kejujuran, dan etika kerja yang
+    tertanam di organisasi.</div>
+    <div class="gloss-item"><span class="gloss-term">Manual Controls</span> — pengendalian yang
+    dilakukan langsung oleh manusia, misalnya tanda tangan persetujuan dokumen.</div>
+    <div class="gloss-item"><span class="gloss-term">IT-Dependent Manual Controls</span> —
+    pengendalian manual yang mengandalkan data atau laporan dari sistem, misalnya mengecek
+    transaksi janggal dari laporan pengecualian sistem.</div>
+    <div class="gloss-item"><span class="gloss-term">IT Application Controls</span> —
+    pengendalian yang tertanam otomatis di dalam sistem atau aplikasi, misalnya sistem yang
+    mencegah duplikasi transaksi.</div>
+    <div class="gloss-item"><span class="gloss-term">GITC (General IT Controls)</span> —
+    pengendalian umum atas lingkungan teknologi informasi yang mendasari keandalan aplikasi dan
+    data, seperti kontrol akses dan manajemen perubahan sistem.</div>
+    <div class="gloss-item"><span class="gloss-term">Preventive Control</span> — pengendalian
+    yang mencegah kesalahan atau penyimpangan terjadi sebelum sempat berlangsung.</div>
+    <div class="gloss-item"><span class="gloss-term">Detective Control</span> — pengendalian
+    yang mendeteksi kesalahan atau penyimpangan setelah kejadian berlangsung.</div>
+    <div class="gloss-item"><span class="gloss-term">Segregation of Duties</span> — pemisahan
+    tugas antara orang yang mengotorisasi, mencatat, dan menyimpan aset, supaya satu orang tidak
+    bisa mengendalikan seluruh siklus transaksi sendirian.</div>
+    <div class="gloss-item"><span class="gloss-term">Fraud Vulnerability</span> — kerawanan atau
+    celah dalam suatu proses yang berpotensi dimanfaatkan untuk melakukan kecurangan.</div>
+    <div class="gloss-item"><span class="gloss-term">Three Lines of Defense</span> — model
+    tata kelola risiko yang membagi peran antara pemilik risiko (lini 1), fungsi kontrol dan
+    kepatuhan (lini 2), dan audit internal sebagai assurance independen (lini 3).</div>
+    <div class="gloss-item"><span class="gloss-term">Risk Owner</span> — pihak yang memiliki dan
+    bertanggung jawab langsung atas pengelolaan suatu risiko sehari-hari, biasanya manajemen
+    operasional lini pertama.</div>
+    <div class="gloss-item"><span class="gloss-term">Governing Body</span> — badan pengawas
+    tertinggi organisasi, misalnya Dewan Direksi atau Dewan Komisaris, tempat lini ketiga
+    (audit internal) melapor untuk menjaga independensi.</div>
+    <div class="gloss-item"><span class="gloss-term">COSO ERM</span> — kerangka kerja
+    Enterprise Risk Management yang diterbitkan oleh Committee of Sponsoring Organizations of
+    the Treadway Commission, menggambarkan manajemen risiko dalam delapan komponen yang saling
+    terkait.</div>
+    <div class="gloss-item"><span class="gloss-term">Event Identification</span> — salah satu
+    komponen COSO ERM, yaitu proses mengenali peristiwa internal maupun eksternal yang bisa
+    memengaruhi pencapaian tujuan organisasi, baik sebagai risiko maupun peluang.</div>
+    <div class="gloss-item"><span class="gloss-term">Risk Response</span> — keputusan manajemen
+    atas suatu risiko, misalnya menghindari, mengurangi, membagi, atau menerima risiko tersebut.</div>
+    <div class="gloss-item"><span class="gloss-term">Ongoing Evaluation</span> — evaluasi
+    pemantauan yang berjalan menyatu dengan aktivitas operasional sehari-hari, sifatnya rutin dan
+    berkelanjutan.</div>
+    <div class="gloss-item"><span class="gloss-term">Separate Evaluation</span> — evaluasi
+    pemantauan yang dilakukan terpisah dari aktivitas operasional harian, misalnya audit internal
+    berkala atau review khusus.</div>
+    <div class="gloss-item"><span class="gloss-term">Velocity dan Persistence (Risiko)</span> —
+    dua dimensi tambahan penilaian risiko pada framework COSO 2013, yaitu seberapa cepat suatu
+    risiko bisa terjadi (velocity) dan seberapa lama dampaknya bertahan (persistence), di luar
+    sekadar frekuensi dan dampak.</div>
+    <div class="gloss-item"><span class="gloss-term">SLA (Service Level Agreement)</span> —
+    kesepakatan tingkat layanan yang menjadi acuan standar waktu atau kualitas suatu proses,
+    sering dipakai sebagai tolok ukur kesalahan transaksi dalam kriteria penilaian temuan.</div>
+    <div class="gloss-item"><span class="gloss-term">Risk Governance</span> — kategori peran
+    Dewan Direksi dalam piramida risk aware enterprise, yaitu mengawasi keseluruhan manajemen
+    risiko organisasi dari level tertinggi.</div>
+    <div class="gloss-item"><span class="gloss-term">Risk Infrastructure and Management</span> —
+    kategori peran Risk Management Committee, yaitu membangun kebijakan, toleransi, dan
+    infrastruktur tata kelola risiko organisasi.</div>
+    <div class="gloss-item"><span class="gloss-term">Risk Ownership</span> — kategori peran
+    Functional Head, yaitu memiliki dan mengelola langsung risiko serta mitigasinya di area
+    bisnis masing-masing.</div>
+    <div class="gloss-item"><span class="gloss-term">GIAS 2025</span> — Global Internal Audit
+    Standards 2025, standar profesional audit internal terbaru yang menjadi acuan pelaksanaan
+    fungsi audit internal secara global.</div>
+    <div class="gloss-item"><span class="gloss-term">IPPF</span> — International Professional
+    Practices Framework, kerangka kerja praktik profesional audit internal yang memuat prinsip,
+    standar, dan panduan etika bagi auditor internal.</div>
+  </div>
+</section>
+
+<footer>
+  <p>Modul ini disusun berdasarkan webinar <strong>"Risk Based Audit"</strong> yang disampaikan oleh
+  <strong>Ibu Lis Suryani, S.Kom., MM, QRGP, CRGP</strong>, diselenggarakan oleh <strong>Unlock Indonesia</strong>.</p>
+  <p>Bagian dari seri <em>Audit &amp; Data Insight Journey</em>.</p>
+  <p style="margin-top:18px;color:var(--teal-300);">Disusun oleh <strong>Rosliana Dwi Astuti, S.Ak</strong></p>
+</footer>
+
+<script>
+const CHAPTERS = [
+{
+  title: "Bab 1 — Memahami Risiko",
+  items: [
+    {
+      q: "Risiko selalu berarti suatu kejadian buruk yang sudah terjadi dan merugikan organisasi.",
+      correct: false,
+      fb: "Salah. Risiko adalah kemungkinan bahwa sesuatu bisa meleset dari tujuan, belum tentu terjadi dan belum tentu buruk secara mutlak. Tips: bayangkan perjalanan mobil menuju suatu kota, ban bocor adalah salah satu kemungkinan meleset, bukan kepastian."
+    },
+    {
+      q: "Semua ketidakpastian yang dihadapi organisasi harus dicatat sebagai risiko dan dimasukkan dalam rencana audit.",
+      correct: false,
+      fb: "Salah. Hanya ketidakpastian yang berdampak pada pencapaian tujuan organisasi yang layak disebut risiko. Tips: pakai kalimat kunci 'risiko = ketidakpastian + dampak terhadap tujuan'."
+    }
+  ]
+},
+{
+  title: "Bab 2 — Proses Risk Assessment & Definisi RBA",
+  items: [
+    {
+      q: "Auditor internal bertugas mengelola risiko operasional sehari-hari bersama manajemen.",
+      correct: false,
+      fb: "Salah. Auditor internal menilai dan memberi assurance, manajemen yang mengelola risiko. Tips: manajemen = sopir yang mengelola risiko di jalan, auditor internal = mekanik yang mengecek rem, ban, dan mesin."
+    },
+    {
+      q: "Dalam risk based audit, area dengan tingkat risiko rendah tidak perlu diaudit sama sekali agar sumber daya fokus ke area berisiko tinggi.",
+      correct: false,
+      fb: "Salah. Area berisiko rendah tetap diaudit, hanya frekuensi dan kedalamannya lebih rendah. Tips: seperti jadwal servis armada, truk vital diservis 3 bulan sekali, mobil jarang pakai diservis setahun sekali, keduanya tetap diperiksa."
+    }
+  ]
+},
+{
+  title: "Bab 3 — Pendekatan RBA & Dilema Auditor",
+  items: [
+    {
+      q: "Dengan pendekatan risk based auditing, dilema keterbatasan waktu dan tenaga auditor otomatis hilang karena semuanya terukur.",
+      correct: false,
+      fb: "Salah. Dilema tetap ada, namun keputusan seberapa dalam dan seberapa luas kini didasarkan pada data risiko, bukan tebakan. Tips: RBIA membantu memilih dengan sadar, bukan menghilangkan pilihan."
+    },
+    {
+      q: "Assurance yang diberikan risk based audit menjadi lebih rendah karena tidak semua area dicek sedalam-dalamnya.",
+      correct: false,
+      fb: "Salah. Fokus pada risiko besar justru membuat assurance lebih tajam dan relevan, bukan lebih rendah. Tips: seperti mekanik yang memprioritaskan kerusakan paling serius pada kendaraan, bukan mengabaikan yang lain."
+    }
+  ]
+},
+{
+  title: "Bab 4 — RBA vs Metodologi Lama",
+  items: [
+    {
+      q: "Perbedaan utama risk based audit dan audit tradisional hanya terletak pada frekuensi pemeriksaan.",
+      correct: false,
+      fb: "Salah. Audit tradisional membagi waktu merata ke semua unit, risk based audit mengalokasikan waktu berdasarkan level risiko. Tips: audit tradisional menjadwalkan servis merata ke semua kendaraan, risk based audit lebih banyak waktu ke kendaraan yang paling sering dipakai atau paling rawan rusak."
+    },
+    {
+      q: "Metode audit lama sama sekali tidak mempertimbangkan risiko.",
+      correct: false,
+      fb: "Salah. Audit lama mungkin juga mempertimbangkan risiko, tetapi tidak terstruktur dan tidak terdokumentasi secara sistematis. Tips: risk based audit memakai heat map dan audit universe yang terdokumentasi, jadi keputusannya bisa dipertanggungjawabkan."
+    }
+  ]
+},
+{
+  title: "Bab 5 — Sumber Informasi & Contoh Rencana RBA",
+  items: [
+    {
+      q: "Rencana audit berbasis risiko hanya disusun dari data internal organisasi.",
+      correct: false,
+      fb: "Salah. Laporan audit eksternal, temuan regulator, dan hasil assurance pihak lain juga jadi sumber, sesuai semangat GIAS 2025 agar auditor internal tidak bekerja terisolasi. Tips: seperti mekanik yang juga memeriksa catatan servis dari bengkel resmi sebelumnya, bukan cuma mengandalkan pemeriksaan sendiri hari itu."
+    },
+    {
+      q: "Jika suatu unit bisnis memiliki skor risiko rendah, unit tersebut tidak perlu diaudit sama sekali.",
+      correct: false,
+      fb: "Salah. Unit itu tetap masuk audit universe, hanya frekuensi dan kedalaman auditnya lebih rendah, bukan ditiadakan. Tips: mobil kantor yang jarang dipakai tetap diservis, cukup setahun sekali."
+    }
+  ]
+},
+{
+  title: "Bab 6 — Cakupan Komponen Keuangan",
+  items: [
+    {
+      q: "Jika cakupan aset mencapai 98%, artinya auditor sudah memeriksa 98% dari total nilai aset perusahaan.",
+      correct: false,
+      fb: "Salah. Persentase itu menunjukkan seberapa besar porsi pos laporan keuangan yang masuk radar audit, bukan berapa rupiah yang sudah diperiksa. Tips: baca '98% aset' sebagai 'hampir semua jenis aset penting ada dalam rencana audit'."
+    },
+    {
+      q: "Cakupan liabilities 96% menjamin bahwa 96% kewajiban perusahaan bebas dari salah saji material.",
+      correct: false,
+      fb: "Salah. Cakupan hanya berarti komponen itu direncanakan untuk diaudit, hasilnya baru diketahui setelah pelaksanaan audit. Tips: jadwal servis mencakup 96% jenis onderdil bukan berarti onderdil itu sudah 96% aman."
+    }
+  ]
+},
+{
+  title: "Bab 7 — Kriteria Penilaian Temuan & Rating Laporan",
+  items: [
+    {
+      q: "Jika ada satu temuan Critical tapi banyak temuan Moderate kecil-kecil, rating akhir laporan bisa tetap baik karena banyaknya temuan moderate.",
+      correct: false,
+      fb: "Salah. Sistem rating memberi bobot konversi lebih berat untuk Critical, sehingga satu Critical bisa 'membebani' hasil pemeriksaan lebih parah daripada beberapa Moderate. Tips: satu temuan rem blong bisa menjatuhkan hasil pemeriksaan kendaraan meski ada banyak temuan goresan cat kecil."
+    },
+    {
+      q: "Rating laporan audit hanya ditentukan oleh jumlah temuan.",
+      correct: false,
+      fb: "Salah. Rating didasarkan pada signifikansi, bobot, dan faktor kualitatif, bukan sekadar jumlah temuan. Tips: satu pelanggaran besar lebih berbahaya daripada sepuluh pelanggaran kecil yang tidak berdampak sistemik."
+    }
+  ]
+},
+{
+  title: "Bab 8 — Three Lines of Defense & 8 Komponen COSO ERM",
+  items: [
+    {
+      q: "Fungsi compliance (lini kedua) memiliki tingkat independensi yang sama dengan audit internal (lini ketiga).",
+      correct: false,
+      fb: "Salah. Lini kedua independensinya terbatas dan melapor terutama ke manajemen, lini ketiga independensinya lebih besar dan melapor ke dewan pengawas. Tips: lini kedua seperti petugas keselamatan perusahaan yang menyusun aturan berkendara, lini ketiga seperti inspektur independen dari luar yang melapor langsung ke pemilik perusahaan."
+    },
+    {
+      q: "Kubus COSO ERM hanya relevan untuk tujuan pelaporan keuangan.",
+      correct: false,
+      fb: "Salah. Kubus COSO mencakup empat kategori tujuan yaitu strategis, operasional, pelaporan, dan kepatuhan. Tips: kubus punya tiga sisi (tujuan, komponen, tingkat entitas), satu risiko bisa dilihat dari banyak sudut sekaligus."
+    }
+  ]
+},
+{
+  title: "Bab 9 — Ringkasan Perubahan Framework COSO",
+  items: [
+    {
+      q: "Jika control environment sudah kuat secara umum, prinsip-prinsip spesifik di dalamnya boleh tidak terpenuhi sebagian.",
+      correct: false,
+      fb: "Salah. Kelima komponen dan 17 prinsip harus hadir dan berfungsi serta beroperasi secara terintegrasi, satu prinsip yang bolong bisa meruntuhkan efektivitas komponen. Tips: ibarat 5 bagian utama kendaraan, 17 detail teknis di dalamnya, kendaraan hanya layak jalan jika semua detail benar-benar terpasang."
+    },
+    {
+      q: "Informasi dan komunikasi dalam COSO hanya mencakup komunikasi internal ke karyawan.",
+      correct: false,
+      fb: "Salah. Framework terbaru menekankan komunikasi internal dan eksternal, termasuk ke regulator, pemasok, dan pemegang saham. Tips: bayangkan sistem komunikasi dua arah, internal lewat rapat dan memo, eksternal lewat laporan ke publik dan respons ke regulator."
+    }
+  ]
+},
+{
+  title: "Bab 10 — Bedah Tiap Komponen: Old vs New",
+  items: [
+    {
+      q: "Detective control seperti CCTV dan rekonsiliasi sudah cukup untuk mencegah risiko, sehingga preventive control bisa dikurangi.",
+      correct: false,
+      fb: "Salah. Preventive mencegah sebelum kejadian terjadi (sabuk pengaman), detective menemukan setelah kejadian terjadi (dashcam), keduanya saling melengkapi bukan saling menggantikan. Tips: pasangkan selalu 'Cegah + Deteksi'."
+    },
+    {
+      q: "Auditor tidak perlu mempertimbangkan velocity dan persistence risiko karena dampak dan kemungkinan sudah cukup.",
+      correct: false,
+      fb: "Salah. Risiko dengan velocity tinggi bisa lebih merusak meski dampaknya kecil, framework 2013 menambahkan dimensi ini agar respons lebih tepat. Tips: seperti badai di tengah perjalanan, bukan cuma seberapa besar tapi seberapa cepat datangnya dan berapa lama menghadang jalan."
+    }
+  ]
+},
+{
+  title: "Bab 11 — Membangun Risk Aware Enterprise",
+  items: [
+    {
+      q: "Budaya sadar risiko cukup dibangun di level manajemen puncak dan dewan direksi saja.",
+      correct: false,
+      fb: "Salah. Kesadaran risiko dibutuhkan di tiga lini sekaligus, BOD mengawasi, komite manajemen risiko menerjemahkan kebijakan, dan kepala fungsi di lapangan yang benar-benar memiliki dan mengelola risiko sehari-hari. Tips: Board of Directors menentukan arah perjalanan, Risk Management Committee menerjemahkannya jadi aturan dan memantau risiko di jalan, Functional Head yang menjalankan pengendalian di lapangan sehari-hari."
+    },
+    {
+      q: "Risk aware enterprise berarti organisasi menghindari semua risiko.",
+      correct: false,
+      fb: "Salah. Sadar risiko berarti mengambil keputusan dengan informasi risiko yang matang, peluang bisnis tetap diambil tapi dengan mata terbuka, bukan menghindari semua risiko. Tips: perjalanan yang sadar risiko bukan berarti tidak pernah berangkat saat cuaca kurang bersahabat, tapi tahu batas aman dan menyiapkan ban serep."
+    }
+  ]
+}
+];
+
+const quizArea = document.getElementById('quizArea');
+const keyArea = document.getElementById('keyArea');
+let totalQ = 0;
+CHAPTERS.forEach(ch => totalQ += ch.items.length);
+const userAnswers = new Array(totalQ).fill(null);
+let globalIdx = 0;
+
+CHAPTERS.forEach(chapter => {
+  const chDiv = document.createElement('div');
+  chDiv.style.margin = '30px 0 10px';
+  const chTitle = document.createElement('h3');
+  chTitle.textContent = chapter.title;
+  chDiv.appendChild(chTitle);
+  quizArea.appendChild(chDiv);
+
+  chapter.items.forEach(item => {
+    const qi = globalIdx;
+    globalIdx++;
+
+    const qDiv = document.createElement('div');
+    qDiv.className = 'quiz-q';
+    qDiv.id = 'q' + qi;
+    const qTitle = document.createElement('div');
+    qTitle.innerHTML = '<strong>' + (qi+1) + '. ' + item.q + '</strong>';
+    qDiv.appendChild(qTitle);
+
+    const btnRow = document.createElement('div');
+    btnRow.className = 'tf-btns';
+
+    ['Benar','Salah'].forEach(label => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt tf-btn';
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        userAnswers[qi] = (label === 'Benar');
+        const allBtns = btnRow.querySelectorAll('.tf-btn');
+        allBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        updateProgress();
+      });
+      btnRow.appendChild(btn);
+    });
+
+    qDiv.appendChild(btnRow);
+    quizArea.appendChild(qDiv);
+  });
+});
+
+function updateProgress(){
+  const done = userAnswers.filter(a => a !== null).length;
+  document.getElementById('quizScore').textContent =
+    done + ' / ' + totalQ + ' soal sudah dijawab.';
+}
+updateProgress();
+
+document.getElementById('checkAnswersBtn').addEventListener('click', () => {
+  let score = 0;
+  let idx = 0;
+  CHAPTERS.forEach(chapter => {
+    chapter.items.forEach(item => {
+      const qi = idx;
+      idx++;
+      const qDiv = document.getElementById('q' + qi);
+      const btns = qDiv.querySelectorAll('.tf-btn');
+      btns.forEach(b => {
+        const isBenarBtn = (b.textContent === 'Benar');
+        if (isBenarBtn === item.correct) b.classList.add('correct-mark');
+        else if (userAnswers[qi] !== null && isBenarBtn === userAnswers[qi]) b.classList.add('wrong-mark');
+      });
+      if (userAnswers[qi] === item.correct) score++;
+    });
+  });
+
+  const answeredCount = userAnswers.filter(a => a !== null).length;
+  document.getElementById('quizScore').textContent =
+    'Skor akhir: ' + score + ' / ' + totalQ +
+    ' benar (' + answeredCount + '/' + totalQ + ' soal terjawab).';
+
+  keyArea.innerHTML = '';
+  CHAPTERS.forEach(chapter => {
+    const chDiv = document.createElement('div');
+    chDiv.style.margin = '26px 0 10px';
+    const chTitle = document.createElement('h3');
+    chTitle.textContent = chapter.title;
+    chDiv.appendChild(chTitle);
+    keyArea.appendChild(chDiv);
+
+    chapter.items.forEach(item => {
+      const kDiv = document.createElement('div');
+      kDiv.className = 'gloss-item';
+      const ans = item.correct ? 'Benar' : 'Salah';
+      kDiv.innerHTML = '<div style="margin-bottom:6px;"><strong>' + item.q + '</strong></div>' +
+        '<div><span class="badge low" style="margin-right:8px;">Jawaban: ' + ans + '</span></div>' +
+        '<div style="margin-top:8px;color:var(--muted);">' + item.fb + '</div>';
+      keyArea.appendChild(kDiv);
+    });
+  });
+
+  document.getElementById('kunci').style.display = 'block';
+  document.getElementById('kunci').scrollIntoView({behavior:'smooth'});
+});
+
+
+// scrollspy for nav
+const sections = document.querySelectorAll('section.mod, header.hero');
+const navLinks = document.querySelectorAll('.stickynav a');
+const spy = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.getAttribute('id');
+      navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    }
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+sections.forEach(s => spy.observe(s));
+</script>
+</body>
+</html>
