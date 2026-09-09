@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Audit & Data Insight Journey | Rose Analytics</title>
+
+    <meta name="description"
+          content="A collection of interactive projects exploring financial auditing, data analytics, risk assessment, and fraud detection.">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f7f7f5;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(1100px, 90%);
+            margin: auto;
+        }
+
+        /* NAVIGATION */
+
+        nav {
+            border-bottom: 1px solid #ddd;
+            background: rgba(247, 247, 245, 0.96);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-inner {
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* HERO */
+
+        .hero {
+            padding: 100px 0 85px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .eyebrow {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(42px, 7vw, 76px);
+            line-height: 1.02;
+            max-width: 850px;
+            letter-spacing: -3px;
+            margin-bottom: 28px;
+        }
+
+        .hero p {
+            max-width: 720px;
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 35px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            border: 1px solid #222;
+            font-size: 14px;
+            transition: 0.2s ease;
+        }
+
+        .button:hover {
+            background: #222;
+            color: #fff;
+        }
+
+        .button.secondary {
+            border-color: #bbb;
+            color: #555;
+        }
+
+        /* ABOUT */
+
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .section-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #777;
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            letter-spacing: -1px;
+            margin-bottom: 25px;
+        }
+
+        .about-text {
+            max-width: 780px;
+            color: #555;
+            font-size: 17px;
+        }
+
+        /* SKILLS */
+
+        .skills {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: #ddd;
+            border: 1px solid #ddd;
+        }
+
+        .skill {
+            background: #f7f7f5;
+            padding: 25px;
+        }
+
+        .skill strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .skill span {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* PROJECTS */
+
+        .category {
+            margin-top: 50px;
+        }
+
+        .category:first-of-type {
+            margin-top: 30px;
+        }
+
+        .category h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .project {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 25px;
+            transition: 0.2s ease;
+        }
+
+        .project:hover {
+            transform: translateY(-3px);
+            border-color: #999;
+        }
+
+        .project-number {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .project h4 {
+            font-size: 19px;
+            margin-bottom: 10px;
+        }
+
+        .project p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .project-link {
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        /* HIGHLIGHT */
+
+        .highlight {
+            background: #222;
+            color: #fff;
+            padding: 55px;
+        }
+
+        .highlight p {
+            color: #ccc;
+            max-width: 700px;
+            margin-top: 15px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            padding: 50px 0;
+            color: #666;
+            font-size: 13px;
+        }
+
+        footer a {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 800px) {
+
+            .nav-inner {
+                padding: 15px 0;
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .nav-links {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+
+            .hero {
+                padding: 70px 0;
+            }
+
+            .skills {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .projects {
+                grid-template-columns: 1fr;
+            }
+
+            .highlight {
+                padding: 35px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .skills {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                letter-spacing: -1.5px;
+            }
+
+            .section-title {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+
+<nav>
+    <div class="container nav-inner">
+
+        <div class="brand">
+            Rose Analytics
+        </div>
+
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#skills">Focus</a>
+            <a href="#projects">Projects</a>
+            <a href="https://github.com/rose-analytics0/audit-data-insight-journey"
+               target="_blank">
+                GitHub
+            </a>
+        </div>
+
+    </div>
+</nav>
+
+
+<!-- HERO -->
+
+<header class="hero">
+    <div class="container">
+
+        <div class="eyebrow">
+            Audit • Data • Risk • Fraud Analytics
+        </div>
+
+        <h1>
+            Audit & Data<br>
+            Insight Journey
+        </h1>
+
+        <p>
+            A collection of interactive projects exploring financial auditing,
+            data analytics, risk assessment, and fraud detection through
+            practical, data-driven approaches.
+        </p>
+
+        <div class="buttons">
+
+            <a class="button"
+               href="#projects">
+                Explore Projects
+            </a>
+
+            <a class="button secondary"
+               href="https://github.com/rose-analytics0/audit-data-insight-journey"
+               target="_blank">
+                View GitHub Repository
+            </a>
+
+        </div>
+
+    </div>
+</header>
+
+
+<!-- ABOUT -->
+
+<section id="about">
+
+    <div class="container">
+
+        <div class="section-label">
+            01 — About
+        </div>
+
+        <h2 class="section-title">
+            Turning data into audit and business insight.
+        </h2>
+
+        <p class="about-text">
+            This portfolio brings together interactive learning and
+            project-based work in financial auditing, audit analytics,
+            data analysis, risk assessment, and fraud detection.
+            The projects are designed to explore how structured data,
+            analytical methods, and visual insights can support
+            better decision-making and operational accuracy.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- FOCUS -->
+
+<section id="skills">
+
+    <div class="container">
+
+        <div class="section-label">
+            02 — Areas of Focus
+        </div>
+
+        <h2 class="section-title">
+            Core capabilities
+        </h2>
+
+        <div class="skills">
+
+            <div class="skill">
+                <strong>Financial Auditing</strong>
+                <span>
+                    Audit fundamentals, audit procedures,
+                    financial data review
+                </span>
+            </div>
+
+            <div class="skill">
+                <strong>Data Analytics</strong>
+                <span>
+                    Data analysis, correlation, classification,
+                    analytical interpretation
+                </span>
+            </div>
+
+            <div class="skill">
+                <strong>Risk Analysis</strong>
+                <span>
+                    Risk profiling, segmentation,
+                    risk-based auditing
+                </span>
+            </div>
+
+            <div class="skill">
+                <strong>Fraud Detection</strong>
+                <span>
+                    Fraud indicators, transaction analysis,
+                    predictive evaluation
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- PROJECTS -->
+
+<section id="projects">
+
+    <div class="container">
+
+        <div class="section-label">
+            03 — Selected Projects
+        </div>
+
+        <h2 class="section-title">
+            Interactive project collection
+        </h2>
+
+
+        <!-- FINANCIAL AUDIT -->
+
+        <div class="category">
+
+            <h3>Financial Auditing</h3>
+
+            <div class="projects">
+
+                <article class="project">
+
+                    <div class="project-number">
+                        AUDIT / 01
+                    </div>
+
+                    <h4>
+                        Financial Auditing Fundamentals
+                    </h4>
+
+                    <p>
+                        Interactive material exploring fundamental
+                        concepts and principles of financial auditing.
+                    </p>
+
+                    <a class="project-link"
+                       href="ADJ2_Financial_Auditing_Fundamentals.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        AUDIT / 02
+                    </div>
+
+                    <h4>
+                        Cyber Resilience for Internal Auditors
+                    </h4>
+
+                    <p>
+                        Interactive exploration of cyber resilience
+                        concepts from an internal audit perspective.
+                    </p>
+
+                    <a class="project-link"
+                       href="ADJ1_Cyber_Resilience_for_Internal_Auditors.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        AUDIT / 03
+                    </div>
+
+                    <h4>
+                        Risk-Based Auditing Fundamentals
+                    </h4>
+
+                    <p>
+                        Practical exploration of risk-based auditing
+                        and its role in audit planning and assessment.
+                    </p>
+
+                    <a class="project-link"
+                       href="ADJ6_Risk_Based_Auditing_Fundamentals.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+            </div>
+
+        </div>
+
+
+        <!-- DATA ANALYTICS -->
+
+        <div class="category">
+
+            <h3>Data Analytics</h3>
+
+            <div class="projects">
+
+                <article class="project">
+
+                    <div class="project-number">
+                        DATA / 01
+                    </div>
+
+                    <h4>
+                        Correlation Analysis
+                    </h4>
+
+                    <p>
+                        Interactive analysis exploring relationships
+                        between variables and correlation patterns.
+                    </p>
+
+                    <a class="project-link"
+                       href="correlation_analysis.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        DATA / 02
+                    </div>
+
+                    <h4>
+                        Confusion Matrix
+                    </h4>
+
+                    <p>
+                        Interactive visualization for understanding
+                        classification performance and model outcomes.
+                    </p>
+
+                    <a class="project-link"
+                       href="confusion_matrix_interaktif.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        DATA / 03
+                    </div>
+
+                    <h4>
+                        F1 Score
+                    </h4>
+
+                    <p>
+                        Interactive exploration of F1 score as a
+                        classification performance metric.
+                    </p>
+
+                    <a class="project-link"
+                       href="f1_score_interaktif.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        DATA / 04
+                    </div>
+
+                    <h4>
+                        AUC & ROC Analysis
+                    </h4>
+
+                    <p>
+                        Interactive visualization of ROC curves
+                        and AUC for model evaluation.
+                    </p>
+
+                    <a class="project-link"
+                       href="auc_roc_interaktif.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        DATA / 05
+                    </div>
+
+                    <h4>
+                        Class Imbalance
+                    </h4>
+
+                    <p>
+                        Interactive exploration of class imbalance
+                        and its implications for analytical models.
+                    </p>
+
+                    <a class="project-link"
+                       href="class_imbalance.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+            </div>
+
+        </div>
+
+
+        <!-- RISK & FRAUD -->
+
+        <div class="category">
+
+            <h3>Risk & Fraud Analytics</h3>
+
+            <div class="projects">
+
+                <article class="project">
+
+                    <div class="project-number">
+                        RISK / 01
+                    </div>
+
+                    <h4>
+                        Risk Profiling
+                    </h4>
+
+                    <p>
+                        Interactive project exploring risk profiling
+                        and identification of different risk patterns.
+                    </p>
+
+                    <a class="project-link"
+                       href="post20_risk_profiling.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        RISK / 02
+                    </div>
+
+                    <h4>
+                        Risk Segmentation
+                    </h4>
+
+                    <p>
+                        Interactive exploration of risk segmentation
+                        for analytical decision-making.
+                    </p>
+
+                    <a class="project-link"
+                       href="post21_risk_segmentation.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        FRAUD / 01
+                    </div>
+
+                    <h4>
+                        Fraud Amount Analysis
+                    </h4>
+
+                    <p>
+                        Interactive analysis focused on fraudulent
+                        transaction amounts and analytical patterns.
+                    </p>
+
+                    <a class="project-link"
+                       href="fraud_amount.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        FRAUD / 02
+                    </div>
+
+                    <h4>
+                        Transaction Type Fraud
+                    </h4>
+
+                    <p>
+                        Interactive exploration of transaction types
+                        and their relationship to fraud detection.
+                    </p>
+
+                    <a class="project-link"
+                       href="transaction_type_fraud.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        FRAUD / 03
+                    </div>
+
+                    <h4>
+                        Fraud Detection Analytics
+                    </h4>
+
+                    <p>
+                        Interactive project exploring analytical
+                        approaches to fraud detection.
+                    </p>
+
+                    <a class="project-link"
+                       href="ADJ5_Audit_Analytics_for_Fraud_Detection.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+            </div>
+
+        </div>
+
+
+        <!-- ADDITIONAL -->
+
+        <div class="category">
+
+            <h3>Additional Analytics</h3>
+
+            <div class="projects">
+
+                <article class="project">
+
+                    <div class="project-number">
+                        ANALYTICS / 01
+                    </div>
+
+                    <h4>
+                        Feature Selection for Audit
+                    </h4>
+
+                    <p>
+                        Interactive exploration of feature selection
+                        concepts for audit analytics.
+                    </p>
+
+                    <a class="project-link"
+                       href="feature_selection_untuk_audit.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        ANALYTICS / 02
+                    </div>
+
+                    <h4>
+                        Model Decision Support
+                    </h4>
+
+                    <p>
+                        Interactive material exploring analytical
+                        models as decision-support tools.
+                    </p>
+
+                    <a class="project-link"
+                       href="model_decision_support.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        ANALYTICS / 03
+                    </div>
+
+                    <h4>
+                        Digital Audit & Machine Learning Simulation
+                    </h4>
+
+                    <p>
+                        Interactive simulation combining digital
+                        auditing concepts with machine learning.
+                    </p>
+
+                    <a class="project-link"
+                       href="simulasi_audit_digital_ml.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+
+                <article class="project">
+
+                    <div class="project-number">
+                        ANALYTICS / 04
+                    </div>
+
+                    <h4>
+                        Distribution of Transaction Values
+                    </h4>
+
+                    <p>
+                        Interactive visualization for exploring
+                        transaction value distributions.
+                    </p>
+
+                    <a class="project-link"
+                       href="distribusi_nilai_transaksi.html"
+                       target="_blank">
+                        View Project →
+                    </a>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- HIGHLIGHT -->
+
+<section>
+
+    <div class="container">
+
+        <div class="highlight">
+
+            <div class="section-label">
+                Portfolio Note
+            </div>
+
+            <h2>
+                Built around practical learning and analytical thinking.
+            </h2>
+
+            <p>
+                These projects represent an ongoing journey of applying
+                audit knowledge, data analytics, risk concepts, and
+                fraud detection methods through interactive outputs.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <div class="container">
+
+        <p>
+            © 2026 Rose Analytics ·
+            <a href="https://github.com/rose-analytics0/audit-data-insight-journey"
+               target="_blank">
+                View full GitHub repository
+            </a>
+        </p>
+
+    </div>
+
+</footer>
+
+
+</body>
+</html>
