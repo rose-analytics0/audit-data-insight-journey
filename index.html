@@ -7,1045 +7,1158 @@
     <title>Audit & Data Insight Journey | Rose Analytics</title>
 
     <meta name="description"
-          content="A collection of interactive projects exploring financial auditing, data analytics, risk assessment, and fraud detection.">
+          content="An interactive HTML portfolio in audit, data analytics and fraud detection by Rosliana Dwi Astuti (Rose Analytics).">
+
+    <link rel="icon" type="image/png" href="assets/rose-analytics-logo.png">
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        html {
-            scroll-behavior: smooth;
-        }
+html {
+    scroll-behavior: smooth;
+}
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f7f7f5;
-            color: #222;
-            line-height: 1.6;
-        }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f7f7f5;
+    color: #222;
+    line-height: 1.6;
+}
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
+a {
+    color: inherit;
+    text-decoration: none;
+}
 
-        .container {
-            width: min(1100px, 90%);
-            margin: auto;
-        }
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid #222;
+    outline-offset: 3px;
+}
 
-        /* NAVIGATION */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
 
-        nav {
-            border-bottom: 1px solid #ddd;
-            background: rgba(247, 247, 245, 0.96);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+.wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 48px;
+}
 
-        .nav-inner {
-            min-height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-        }
+section {
+    padding: 100px 0;
+    border-bottom: 1px solid #ddd;
+}
 
-        .brand {
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
+.section-label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #666;
+    margin-bottom: 18px;
+}
 
-        .nav-links {
-            display: flex;
-            gap: 25px;
-            font-size: 14px;
-        }
+.section-title {
+    font-size: clamp(28px, 3vw, 38px);
+    letter-spacing: -1px;
+    margin-bottom: 40px;
+    max-width: 640px;
+}
 
-        .nav-links a:hover {
-            text-decoration: underline;
-        }
+/* NAVIGATION */
 
-        /* HERO */
+nav {
+    border-bottom: 1px solid #ddd;
+    background: rgba(247, 247, 245, 0.96);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
 
-        .hero {
-            padding: 100px 0 85px;
-            border-bottom: 1px solid #ddd;
-        }
+.nav-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 48px;
+    min-height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
 
-        .eyebrow {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #666;
-            margin-bottom: 20px;
-        }
+.brand {
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    font-size: 15px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
 
-        .hero h1 {
-            font-size: clamp(42px, 7vw, 76px);
-            line-height: 1.02;
-            max-width: 850px;
-            letter-spacing: -3px;
-            margin-bottom: 28px;
-        }
+.brand-logo {
+    height: 68px;
+    width: auto;
+    display: block;
+}
 
-        .hero p {
-            max-width: 720px;
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 35px;
-        }
+.nav-links {
+    display: flex;
+    gap: 28px;
+    font-size: 14px;
+}
 
-        .buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
+.nav-links a:hover {
+    text-decoration: underline;
+}
 
-        .button {
-            display: inline-block;
-            padding: 12px 20px;
-            border: 1px solid #222;
-            font-size: 14px;
-            transition: 0.2s ease;
-        }
+/* HERO */
 
-        .button:hover {
-            background: #222;
-            color: #fff;
-        }
+.hero .wrap {
+    display: grid;
+    grid-template-columns: 55fr 45fr;
+    gap: 64px;
+    align-items: center;
+    padding: 90px 0 100px;
+}
 
-        .button.secondary {
-            border-color: #bbb;
-            color: #555;
-        }
+.hero-eyebrow {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #666;
+    margin-bottom: 22px;
+}
 
-        /* ABOUT */
+.hero h1 {
+    font-size: clamp(40px, 5.4vw, 64px);
+    line-height: 1.04;
+    letter-spacing: -2px;
+    margin-bottom: 22px;
+}
 
-        section {
-            padding: 80px 0;
-            border-bottom: 1px solid #ddd;
-        }
+.hero-sub {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 16px;
+    max-width: 480px;
+}
 
-        .section-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #777;
-            margin-bottom: 14px;
-        }
+.hero-desc {
+    font-size: 15px;
+    color: #555;
+    max-width: 460px;
+    margin-bottom: 36px;
+}
 
-        .section-title {
-            font-size: 36px;
-            letter-spacing: -1px;
-            margin-bottom: 25px;
-        }
+.btn-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
 
-        .about-text {
-            max-width: 780px;
-            color: #555;
-            font-size: 17px;
-        }
+.btn {
+    display: inline-block;
+    padding: 13px 26px;
+    font-size: 14px;
+    border: 1px solid #222;
+    border-radius: 3px;
+}
 
-        /* SKILLS */
+.btn-primary {
+    background: #222;
+    color: #fff;
+}
 
-        .skills {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            background: #ddd;
-            border: 1px solid #ddd;
-        }
+.btn-primary:hover {
+    background: #000;
+}
 
-        .skill {
-            background: #f7f7f5;
-            padding: 25px;
-        }
+.btn-secondary {
+    background: transparent;
+    color: #222;
+}
 
-        .skill strong {
-            display: block;
-            margin-bottom: 8px;
-        }
+.btn-secondary:hover {
+    background: #eee;
+}
 
-        .skill span {
-            font-size: 14px;
-            color: #666;
-        }
+/* Hero visual: flow diagram */
 
-        /* PROJECTS */
+.hero-visual {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    padding: 36px 28px;
+}
 
-        .category {
-            margin-top: 50px;
-        }
+.flow-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
 
-        .category:first-of-type {
-            margin-top: 30px;
-        }
+.flow-step {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background: #f7f7f5;
+    text-align: center;
+}
 
-        .category h3 {
-            font-size: 20px;
-            margin-bottom: 15px;
-        }
+.flow-arrow {
+    text-align: center;
+    color: #999;
+    font-size: 15px;
+    padding: 6px 0;
+}
 
-        .projects {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 18px;
-        }
+/* OVERVIEW */
 
-        .project {
-            background: #fff;
-            border: 1px solid #ddd;
-            padding: 25px;
-            transition: 0.2s ease;
-        }
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: #ddd;
+    border: 1px solid #ddd;
+}
 
-        .project:hover {
-            transform: translateY(-3px);
-            border-color: #999;
-        }
+.overview-cell {
+    background: #f7f7f5;
+    padding: 32px 26px;
+}
 
-        .project-number {
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 15px;
-        }
+.overview-cell h4 {
+    font-size: 15px;
+    margin-bottom: 10px;
+}
 
-        .project h4 {
-            font-size: 19px;
-            margin-bottom: 10px;
-        }
+.overview-cell p {
+    font-size: 13.5px;
+    color: #555;
+}
 
-        .project p {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 18px;
-        }
+/* FEATURED */
 
-        .project-link {
-            font-size: 13px;
-            font-weight: 700;
-            text-decoration: underline;
-        }
+.featured-grid {
+    display: grid;
+    grid-template-columns: 60fr 40fr;
+    gap: 40px;
+    align-items: stretch;
+}
 
-        /* HIGHLIGHT */
+.featured-preview {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    min-height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
 
-        .highlight {
-            background: #222;
-            color: #fff;
-            padding: 55px;
-        }
+.featured-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 
-        .highlight p {
-            color: #ccc;
-            max-width: 700px;
-            margin-top: 15px;
-        }
+.featured-tag {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #666;
+    margin-bottom: 14px;
+}
 
-        /* FOOTER */
+.featured-info h3 {
+    font-size: 26px;
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
+}
 
-        footer {
-            padding: 50px 0;
-            color: #666;
-            font-size: 13px;
-        }
+.featured-info > p {
+    font-size: 14.5px;
+    color: #555;
+    margin-bottom: 22px;
+}
 
-        footer a {
-            text-decoration: underline;
-        }
+.featured-stages {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+    font-size: 13.5px;
+    color: #333;
+    margin-bottom: 26px;
+}
 
-        /* RESPONSIVE */
+.featured-stages li {
+    padding-left: 14px;
+    position: relative;
+}
 
-        @media (max-width: 800px) {
+.featured-stages li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 5px;
+    height: 5px;
+    background: #222;
+    border-radius: 50%;
+}
 
-            .nav-inner {
-                padding: 15px 0;
-                align-items: flex-start;
-                flex-direction: column;
-            }
+/* MODULES */
 
-            .nav-links {
-                gap: 15px;
-                flex-wrap: wrap;
-            }
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
 
-            .hero {
-                padding: 70px 0;
-            }
+.module-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 28px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+}
 
-            .skills {
-                grid-template-columns: repeat(2, 1fr);
-            }
+.module-card:hover {
+    border-color: #bbb;
+}
 
-            .projects {
-                grid-template-columns: 1fr;
-            }
+.module-num {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 14px;
+}
 
-            .highlight {
-                padding: 35px;
-            }
-        }
+.module-card h4 {
+    font-size: 17px;
+    margin-bottom: 10px;
+    letter-spacing: -0.2px;
+}
 
-        @media (max-width: 500px) {
+.module-tags {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 12px;
+}
 
-            .skills {
-                grid-template-columns: 1fr;
-            }
+.module-card p {
+    font-size: 13.5px;
+    color: #555;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
 
-            .hero h1 {
-                letter-spacing: -1.5px;
-            }
+.module-link {
+    font-size: 13.5px;
+    font-weight: 700;
+}
 
-            .section-title {
-                font-size: 30px;
-            }
-        }
-    </style>
+.module-card.pointer {
+    background: #222;
+    color: #f2f2f0;
+    border-color: #222;
+}
+
+.module-card.pointer .module-num,
+.module-card.pointer .module-tags {
+    color: #aaa;
+}
+
+.module-card.pointer p {
+    color: #ccc;
+}
+
+/* ANALYTICS */
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.analytics-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    padding: 30px;
+}
+
+.analytics-card.wide {
+    grid-column: 1 / -1;
+}
+
+.analytics-preview {
+    height: 120px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background: #f7f7f5;
+    margin-bottom: 18px;
+}
+
+.analytics-card h4 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.analytics-card p {
+    font-size: 13.5px;
+    color: #555;
+    margin-bottom: 18px;
+}
+
+.analytics-link {
+    font-size: 13.5px;
+    font-weight: 700;
+}
+
+.feature-flow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 13.5px;
+    color: #333;
+    margin: 18px 0 22px;
+}
+
+.feature-flow .fnode {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 14px;
+    background: #f7f7f5;
+}
+
+.feature-flow .farrow {
+    color: #999;
+}
+
+/* DECISION */
+
+.decision-flow {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    padding: 26px 30px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-bottom: 40px;
+}
+
+.decision-flow .dnode {
+    padding: 6px 4px;
+}
+
+.decision-flow .darrow {
+    color: #999;
+    font-weight: 400;
+}
+
+.decision-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.decision-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    padding: 32px;
+}
+
+.decision-card h4 {
+    font-size: 17px;
+    margin-bottom: 14px;
+}
+
+.decision-flow-mini {
+    font-size: 13.5px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.decision-flow-mini div {
+    padding: 3px 0;
+}
+
+.decision-card p.plain {
+    font-size: 13.5px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.decision-link {
+    font-size: 13.5px;
+    font-weight: 700;
+}
+
+/* EVALUATION */
+
+.eval-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.eval-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    padding: 24px 20px;
+}
+
+.eval-step {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 12px;
+}
+
+.eval-card h4 {
+    font-size: 15.5px;
+    margin-bottom: 10px;
+}
+
+.eval-card p {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 18px;
+}
+
+.eval-link {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* COLLECTION */
+
+.filter-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+}
+
+.filter-btn {
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 20px;
+    padding: 8px 18px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    color: #333;
+}
+
+.filter-btn.active {
+    background: #222;
+    color: #fff;
+    border-color: #222;
+}
+
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.collection-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    padding: 20px;
+}
+
+.collection-card h5 {
+    font-size: 14.5px;
+    margin-bottom: 6px;
+}
+
+.collection-card .cat {
+    font-size: 11.5px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.collection-link {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.collection-card.hidden {
+    display: none;
+}
+
+/* FOOTER */
+
+footer {
+    padding: 60px 0;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.footer-brand-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+}
+
+.footer-logo {
+    height: 56px;
+    width: auto;
+    display: block;
+}
+
+.footer-brand {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.footer-name {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 6px;
+}
+
+.footer-tags {
+    font-size: 13.5px;
+    color: #666;
+}
+
+.footer-links {
+    display: flex;
+    gap: 24px;
+    font-size: 14px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 980px) {
+    .wrap {
+        padding: 0 28px;
+    }
+    .nav-inner {
+        padding: 0 28px;
+    }
+    .hero .wrap {
+        grid-template-columns: 1fr;
+    }
+    .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .featured-grid {
+        grid-template-columns: 1fr;
+    }
+    .modules-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+    .analytics-card.wide {
+        grid-column: auto;
+    }
+    .decision-grid {
+        grid-template-columns: 1fr;
+    }
+    .eval-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .collection-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .overview-grid,
+    .modules-grid,
+    .eval-grid,
+    .collection-grid {
+        grid-template-columns: 1fr;
+    }
+    .nav-links {
+        display: none;
+    }
+}
+</style>
 </head>
-
 <body>
 
-<!-- NAVIGATION -->
-
 <nav>
-    <div class="container nav-inner">
-
-        <div class="brand">
-            Rose Analytics
-        </div>
-
+    <div class="nav-inner">
+        <a class="brand" href="#hero">
+            <img src="assets/rose-analytics-logo.png" alt="Rose Analytics logo" class="brand-logo">
+        </a>
         <div class="nav-links">
-            <a href="#about">About</a>
-            <a href="#skills">Focus</a>
-            <a href="#projects">Projects</a>
-            <a href="https://github.com/rose-analytics0/audit-data-insight-journey"
-               target="_blank">
-                GitHub
-            </a>
+            <a href="#hero">Home</a>
+            <a href="#modules">Modules</a>
+            <a href="#analytics">Analytics</a>
+            <a href="#evaluation">Evaluation</a>
+            <a href="https://github.com/rose-analytics0/audit-data-insight-journey" target="_blank">GitHub</a>
         </div>
-
     </div>
 </nav>
 
-
-<!-- HERO -->
-
-<header class="hero">
-    <div class="container">
-
-        <div class="eyebrow">
-            Audit • Data • Risk • Fraud Analytics
+<section id="hero" class="hero">
+    <div class="wrap">
+        <div>
+            <div class="hero-eyebrow">Interactive HTML Portfolio</div>
+            <h1>Audit &amp; Data Insight Journey</h1>
+            <p class="hero-sub">Interactive HTML portfolio in audit, data analytics &amp; fraud detection.</p>
+            <p class="hero-desc">A collection of interactive HTML experiences built around one question: how does raw transaction data become an audit decision.</p>
+            <div class="btn-row">
+                <a class="btn btn-primary" href="#modules">Explore Projects</a>
+                <a class="btn btn-secondary" href="#collection">View Collection</a>
+            </div>
         </div>
-
-        <h1>
-            Audit & Data<br>
-            Insight Journey
-        </h1>
-
-        <p>
-            A collection of interactive projects exploring financial auditing,
-            data analytics, risk assessment, and fraud detection through
-            practical, data-driven approaches.
-        </p>
-
-        <div class="buttons">
-
-            <a class="button"
-               href="#projects">
-                Explore Projects
-            </a>
-
-            <a class="button secondary"
-               href="https://github.com/rose-analytics0/audit-data-insight-journey"
-               target="_blank">
-                View GitHub Repository
-            </a>
-
+        <div class="hero-visual">
+            <div class="flow-col">
+                <div class="flow-step">AUDIT</div>
+                <div class="flow-arrow">&darr;</div>
+                <div class="flow-step">DATA</div>
+                <div class="flow-arrow">&darr;</div>
+                <div class="flow-step">RISK</div>
+                <div class="flow-arrow">&darr;</div>
+                <div class="flow-step">DECISION</div>
+            </div>
         </div>
-
     </div>
-</header>
-
-
-<!-- ABOUT -->
-
-<section id="about">
-
-    <div class="container">
-
-        <div class="section-label">
-            01 — About
-        </div>
-
-        <h2 class="section-title">
-            Turning data into audit and business insight.
-        </h2>
-
-        <p class="about-text">
-            This portfolio brings together interactive learning and
-            project-based work in financial auditing, audit analytics,
-            data analysis, risk assessment, and fraud detection.
-            The projects are designed to explore how structured data,
-            analytical methods, and visual insights can support
-            better decision-making and operational accuracy.
-        </p>
-
-    </div>
-
 </section>
 
-
-<!-- FOCUS -->
-
-<section id="skills">
-
-    <div class="container">
-
-        <div class="section-label">
-            02 — Areas of Focus
+<section id="overview">
+    <div class="wrap">
+        <div class="section-label">What You'll Explore</div>
+        <div class="overview-grid">
+            <div class="overview-cell">
+                <h4>Learning Modules</h4>
+                <p>Interactive audit learning covering cyber resilience, financial auditing and risk-based auditing.</p>
+            </div>
+            <div class="overview-cell">
+                <h4>Data Analytics</h4>
+                <p>Transaction analysis and visualization behind a fraud detection case study.</p>
+            </div>
+            <div class="overview-cell">
+                <h4>Fraud &amp; Risk</h4>
+                <p>Risk profiling and segmentation, from model score to audit priority.</p>
+            </div>
+            <div class="overview-cell">
+                <h4>Model Evaluation</h4>
+                <p>Confusion matrix, precision &amp; recall, F1-score and AUC-ROC explained.</p>
+            </div>
         </div>
-
-        <h2 class="section-title">
-            Core capabilities
-        </h2>
-
-        <div class="skills">
-
-            <div class="skill">
-                <strong>Financial Auditing</strong>
-                <span>
-                    Audit fundamentals, audit procedures,
-                    financial data review
-                </span>
-            </div>
-
-            <div class="skill">
-                <strong>Data Analytics</strong>
-                <span>
-                    Data analysis, correlation, classification,
-                    analytical interpretation
-                </span>
-            </div>
-
-            <div class="skill">
-                <strong>Risk Analysis</strong>
-                <span>
-                    Risk profiling, segmentation,
-                    risk-based auditing
-                </span>
-            </div>
-
-            <div class="skill">
-                <strong>Fraud Detection</strong>
-                <span>
-                    Fraud indicators, transaction analysis,
-                    predictive evaluation
-                </span>
-            </div>
-
-        </div>
-
     </div>
-
 </section>
 
-
-<!-- PROJECTS -->
-
-<section id="projects">
-
-    <div class="container">
-
-        <div class="section-label">
-            03 — Selected Projects
-        </div>
-
-        <h2 class="section-title">
-            Interactive project collection
-
-        <div class="category">
-
-            <h3>Learning Modules — Audit & Data Insight Journey Series</h3>
-
-            <div class="projects">
-
-                <article class="project">
-
-                    <div class="project-number">
-                        MODULE / 01
-                    </div>
-
-                    <h4>
-                        Cyber Resilience for Internal Auditors
-                    </h4>
-
-                    <p>
-                        An interactive learning module on cyber resilience for internal auditors, covering the evolving cyber threat landscape, the shift from cybersecurity to cyber resilience, the IIA Cybersecurity Topical Requirement 2025, cloud computing and the shared responsibility model, and strategic actions to strengthen cyber resilience. Independently synthesized from the OJK Institute Webinar (May 21, 2026).
-                    </p>
-
-                    <a class="project-link"
-                       href="ADIJ1_Cyber_Resilience_for_Internal_Auditors.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        MODULE / 02
-                    </div>
-
-                    <h4>
-                        Financial Auditing Fundamentals
-                    </h4>
-
-                    <p>
-                        An interactive module introducing the fundamentals of financial auditing across five core topics: the role of financial auditors, the audit mindset, risk based auditing, and fraud awareness from the evolution of the Fraud Triangle to the Fraud Hexagon, with fraud case studies illustrating the transition from internal audit to forensic audit. Independently synthesized from the Pre-Event Bootcamp Unlock Series (May 31, 2026).
-                    </p>
-
-                    <a class="project-link"
-                       href="ADIJ2_Financial_Auditing_Fundamentals.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        MODULE / 03
-                    </div>
-
-                    <h4>
-                        Audit Analytics & Fraud Detection Fundamentals
-                    </h4>
-
-                    <p>
-                        An 18 topic interactive module integrating audit analytics, data analytics, and fraud detection, covering fraud detection fundamentals, model evaluation, Fraud Risk Assessment (FRA), audit analytics techniques, and audit documentation and audit trails as part of the audit process.
-                    </p>
-
-                    <a class="project-link"
-                       href="ADIJ3_Audit_Analytics_&_Fraud_Detection_Fundamentals.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        MODULE / 04
-                    </div>
-
-                    <h4>
-                        Machine Learning for Audit Analytics
-                    </h4>
-
-                    <p>
-                        A 22 topic interactive module integrating audit analytics, machine learning, and fraud detection, covering problem framing, data understanding, exploratory data analysis, machine learning model development and evaluation, and the interpretation of analytical results to support audit decision-making.
-                    </p>
-
-                    <a class="project-link"
-                       href="ADIJ4_Machine_Learning_for_Audit_Analytics.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        MODULE / 05
-                    </div>
-
-                    <h4>
-                        Audit Analytics for Fraud Detection
-                    </h4>
-
-                    <p>
-                        An interactive learning dashboard demonstrating the end-to-end application of audit analytics through a digital financial fraud detection case study, structured around an auditor's analytical workflow: Business Understanding, Accounting Perspective, Executive Summary, Risk Profile, Model Performance, Threshold Simulation, Audit Follow-Up, and Reference Standards.
-                    </p>
-
-                    <a class="project-link"
-                       href="ADIJ5_Audit_Analytics_for_Fraud_Detection.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        MODULE / 06
-                    </div>
-
-                    <h4>
-                        Risk-Based Auditing Fundamentals
-                    </h4>
-
-                    <p>
-                        An interactive module introducing the fundamentals of Risk-Based Auditing (RBA), covering risk assessment, risk-based audit planning, audit universe prioritization, the Three Lines Model, COSO Internal Control, and COSO Enterprise Risk Management (ERM).
-                    </p>
-
-                    <a class="project-link"
-                       href="ADIJ6_Risk_Based_Auditing_Fundamentals.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
+<section id="featured">
+    <div class="wrap">
+        <div class="section-label">Featured Project</div>
+        <div class="featured-grid">
+            <div class="featured-preview">
+                <div class="flow-col" style="width:100%;max-width:340px;">
+                    <div class="flow-step">TRANSACTION DATA</div>
+                    <div class="flow-arrow">&darr;</div>
+                    <div class="flow-step">RISK PROFILE</div>
+                    <div class="flow-arrow">&darr;</div>
+                    <div class="flow-step">MODEL PERFORMANCE</div>
+                    <div class="flow-arrow">&darr;</div>
+                    <div class="flow-step">AUDIT FOLLOW-UP</div>
+                </div>
             </div>
-
-        </div>
-
-
-        <div class="category">
-
-            <h3>Data Story — Dari Data ke Keputusan (Fraud Detection Analysis)</h3>
-
-            <div class="projects">
-
-                <article class="project">
-
-                    <div class="project-number">
-                        STORY / 01
-                    </div>
-
-                    <h4>
-                        Distribusi Nilai Transaksi
-                    </h4>
-
-                    <p>
-                        Risk is not evenly spread across transactions. 94.6% of transactions fall under Rp500 thousand, yet the extreme tail (above Rp50 million) holds only 47 transactions out of 6.3 million, precisely where material risk hides.
-                    </p>
-
-                    <a class="project-link"
-                       href="distribusi_nilai_transaksi.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        STORY / 02
-                    </div>
-
-                    <h4>
-                        Fraud Amount Analysis
-                    </h4>
-
-                    <p>
-                        Fraud is not always high value. 52.8% of fraud cases occur in transactions under Rp500 thousand, while the fraud rate itself climbs sharply at higher value bands, showing two perspectives on risk that complement rather than contradict each other.
-                    </p>
-
-                    <a class="project-link"
-                       href="fraud_amount.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        STORY / 03
-                    </div>
-
-                    <h4>
-                        Class Imbalance & the Accuracy Illusion
-                    </h4>
-
-                    <p>
-                        A model that always predicts 'not fraud' can still show 99.87% accuracy, because only 0.13% of over 6.3 million transactions are actually fraud. Explores why accuracy alone is misleading under severe class imbalance, and why precision and recall matter more.
-                    </p>
-
-                    <a class="project-link"
-                       href="class_imbalance.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        STORY / 04
-                    </div>
-
-                    <h4>
-                        Transaction Type & Fraud Concentration
-                    </h4>
-
-                    <p>
-                        Fraud only appears in two of five transaction types: CASH_OUT and TRANSFER, while CASH_IN, PAYMENT, and DEBIT remain entirely clean. Connects this pattern to FATF findings on layering and monetization channels in mobile money ecosystems.
-                    </p>
-
-                    <a class="project-link"
-                       href="transaction_type_fraud.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        STORY / 05
-                    </div>
-
-                    <h4>
-                        Balance Movement as a Fraud Indicator
-                    </h4>
-
-                    <p>
-                        Non-fraud transactions show a median balance change of 0, while fraud transactions show a median drop of Rp436,317, with extreme cases draining up to Rp10 million in a single transaction. Ties this pattern to SA 520 analytical procedures.
-                    </p>
-
-                    <a class="project-link"
-                       href="balance_movement.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        STORY / 06
-                    </div>
-
-                    <h4>
-                        Correlation Analysis & the Multivariate Approach
-                    </h4>
-
-                    <p>
-                        No single indicator is sufficient to detect fraud on its own. Explores why fraud must be read through the interaction of multiple signals together (transaction type, balance movement, amount, and timing) rather than any one indicator in isolation.
-                    </p>
-
-                    <a class="project-link"
-                       href="correlation_analysis.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        STORY / 07
-                    </div>
-
-                    <h4>
-                        Feature Selection for Audit Analytics
-                    </h4>
-
-                    <p>
-                        Walks through which variables were selected for the fraud detection model and why, including the deliberate exclusion of account name identifiers to avoid overfitting on identity rather than behavioral pattern, grounded in SA 520 and the KPMG Trusted AI Framework.
-                    </p>
-
-                    <a class="project-link"
-                       href="feature_selection_untuk_audit.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
+            <div class="featured-info">
+                <div class="featured-tag">End-to-End Audit Analytics Dashboard</div>
+                <h3>Audit Analytics for Fraud Detection</h3>
+                <p>An interactive learning dashboard demonstrating the end-to-end application of audit analytics through a digital financial fraud detection case study, structured around an auditor's analytical workflow.</p>
+                <ul class="featured-stages">
+                    <li>Business Understanding</li>
+                    <li>Accounting Perspective</li>
+                    <li>Executive Summary</li>
+                    <li>Risk Profile</li>
+                    <li>Model Performance</li>
+                    <li>Threshold Simulation</li>
+                    <li>Audit Follow-Up</li>
+                    <li>Reference Standards</li>
+                </ul>
+                <a class="btn btn-primary" href="ADIJ5_Audit_Analytics_for_Fraud_Detection.html" target="_blank">Open Project &rarr;</a>
             </div>
-
         </div>
-
-
-        <div class="category">
-
-            <h3>Model Evaluation & Risk Application</h3>
-
-            <div class="projects">
-
-                <article class="project">
-
-                    <div class="project-number">
-                        EVAL / 01
-                    </div>
-
-                    <h4>
-                        Metrics in a Fintech Context
-                    </h4>
-
-                    <p>
-                        Explains why precision and recall carry different real world consequences in fintech: precision protects user trust by limiting false alarms, while recall protects against loss by minimizing missed fraud, discussed alongside OJK and FATF regulatory context.
-                    </p>
-
-                    <a class="project-link"
-                       href="metrik_dalam_konteks_fintech.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        EVAL / 02
-                    </div>
-
-                    <h4>
-                        Confusion Matrix in Practice
-                    </h4>
-
-                    <p>
-                        Applies the confusion matrix to a model tested on 1.27 million transactions, breaking down true positives, true negatives, false positives, and false negatives, and the audit implications of each, including the precision-recall trade-off as a professional judgment call.
-                    </p>
-
-                    <a class="project-link"
-                       href="post19_confusion_matrix.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        EVAL / 03
-                    </div>
-
-                    <h4>
-                        Fraud Risk Profiling
-                    </h4>
-
-                    <p>
-                        Distinguishes risk scoring (the model's job) from risk profiling (the auditor's job), showing how raw model scores are interpreted into High, Medium, and Low risk categories to focus audit procedures, grounded in GIAS 2025 and IPPF.
-                    </p>
-
-                    <a class="project-link"
-                       href="post20_risk_profiling.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        EVAL / 04
-                    </div>
-
-                    <h4>
-                        Risk Segmentation
-                    </h4>
-
-                    <p>
-                        Two transactions with identical value, type, and an 84% risk score can still land in different risk tiers. Explores how auditors combine contextual red flags, not just the model score, to segment and prioritize transactions for review.
-                    </p>
-
-                    <a class="project-link"
-                       href="post21_risk_segmentation.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-            </div>
-
-        </div>
-
-
-        <div class="category">
-
-            <h3>ML Metrics Explained</h3>
-
-            <div class="projects">
-
-                <article class="project">
-
-                    <div class="project-number">
-                        METRIC / 01
-                    </div>
-
-                    <h4>
-                        Confusion Matrix
-                    </h4>
-
-                    <p>
-                        An accessible explainer using a security guard analogy to introduce the four outcomes behind every fraud detection model: true positive, false negative, false positive, and true negative, the source table behind every other evaluation metric.
-                    </p>
-
-                    <a class="project-link"
-                       href="confusion_matrix_interaktif.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        METRIC / 02
-                    </div>
-
-                    <h4>
-                        F1 Score
-                    </h4>
-
-                    <p>
-                        Continues the security guard analogy to show why averaging precision and recall directly can be misleading, and how F1 score penalizes imbalance between the two instead of masking it.
-                    </p>
-
-                    <a class="project-link"
-                       href="f1_score_interaktif.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-
-                <article class="project">
-
-                    <div class="project-number">
-                        METRIC / 03
-                    </div>
-
-                    <h4>
-                        AUC-ROC
-                    </h4>
-
-                    <p>
-                        Extends the analogy further to explain performance across every threshold at once rather than a single operating point, and what the area under the ROC curve reveals about a model's overall reliability.
-                    </p>
-
-                    <a class="project-link"
-                       href="auc_roc_interaktif.html"
-                       target="_blank">
-                        View Project →
-                    </a>
-
-                </article>
-
-            </div>
-
-        </div>
-
-        <div class="category">
-
-            <h3>Additional Analytics (belum ada dalam narasi utama)</h3>
-
-            <div class="projects">
-
-                <article class="project">
-                    <div class="project-number">EXTRA / 01</div>
-                    <h4>Timing of Fraud</h4>
-                    <p>Interactive analysis of transaction timing patterns as a fraud indicator.</p>
-                    <a class="project-link" href="timing_fraud.html" target="_blank">View Project →</a>
-                </article>
-
-                <article class="project">
-                    <div class="project-number">EXTRA / 02</div>
-                    <h4>Model Decision Support</h4>
-                    <p>Interactive material exploring analytical models as decision-support tools.</p>
-                    <a class="project-link" href="model_decision_support.html" target="_blank">View Project →</a>
-                </article>
-
-                <article class="project">
-                    <div class="project-number">EXTRA / 03</div>
-                    <h4>Digital Audit & Machine Learning Simulation</h4>
-                    <p>Interactive simulation combining digital auditing concepts with machine learning.</p>
-                    <a class="project-link" href="simulasi_audit_digital_ml.html" target="_blank">View Project →</a>
-                </article>
-
-            </div>
-
-        </div>
-</section>
-
-
-<!-- HIGHLIGHT -->
-
-<section>
-
-    <div class="container">
-
-        <div class="highlight">
-
-            <div class="section-label">
-                Portfolio Note
-            </div>
-
-            <h2>
-                Built around practical learning and analytical thinking.
-            </h2>
-
-            <p>
-                These projects represent an ongoing journey of applying
-                audit knowledge, data analytics, risk concepts, and
-                fraud detection methods through interactive outputs.
-            </p>
-
-        </div>
-
     </div>
-
 </section>
 
+<section id="modules">
+    <div class="wrap">
+        <div class="section-label">Interactive Learning Modules</div>
+        <div class="modules-grid">
+                <a class="module-card" href="ADIJ1_Cyber_Resilience_for_Internal_Auditors.html" target="_blank">
+                    <div class="module-num">01</div>
+                    <h4>Cyber Resilience for Internal Auditors</h4>
+                    <div class="module-tags">Audit &middot; Cyber &middot; Risk</div>
+                    <p>Interactive module on cyber resilience, cloud risk and the IIA Cybersecurity Topical Requirement 2025.</p>
+                    <div class="module-link">View Module &rarr;</div>
+                </a>
+                <a class="module-card" href="ADIJ2_Financial_Auditing_Fundamentals.html" target="_blank">
+                    <div class="module-num">02</div>
+                    <h4>Financial Auditing Fundamentals</h4>
+                    <div class="module-tags">Audit &middot; Fraud &middot; Risk</div>
+                    <p>Interactive module covering the audit mindset, risk-based auditing and fraud awareness, from the Fraud Triangle to the Fraud Hexagon.</p>
+                    <div class="module-link">View Module &rarr;</div>
+                </a>
+                <a class="module-card" href="ADIJ3_Audit_Analytics_&_Fraud_Detection_Fundamentals.html" target="_blank">
+                    <div class="module-num">03</div>
+                    <h4>Audit Analytics &amp; Fraud Detection Fundamentals</h4>
+                    <div class="module-tags">Analytics &middot; Fraud &middot; Audit</div>
+                    <p>An 18-topic module on fraud detection fundamentals, model evaluation and audit documentation.</p>
+                    <div class="module-link">View Module &rarr;</div>
+                </a>
+                <a class="module-card" href="ADIJ4_Machine_Learning_for_Audit_Analytics.html" target="_blank">
+                    <div class="module-num">04</div>
+                    <h4>Machine Learning for Audit Analytics</h4>
+                    <div class="module-tags">ML &middot; Analytics &middot; Audit</div>
+                    <p>A 22-topic module applying machine learning and exploratory data analysis to digital financial fraud detection.</p>
+                    <div class="module-link">View Module &rarr;</div>
+                </a>
+                <a class="module-card" href="ADIJ6_Risk_Based_Auditing_Fundamentals.html" target="_blank">
+                    <div class="module-num">05</div>
+                    <h4>Risk-Based Auditing Fundamentals</h4>
+                    <div class="module-tags">Risk &middot; Audit &middot; Governance</div>
+                    <p>Interactive module on risk assessment, the Three Lines Model, COSO Internal Control and ERM.</p>
+                    <div class="module-link">View Module &rarr;</div>
+                </a>
+                <a class="module-card pointer" href="ADIJ5_Audit_Analytics_for_Fraud_Detection.html" target="_blank">
+                    <div class="module-num">06</div>
+                    <h4>Audit Analytics for Fraud Detection</h4>
+                    <div class="module-tags">Featured</div>
+                    <p>The full end-to-end fraud detection dashboard, shown above as this collection's featured project.</p>
+                    <div class="module-link">Explore Featured Project &rarr;</div>
+                </a>
+        </div>
+    </div>
+</section>
 
-<!-- FOOTER -->
+<section id="analytics">
+    <div class="wrap">
+        <div class="section-label">Interactive Audit Analytics</div>
+        <div class="analytics-grid">
+            <div class="analytics-card">
+                <div class="analytics-preview"></div>
+                <h4>Transaction Value Distribution</h4>
+                <p>94.6% of transactions fall under Rp500 thousand, yet the extreme tail is where material risk hides. Risk is not evenly distributed.</p>
+                <a class="analytics-link" href="distribusi_nilai_transaksi.html" target="_blank">Explore &rarr;</a>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-preview"></div>
+                <h4>Fraud by Transaction Amount</h4>
+                <p>52.8% of fraud cases occur in transactions under Rp500 thousand. Fraud is not always high-value.</p>
+                <a class="analytics-link" href="fraud_amount.html" target="_blank">Explore &rarr;</a>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-preview"></div>
+                <h4>Class Imbalance</h4>
+                <p>A model that always predicts 'not fraud' can still show 99.87% accuracy. Accuracy can be misleading.</p>
+                <a class="analytics-link" href="class_imbalance.html" target="_blank">Explore &rarr;</a>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-preview"></div>
+                <h4>Fraud by Transaction Type</h4>
+                <p>Fraud only appears in TRANSFER and CASH_OUT. Risk is concentrated, not spread evenly across channels.</p>
+                <a class="analytics-link" href="transaction_type_fraud.html" target="_blank">Explore &rarr;</a>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-preview"></div>
+                <h4>Balance Movement</h4>
+                <p>Fraud transactions show a median balance drop of Rp436,317, versus a median of 0 for normal transactions.</p>
+                <a class="analytics-link" href="balance_movement.html" target="_blank">Explore &rarr;</a>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-preview"></div>
+                <h4>Correlation Analysis</h4>
+                <p>No single indicator is sufficient. Fraud is read through the interaction of multiple signals together.</p>
+                <a class="analytics-link" href="correlation_analysis.html" target="_blank">Explore &rarr;</a>
+            </div>
+            <div class="analytics-card wide">
+                <h4>Feature Selection for Audit Analytics</h4>
+                <div class="feature-flow">
+                    <span class="fnode">Type + Amount + Balance Movement + Timing</span>
+                    <span class="farrow">&rarr;</span>
+                    <span class="fnode">Feature Set</span>
+                    <span class="farrow">&rarr;</span>
+                    <span class="fnode">Audit Analytics Model</span>
+                </div>
+                <p>Which variables were selected for the fraud detection model, and why account identifiers were deliberately excluded to avoid overfitting on identity rather than behavior.</p>
+                <a class="analytics-link" href="feature_selection_untuk_audit.html" target="_blank">Explore Interactive Analysis &rarr;</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="decision">
+    <div class="wrap">
+        <div class="section-label">From Data to Audit Decision</div>
+        <div class="decision-flow">
+            <span class="dnode">DATA</span><span class="darrow">&rarr;</span>
+            <span class="dnode">EDA</span><span class="darrow">&rarr;</span>
+            <span class="dnode">FRAUD SIGNALS</span><span class="darrow">&rarr;</span>
+            <span class="dnode">MODEL</span><span class="darrow">&rarr;</span>
+            <span class="dnode">RISK SCORE</span><span class="darrow">&rarr;</span>
+            <span class="dnode">AUDIT PRIORITY</span>
+        </div>
+        <div class="decision-grid">
+            <div class="decision-card">
+                <h4>Risk Profiling</h4>
+                <div class="decision-flow-mini">
+                    <div>Model &rarr; Risk Score</div>
+                    <div>Auditor &rarr; Risk Profile</div>
+                </div>
+                <p class="plain">How a raw model score is interpreted into a risk profile that focuses audit procedures, grounded in GIAS 2025 and IPPF.</p>
+                <a class="decision-link" href="post20_risk_profiling.html" target="_blank">Explore &rarr;</a>
+            </div>
+            <div class="decision-card">
+                <h4>Risk Segmentation</h4>
+                <div class="decision-flow-mini">
+                    <div>Same Risk Score</div>
+                    <div>Different Context</div>
+                </div>
+                <p class="plain">Two transactions with an identical 84% risk score can still land in different risk tiers, depending on contextual red flags.</p>
+                <a class="decision-link" href="post21_risk_segmentation.html" target="_blank">Explore &rarr;</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="evaluation">
+    <div class="wrap">
+        <div class="section-label">Model Evaluation</div>
+        <div class="eval-grid">
+            <div class="eval-card">
+                <div class="eval-step">Step 1</div>
+                <h4>Confusion Matrix</h4>
+                <p>TP 1,636 &middot; TN 1,270,774 &middot; FP 107 &middot; FN 7, tested on 1.27 million transactions.</p>
+                <a class="eval-link" href="post19_confusion_matrix.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="eval-card">
+                <div class="eval-step">Step 2</div>
+                <h4>Precision &amp; Recall</h4>
+                <p>Why the two metrics carry different real-world consequences for a fintech platform.</p>
+                <a class="eval-link" href="metrik_dalam_konteks_fintech.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="eval-card">
+                <div class="eval-step">Step 3</div>
+                <h4>F1-Score</h4>
+                <p>A single balanced score that penalizes imbalance between precision and recall instead of masking it.</p>
+                <a class="eval-link" href="f1_score_interaktif.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="eval-card">
+                <div class="eval-step">Step 4</div>
+                <h4>AUC-ROC</h4>
+                <p>Performance across every threshold at once, not just a single operating point.</p>
+                <a class="eval-link" href="auc_roc_interaktif.html" target="_blank">View &rarr;</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="collection">
+    <div class="wrap">
+        <div class="section-label">Explore the Collection</div>
+        <div class="filter-row">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="audit">Audit</button>
+            <button class="filter-btn" data-filter="analytics">Analytics</button>
+            <button class="filter-btn" data-filter="fraud">Fraud</button>
+            <button class="filter-btn" data-filter="risk">Risk</button>
+            <button class="filter-btn" data-filter="ml">ML</button>
+        </div>
+        <div class="collection-grid" id="collectionGrid">
+            <div class="collection-card" data-cat="audit">
+                <h5>Cyber Resilience for Internal Auditors</h5>
+                <div class="cat">Audit</div>
+                <a class="collection-link" href="ADIJ1_Cyber_Resilience_for_Internal_Auditors.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="audit">
+                <h5>Financial Auditing Fundamentals</h5>
+                <div class="cat">Audit</div>
+                <a class="collection-link" href="ADIJ2_Financial_Auditing_Fundamentals.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="audit fraud">
+                <h5>Audit Analytics &amp; Fraud Detection Fundamentals</h5>
+                <div class="cat">Audit &middot; Fraud</div>
+                <a class="collection-link" href="ADIJ3_Audit_Analytics_&_Fraud_Detection_Fundamentals.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="ml analytics">
+                <h5>Machine Learning for Audit Analytics</h5>
+                <div class="cat">ML &middot; Analytics</div>
+                <a class="collection-link" href="ADIJ4_Machine_Learning_for_Audit_Analytics.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="fraud analytics">
+                <h5>Audit Analytics for Fraud Detection</h5>
+                <div class="cat">Fraud &middot; Analytics</div>
+                <a class="collection-link" href="ADIJ5_Audit_Analytics_for_Fraud_Detection.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="risk audit">
+                <h5>Risk-Based Auditing Fundamentals</h5>
+                <div class="cat">Risk &middot; Audit</div>
+                <a class="collection-link" href="ADIJ6_Risk_Based_Auditing_Fundamentals.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="analytics">
+                <h5>Transaction Value Distribution</h5>
+                <div class="cat">Analytics</div>
+                <a class="collection-link" href="distribusi_nilai_transaksi.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="fraud analytics">
+                <h5>Fraud by Transaction Amount</h5>
+                <div class="cat">Fraud &middot; Analytics</div>
+                <a class="collection-link" href="fraud_amount.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="analytics ml">
+                <h5>Class Imbalance</h5>
+                <div class="cat">Analytics &middot; ML</div>
+                <a class="collection-link" href="class_imbalance.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="fraud analytics">
+                <h5>Fraud by Transaction Type</h5>
+                <div class="cat">Fraud &middot; Analytics</div>
+                <a class="collection-link" href="transaction_type_fraud.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="analytics fraud">
+                <h5>Balance Movement</h5>
+                <div class="cat">Analytics &middot; Fraud</div>
+                <a class="collection-link" href="balance_movement.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="analytics ml">
+                <h5>Correlation Analysis</h5>
+                <div class="cat">Analytics &middot; ML</div>
+                <a class="collection-link" href="correlation_analysis.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="analytics ml audit">
+                <h5>Feature Selection for Audit Analytics</h5>
+                <div class="cat">Analytics &middot; ML &middot; Audit</div>
+                <a class="collection-link" href="feature_selection_untuk_audit.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="ml fraud">
+                <h5>Confusion Matrix in Practice</h5>
+                <div class="cat">ML &middot; Fraud</div>
+                <a class="collection-link" href="post19_confusion_matrix.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="ml analytics">
+                <h5>Metrics in a Fintech Context</h5>
+                <div class="cat">ML &middot; Analytics</div>
+                <a class="collection-link" href="metrik_dalam_konteks_fintech.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="risk audit">
+                <h5>Fraud Risk Profiling</h5>
+                <div class="cat">Risk &middot; Audit</div>
+                <a class="collection-link" href="post20_risk_profiling.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="risk analytics">
+                <h5>Risk Segmentation</h5>
+                <div class="cat">Risk &middot; Analytics</div>
+                <a class="collection-link" href="post21_risk_segmentation.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="ml">
+                <h5>Confusion Matrix (Explained)</h5>
+                <div class="cat">ML</div>
+                <a class="collection-link" href="confusion_matrix_interaktif.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="ml">
+                <h5>F1-Score (Explained)</h5>
+                <div class="cat">ML</div>
+                <a class="collection-link" href="f1_score_interaktif.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="ml">
+                <h5>AUC-ROC (Explained)</h5>
+                <div class="cat">ML</div>
+                <a class="collection-link" href="auc_roc_interaktif.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="fraud analytics">
+                <h5>Timing of Fraud</h5>
+                <div class="cat">Fraud &middot; Analytics</div>
+                <a class="collection-link" href="timing_fraud.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="analytics audit">
+                <h5>Model Decision Support</h5>
+                <div class="cat">Analytics &middot; Audit</div>
+                <a class="collection-link" href="model_decision_support.html" target="_blank">View &rarr;</a>
+            </div>
+            <div class="collection-card" data-cat="ml audit">
+                <h5>Digital Audit &amp; Machine Learning Simulation</h5>
+                <div class="cat">ML &middot; Audit</div>
+                <a class="collection-link" href="simulasi_audit_digital_ml.html" target="_blank">View &rarr;</a>
+            </div>
+        </div>
+    </div>
+</section>
 
 <footer>
-
-    <div class="container">
-
-        <p>
-            © 2026 Rose Analytics ·
-            <a href="https://github.com/rose-analytics0/audit-data-insight-journey"
-               target="_blank">
-                View full GitHub repository
-            </a>
-        </p>
-
+    <div class="wrap footer-inner">
+        <div>
+            <div class="footer-brand-row">
+                <img src="assets/rose-analytics-logo.png" alt="Rose Analytics logo" class="footer-logo">
+                <div>
+                    <div class="footer-brand">Rose Analytics</div>
+                    <div class="footer-name">Rosliana Dwi Astuti</div>
+                </div>
+            </div>
+            <div class="footer-tags">Interactive HTML Portfolio &middot; Audit &middot; Data Analytics &middot; Fraud Detection &middot; Risk</div>
+        </div>
+        <div class="footer-links">
+            <a href="https://github.com/rose-analytics0/audit-data-insight-journey" target="_blank">GitHub</a>
+            <a href="https://www.linkedin.com/" target="_blank">LinkedIn</a>
+        </div>
     </div>
-
 </footer>
 
-
+<script>
+(function () {
+    var buttons = document.querySelectorAll('.filter-btn');
+    var cards = document.querySelectorAll('.collection-card');
+    buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            buttons.forEach(function (b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            var filter = btn.getAttribute('data-filter');
+            cards.forEach(function (card) {
+                var cats = card.getAttribute('data-cat').split(' ');
+                if (filter === 'all' || cats.indexOf(filter) !== -1) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+    });
+})();
+</script>
 </body>
 </html>
