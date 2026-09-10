@@ -620,9 +620,9 @@ footer {
 .footer-inner {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 40px;
 }
 
 .footer-brand-row {
@@ -656,12 +656,28 @@ footer {
 
 .footer-links {
     display: flex;
-    gap: 24px;
+    gap: 40px;
     font-size: 14px;
 }
 
-.footer-links a:hover {
+.footer-link-item {
+    max-width: 220px;
+}
+
+.footer-link-item a {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.footer-link-item a:hover {
     text-decoration: underline;
+}
+
+.footer-link-caption {
+    font-size: 12.5px;
+    color: #777;
+    margin-top: 4px;
+    line-height: 1.5;
 }
 
 /* RESPONSIVE */
@@ -727,7 +743,6 @@ footer {
             <a href="#modules">Modules</a>
             <a href="#analytics">Analytics</a>
             <a href="#evaluation">Evaluation</a>
-            <a href="https://github.com/rose-analytics0/audit-data-insight-journey" target="_blank">GitHub</a>
         </div>
     </div>
 </nav>
@@ -1133,8 +1148,14 @@ footer {
             <div class="footer-tags">Interactive HTML Portfolio &middot; Audit &middot; Data Analytics &middot; Fraud Detection &middot; Risk</div>
         </div>
         <div class="footer-links">
-            <a href="https://github.com/rose-analytics0/audit-data-insight-journey" target="_blank">GitHub</a>
-            <a href="https://www.linkedin.com/" target="_blank">LinkedIn</a>
+            <div class="footer-link-item">
+                <a href="https://github.com/rose-analytics0/audit-data-insight-journey" target="_blank">GitHub &rarr;</a>
+                <div class="footer-link-caption">Full source code and every module as-is, including earlier drafts and iterations. A working repo, not a polished showcase, kept as a record of the process.</div>
+            </div>
+            <div class="footer-link-item">
+                <a href="https://www.linkedin.com/" target="_blank">LinkedIn &rarr;</a>
+                <div class="footer-link-caption">Updates, insights, and the story behind each module.</div>
+            </div>
         </div>
     </div>
 </footer>
